@@ -1,0 +1,334 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1AA61A751A41044B00F2B2F6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA61A741A41044B00F2B2F6 /* AppDelegate.swift */; };
+		1AA61A771A41044B00F2B2F6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA61A761A41044B00F2B2F6 /* ViewController.swift */; };
+		1AA61A7A1A41044B00F2B2F6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A781A41044B00F2B2F6 /* Main.storyboard */; };
+		1AA61A7C1A41044B00F2B2F6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */; };
+		1AA61A7F1A41044B00F2B2F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */; };
+		1AA61A951A41049100F2B2F6 /* SimplePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AA61A941A41049100F2B2F6 /* SimplePlayerView.swift */; };
+		1AEC3D1F1A43267B00EAFC38 /* GLESBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D191A43267B00EAFC38 /* GLESBridge.m */; };
+		1AEC3D201A43267B00EAFC38 /* HKLCMTimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D1A1A43267B00EAFC38 /* HKLCMTimeUtils.swift */; };
+		1AEC3D211A43267B00EAFC38 /* HKLGLPixelBufferView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D1C1A43267B00EAFC38 /* HKLGLPixelBufferView.m */; };
+		1AEC3D221A43267B00EAFC38 /* HKLOpenGLUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D1D1A43267B00EAFC38 /* HKLOpenGLUtilities.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleGaplessPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AA61A731A41044B00F2B2F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1AA61A741A41044B00F2B2F6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1AA61A761A41044B00F2B2F6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		1AA61A791A41044B00F2B2F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		1AA61A7E1A41044B00F2B2F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		1AA61A941A41049100F2B2F6 /* SimplePlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimplePlayerView.swift; sourceTree = "<group>"; };
+		1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleGaplessPlayer-Bridging-Header.h"; sourceTree = "<group>"; };
+		1AEC3D181A43267B00EAFC38 /* GLESBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLESBridge.h; sourceTree = "<group>"; };
+		1AEC3D191A43267B00EAFC38 /* GLESBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLESBridge.m; sourceTree = "<group>"; };
+		1AEC3D1A1A43267B00EAFC38 /* HKLCMTimeUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCMTimeUtils.swift; sourceTree = "<group>"; };
+		1AEC3D1B1A43267B00EAFC38 /* HKLGLPixelBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLGLPixelBufferView.h; sourceTree = "<group>"; };
+		1AEC3D1C1A43267B00EAFC38 /* HKLGLPixelBufferView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HKLGLPixelBufferView.m; sourceTree = "<group>"; };
+		1AEC3D1D1A43267B00EAFC38 /* HKLOpenGLUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HKLOpenGLUtilities.c; sourceTree = "<group>"; };
+		1AEC3D1E1A43267B00EAFC38 /* HKLOpenGLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLOpenGLUtilities.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1AA61A6C1A41044B00F2B2F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1AA61A661A41044B00F2B2F6 = {
+			isa = PBXGroup;
+			children = (
+				1AA61A711A41044B00F2B2F6 /* SimpleGaplessPlayer */,
+				1AA61A701A41044B00F2B2F6 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1AA61A701A41044B00F2B2F6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1AA61A711A41044B00F2B2F6 /* SimpleGaplessPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				1AA61A741A41044B00F2B2F6 /* AppDelegate.swift */,
+				1AA61A761A41044B00F2B2F6 /* ViewController.swift */,
+				1AA61A781A41044B00F2B2F6 /* Main.storyboard */,
+				1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */,
+				1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */,
+				1AA61A941A41049100F2B2F6 /* SimplePlayerView.swift */,
+				1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */,
+				1AEC3D171A43267B00EAFC38 /* misc */,
+				1AA61A721A41044B00F2B2F6 /* Supporting Files */,
+			);
+			path = SimpleGaplessPlayer;
+			sourceTree = "<group>";
+		};
+		1AA61A721A41044B00F2B2F6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1AA61A731A41044B00F2B2F6 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1AEC3D171A43267B00EAFC38 /* misc */ = {
+			isa = PBXGroup;
+			children = (
+				1AEC3D181A43267B00EAFC38 /* GLESBridge.h */,
+				1AEC3D191A43267B00EAFC38 /* GLESBridge.m */,
+				1AEC3D1A1A43267B00EAFC38 /* HKLCMTimeUtils.swift */,
+				1AEC3D1B1A43267B00EAFC38 /* HKLGLPixelBufferView.h */,
+				1AEC3D1C1A43267B00EAFC38 /* HKLGLPixelBufferView.m */,
+				1AEC3D1D1A43267B00EAFC38 /* HKLOpenGLUtilities.c */,
+				1AEC3D1E1A43267B00EAFC38 /* HKLOpenGLUtilities.h */,
+			);
+			path = misc;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AA61A8E1A41044B00F2B2F6 /* Build configuration list for PBXNativeTarget "SimpleGaplessPlayer" */;
+			buildPhases = (
+				1AA61A6B1A41044B00F2B2F6 /* Sources */,
+				1AA61A6C1A41044B00F2B2F6 /* Frameworks */,
+				1AA61A6D1A41044B00F2B2F6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimpleGaplessPlayer;
+			productName = LearningVideoComposition;
+			productReference = 1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1AA61A671A41044B00F2B2F6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Hirohito Kato";
+				TargetAttributes = {
+					1AA61A6E1A41044B00F2B2F6 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 1AA61A6A1A41044B00F2B2F6 /* Build configuration list for PBXProject "SimpleGaplessPlayer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1AA61A661A41044B00F2B2F6;
+			productRefGroup = 1AA61A701A41044B00F2B2F6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1AA61A6D1A41044B00F2B2F6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AA61A7A1A41044B00F2B2F6 /* Main.storyboard in Resources */,
+				1AA61A7F1A41044B00F2B2F6 /* LaunchScreen.xib in Resources */,
+				1AA61A7C1A41044B00F2B2F6 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1AA61A6B1A41044B00F2B2F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AEC3D201A43267B00EAFC38 /* HKLCMTimeUtils.swift in Sources */,
+				1AA61A771A41044B00F2B2F6 /* ViewController.swift in Sources */,
+				1AA61A951A41049100F2B2F6 /* SimplePlayerView.swift in Sources */,
+				1AA61A751A41044B00F2B2F6 /* AppDelegate.swift in Sources */,
+				1AEC3D211A43267B00EAFC38 /* HKLGLPixelBufferView.m in Sources */,
+				1AEC3D221A43267B00EAFC38 /* HKLOpenGLUtilities.c in Sources */,
+				1AEC3D1F1A43267B00EAFC38 /* GLESBridge.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		1AA61A781A41044B00F2B2F6 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AA61A791A41044B00F2B2F6 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1AA61A7E1A41044B00F2B2F6 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1AA61A8C1A41044B00F2B2F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1AA61A8D1A41044B00F2B2F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1AA61A8F1A41044B00F2B2F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = SimpleGaplessPlayer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = SimpleGaplessPlayer;
+				SWIFT_OBJC_BRIDGING_HEADER = "SimpleGaplessPlayer/SimpleGaplessPlayer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1AA61A901A41044B00F2B2F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				INFOPLIST_FILE = SimpleGaplessPlayer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = SimpleGaplessPlayer;
+				SWIFT_OBJC_BRIDGING_HEADER = "SimpleGaplessPlayer/SimpleGaplessPlayer-Bridging-Header.h";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1AA61A6A1A41044B00F2B2F6 /* Build configuration list for PBXProject "SimpleGaplessPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AA61A8C1A41044B00F2B2F6 /* Debug */,
+				1AA61A8D1A41044B00F2B2F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1AA61A8E1A41044B00F2B2F6 /* Build configuration list for PBXNativeTarget "SimpleGaplessPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AA61A8F1A41044B00F2B2F6 /* Debug */,
+				1AA61A901A41044B00F2B2F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1AA61A671A41044B00F2B2F6 /* Project object */;
+}
