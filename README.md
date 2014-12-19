@@ -12,7 +12,17 @@ The app loads 10 video assets from camera-roll (via Phots.framework) when it is 
 
 ## How to remove gaps?
 
-See ViewController.swift. It creates AVAssetReaderVideoCompositionOutput, which is a subclass of AVAssetReader,  enables you to read each frames based on the video composition settings.
+See ViewController.swift. It creates AVAssetReaderVideoCompositionOutput, which is a subclass of AVAssetReader, enables you to read each frames based on the video composition settings.
+
+To play movies continuously, it creates AVAssetReader for each movie. and it generates a frame in each CADisplayLink callback.  Since Current devices' spec is so high, it is enough to play frames on real-time.
+
+![](figure/howto-01.png)
+
+However, only generating frames is not good for the gapless player. Because the displaylink callback timing and a framerate of the movie is different. So I use AVAssetReaderVideoCompositionOutput & AVMutableVideoComposition instead of AVAssetReader. They enable us to set output frame interval as we like.
+
+![](figure/howto-02.png)
+
+This is the way how to remove gaps.
 
 ## License
 SimpleGaplessPlayer is published under New BSD License
