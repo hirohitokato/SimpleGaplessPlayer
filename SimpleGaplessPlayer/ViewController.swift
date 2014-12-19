@@ -48,9 +48,8 @@ class ViewController: UIViewController {
     カメラロールから古い順で10個のビデオを取り出し、リーダーをセットアップする
     */
     func setupAssets() {
-        weak var weakSelf = self
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
-        collections.enumerateObjectsUsingBlock { (collection, index, stop)  in
+        collections.enumerateObjectsUsingBlock { [unowned self] (collection, index, stop)  in
 
             let assets = PHAsset.fetchAssetsInAssetCollection(collection as PHAssetCollection, options: nil)
 
@@ -60,9 +59,9 @@ class ViewController: UIViewController {
                 _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset,
                     options:nil, resultHandler: { (avasset:AVAsset!, audioMix:AVAudioMix!, info) -> Void in
                         dispatch_async(dispatch_get_main_queue()) {
-                            if weakSelf?.readers.count < 10 {
-                                let reader = weakSelf?.buildAssetReader(avasset)
-                                weakSelf?.readers.append(reader!)
+                            if self.readers.count < 10 {
+                                let reader = self.buildAssetReader(avasset)
+                                self.readers.append(reader!)
                                 reader!.startReading()
                                 NSLog("[\(index)] start reading")
                             } else {
@@ -130,8 +129,8 @@ class ViewController: UIViewController {
         // 注意点：
         // - このビデオトラックにはコンポジション上のビデオトラックを指定すること
         // - IOSurfaceで作成しなくても再生できるが、念のため付けておく
-        let videoTracks = composition.tracksWithMediaType(AVMediaTypeVideo)
-        var output = AVAssetReaderVideoCompositionOutput(videoTracks: videoTracks,
+        let compoVideoTracks = composition.tracksWithMediaType(AVMediaTypeVideo)
+        var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
             videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_32BGRA,
                 kCVPixelBufferIOSurfacePropertiesKey : [:]])
         output.videoComposition = videoComposition
