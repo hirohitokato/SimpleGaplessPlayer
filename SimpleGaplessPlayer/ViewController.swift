@@ -174,9 +174,7 @@ class ViewController: UIViewController {
             default:
                 println("Something is wrong.")
             }
-        }
-
-        if readers.isEmpty {
+        } else {
             println("finished.")
             displayLink.paused = true
         }
