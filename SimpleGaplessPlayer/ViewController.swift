@@ -48,29 +48,32 @@ class ViewController: UIViewController {
     カメラロールから古い順で10個のビデオを取り出し、リーダーをセットアップする
     */
     func setupAssets() {
+
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
-        collections.enumerateObjectsUsingBlock { [unowned self] (collection, index, stop)  in
+
+        collections.enumerateObjectsUsingBlock { [unowned self]  collection, index, stop  in
 
             let assets = PHAsset.fetchAssetsInAssetCollection(collection as PHAssetCollection, options: nil)
 
             NSLog("assets count:\(assets.count)")
-            assets.enumerateObjectsUsingBlock({ (asset, index, stop) in
+            assets.enumerateObjectsUsingBlock { asset, index, stop in
 
-                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset,
-                    options:nil, resultHandler: { (avasset:AVAsset!, audioMix:AVAudioMix!, info) -> Void in
+                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil){ avasset, audioMix, info in
+
                         dispatch_async(dispatch_get_main_queue()) {
                             if self.readers.count < 10 {
-                                let reader = self.buildAssetReader(avasset)
-                                self.readers.append(reader!)
-                                reader!.startReading()
+                            if let reader = self.buildAssetReader(avasset) {
+                                self.readers.append(reader)
+                                reader.startReading()
                                 NSLog("[\(index)] start reading")
+                            }
                             } else {
                                 stop.initialize(true)
                                 NSLog("Ignored an asset")
                             }
                         }
-                })
-            })
+                }
+            }
         }
     }
 
