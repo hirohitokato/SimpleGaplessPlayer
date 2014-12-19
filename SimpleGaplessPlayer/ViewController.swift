@@ -60,18 +60,18 @@ class ViewController: UIViewController {
 
                 _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil){ avasset, audioMix, info in
 
-                        dispatch_async(dispatch_get_main_queue()) {
-                            if self.readers.count < 10 {
+                    dispatch_async(dispatch_get_main_queue()) {
+                        if self.readers.count < 10 {
                             if let reader = self.buildAssetReader(avasset) {
                                 self.readers.append(reader)
                                 reader.startReading()
                                 NSLog("[\(index)] start reading")
                             }
-                            } else {
-                                stop.initialize(true)
-                                NSLog("Ignored an asset")
-                            }
+                        } else {
+                            stop.initialize(true)
+                            NSLog("Ignored an asset")
                         }
+                    }
                 }
             }
         }
@@ -155,10 +155,17 @@ class ViewController: UIViewController {
     }
 
     //MARK: … CADisplayLink callback function
+
+    /**
+    CADisplayLinkのコールバック関数。frameInterval間隔で、画面更新のタイミングで呼ばれる
+
+    :param: displayLink CADisplayLink。現在時刻や直近の処理時間を取得できる
+    */
     @objc func displayLinkCallback(displayLink: CADisplayLink) {
         // 表示対象の時刻を計算
         let nextOutputHostTime = displayLink.timestamp + displayLink.duration
 
+        // FIXME: copyNextSampleBuffer()が空だったときに1フレームそのままになる
         if let reader = readers.first {
             switch reader.status {
             case .Reading:
