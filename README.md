@@ -1,12 +1,14 @@
 # SimpleGaplessPlayer
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/katokichisoft/SimpleGaplessPlayer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A simple player sample that can play multiple assets without gap.
 
 ## What is this?
 
 AVQueuePlayer is used to play a number of items in sequence. But the short gap that we can easily notice them is laid between movies. This project shows how to play multiple assets without gap between assets.
 
-The app loads 10 video assets from camera-roll via Phots.framework when it is launched. Double tap the screen, it plays them with no gap.
+The app loads 10 video assets from camera-roll (via Phots.framework) when it is launched. Double tap the screen, it plays them with no gap.
 
 ## How to remove gaps?
 
