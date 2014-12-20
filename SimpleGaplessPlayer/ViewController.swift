@@ -49,27 +49,32 @@ class ViewController: UIViewController {
     */
     func setupAssets() {
 
-        let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
+        let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
+        let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
         collections.enumerateObjectsUsingBlock { [unowned self]  collection, index, stop  in
 
-            let assets = PHAsset.fetchAssetsInAssetCollection(collection as PHAssetCollection, options: nil)
+            // 日付の古い順
+            var options = PHFetchOptions()
+            options.sortDescriptors = [ NSSortDescriptor(key: "creationDate", ascending: true) ]
 
-            NSLog("assets count:\(assets.count)")
+            let assets = PHAsset.fetchAssetsInAssetCollection(collection as PHAssetCollection, options: options)
             assets.enumerateObjectsUsingBlock { asset, index, stop in
 
-                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil){ avasset, audioMix, info in
-
-                    dispatch_async(dispatch_get_main_queue()) {
-                        if self.readers.count < 10 {
+                // この処理は非同期で行われる
+                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil)
+                { avasset, audioMix, info in
+                    if let avasset = avasset {
+                        dispatch_async(queue) {
+                            if self.readers.count < 5 {
                             if let reader = self.buildAssetReader(avasset) {
                                 self.readers.append(reader)
                                 reader.startReading()
-                                NSLog("[\(index)] start reading")
                             }
                         } else {
                             stop.initialize(true)
-                            NSLog("Ignored an asset")
+                                NSLog("Ignored an asset[\(index)]")
+                            }
                         }
                     }
                 }
