@@ -5,7 +5,7 @@
 //  Copyright (c) 2014年 Hirohito Kato. All rights reserved.
 //
 
-import Foundation
+import QuartzCore
 
 extension CGAffineTransform: Printable {
     public var description: String {
