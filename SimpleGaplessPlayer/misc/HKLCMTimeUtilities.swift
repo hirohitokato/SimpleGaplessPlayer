@@ -1,7 +1,7 @@
 //
 //  HKLCMTimeUtils.swift
 //
-//  Created by Hirohito Kato on 2014/12/03.
+//  Created by Hirohito Kato on 2014/12/19.
 //
 
 import CoreMedia

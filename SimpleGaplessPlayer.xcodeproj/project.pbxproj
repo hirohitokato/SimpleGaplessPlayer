@@ -20,6 +20,7 @@
 		1AEABB491A47D22F00EF97E2 /* HKLCoreGraphicsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */; };
 		1AEABB521A47D32300EF97E2 /* HKLGLPixelBufferView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */; };
 		1AEABB531A47D32300EF97E2 /* HKLOpenGLUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB4F1A47D32300EF97E2 /* HKLOpenGLUtilities.c */; };
+		1AEABB831A48E19900EF97E2 /* HKLAVFoundationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB821A48E19900EF97E2 /* HKLAVFoundationUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HKLGLPixelBufferView.m; sourceTree = "<group>"; };
 		1AEABB4F1A47D32300EF97E2 /* HKLOpenGLUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HKLOpenGLUtilities.c; sourceTree = "<group>"; };
 		1AEABB501A47D32300EF97E2 /* HKLOpenGLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLOpenGLUtilities.h; sourceTree = "<group>"; };
+		1AEABB821A48E19900EF97E2 /* HKLAVFoundationUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLAVFoundationUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtilities.swift */,
 				1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */,
 				1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtilities.swift */,
+				1AEABB821A48E19900EF97E2 /* HKLAVFoundationUtils.swift */,
 			);
 			path = misc;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 				1AEABB0C1A47C40400EF97E2 /* AppDelegate.swift in Sources */,
 				1AEABB461A47D15500EF97E2 /* StreamFrameProducer.swift in Sources */,
 				1AEABB481A47D15D00EF97E2 /* HKLAVGaplessPlayer.swift in Sources */,
+				1AEABB831A48E19900EF97E2 /* HKLAVFoundationUtils.swift in Sources */,
 				1AEABB491A47D22F00EF97E2 /* HKLCoreGraphicsUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
