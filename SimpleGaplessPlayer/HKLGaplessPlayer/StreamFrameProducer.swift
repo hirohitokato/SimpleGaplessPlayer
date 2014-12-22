@@ -56,17 +56,8 @@ internal class StreamFrameProducer: NSObject {
     func nextSampleBuffer() -> (CMSampleBufferRef, CMTime)! {
         let lock = ScopedLock(self)
 
-        // ディスプレイリンク用のスレッド負荷を下げるために別スレッドにて
-        // 処理を行う（ただし同期処理を行わせたいのでdispatch_syncを使う）
-        dispatch_sync(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            [unowned self] in
-            let lock = ScopedLock(self)
-            self.main()
-        }
-
         // 一度取得したらnilに変わる
-        if let nextBuffer = _sampleBuffer {
-            _sampleBuffer = nil
+        if let nextBuffer = self.prepareNextBuffer() {
             return (nextBuffer, _frameInterval)
         }
         return nil
@@ -80,8 +71,6 @@ internal class StreamFrameProducer: NSObject {
 
     private let _kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
-    /// 内部管理用のサンプルバッファ。外からのアクセスにはnextSampleBufferを使わせる
-    private var _sampleBuffer: CMSampleBufferRef? = nil
     /// 現在のアセットにおけるフレーム表示期間
     private var _frameInterval: CMTime = kCMTimeZero
 
@@ -91,12 +80,11 @@ internal class StreamFrameProducer: NSObject {
     /**
     サンプルバッファの生成
     */
-    private func main() {
-        _sampleBuffer = nil
+    private func prepareNextBuffer() -> CMSampleBufferRef? {
         _frameInterval = kCMTimeIndefinite
 
         // サンプルバッファを生成する
-        while _sampleBuffer==nil && !_readers.isEmpty {
+        while !_readers.isEmpty {
 
             let target = _readers.first!
 
@@ -106,9 +94,9 @@ internal class StreamFrameProducer: NSObject {
                 let out = target.output
                 if let sbuf = out.copyNextSampleBuffer() {
 
-                    // 現在のサンプルバッファを更新
-                    _sampleBuffer = sbuf
+                    // 取得したサンプルバッファの情報で更新
                     _frameInterval = target.frameInterval
+                    return sbuf
 
                 } else {
                     println("move to next")
@@ -122,8 +110,10 @@ internal class StreamFrameProducer: NSObject {
                 _readers.removeAtIndex(0)
             default:
                 assert(false, "Invalid state\(Int(target.status.rawValue)). Something is wrong.")
+                _readers.removeAtIndex(0)
             }
         }
+        return nil
     }
 
     private func _asyncPrepareNextAssetReader() {
