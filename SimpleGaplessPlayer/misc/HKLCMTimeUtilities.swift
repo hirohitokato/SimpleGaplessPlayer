@@ -7,7 +7,10 @@
 import CoreMedia
 
 // MARK: Initialization
-extension CMTime: Comparable {
+extension CMTime {
+    public init(value: Int64, _ timescale: Int = 1) {
+        self = CMTimeMake(value, Int32(timescale))
+    }
     public init(value: Int64, _ timescale: Int32 = 1) {
         self = CMTimeMake(value, timescale)
     }
@@ -20,6 +23,7 @@ extension CMTime: Comparable {
 }
 
 // MARK: - Arithmetic Protocol
+
 // MARK: Add
 func + (left: CMTime, right: CMTime) -> CMTime {
     return CMTimeAdd(left, right)
@@ -80,6 +84,9 @@ func /= (inout time: CMTime, divisor: Int32) -> CMTime {
 }
 
 // MARK: - Comparable protocol
+extension CMTime: Comparable {
+}
+
 public func == (time1: CMTime, time2: CMTime) -> Bool {
     return CMTimeCompare(time1, time2) == 0
 }
