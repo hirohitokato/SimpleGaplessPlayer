@@ -47,7 +47,8 @@ class ViewController: UIViewController {
         let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
-        collections.enumerateObjectsUsingBlock { [unowned self]  collection, index, stop  in
+        collections.enumerateObjectsUsingBlock {
+            [unowned self]  collection, index, stop  in
 
             // 日付の古い順
             var options = PHFetchOptions()
@@ -57,12 +58,15 @@ class ViewController: UIViewController {
             assets.enumerateObjectsUsingBlock { asset, index, stop in
 
                 // この処理は非同期で行われる
-                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil)
-                { avasset, audioMix, info in
+                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil) {
+                    avasset, audioMix, info in
+
                     if let avasset = avasset {
                         dispatch_async(queue) {
                             // プロデューサーにアセットを追加
                             self._player.appendAsset(avasset)
+
+                            let track = avasset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
                         }
                     }
                 }
