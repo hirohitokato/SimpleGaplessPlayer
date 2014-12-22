@@ -11,7 +11,7 @@ import Photos
 import AVFoundation
 
 /// フレームレート
-let kFrameRate: Int = 60
+public let kFrameRate: Int = 60
 
 class ViewController: UIViewController {
 
@@ -42,7 +42,7 @@ class ViewController: UIViewController {
     /**
     カメラロールから古い順で10個のビデオを取り出し、リーダーをセットアップする
     */
-    func loadVideoAssets() {
+    private func loadVideoAssets() {
 
         let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
@@ -58,7 +58,7 @@ class ViewController: UIViewController {
 
                 // この処理は非同期で行われる
                 _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil)
-                { [unowned self] avasset, audioMix, info in
+                { avasset, audioMix, info in
                     if let avasset = avasset {
                         dispatch_async(queue) {
                             // プロデューサーにアセットを追加
@@ -71,3 +71,5 @@ class ViewController: UIViewController {
     }
 
 }
+
+
