@@ -18,10 +18,6 @@ import AVFoundation
 class HKLAVGaplessPlayer: NSObject {
     weak var playerView: HKLGLPixelBufferView! = nil
 
-    init(producer: StreamFrameProducer) {
-        self._producer = producer
-    }
-
     /**
     アセットを内部キューの末尾に追加する
 
@@ -33,7 +29,9 @@ class HKLAVGaplessPlayer: NSObject {
             displayLink = CADisplayLink(target: self, selector: "displayLinkCallback:")
             displayLink.frameInterval = 60 / kFrameRate
             displayLink.paused = true
-            displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+            dispatch_sync(dispatch_get_main_queue()) {
+                self.displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+            }
         }
 
         _producer.appendAsset(asset)
@@ -53,7 +51,9 @@ class HKLAVGaplessPlayer: NSObject {
     // MARK: Private variables & methods
     private var displayLink: CADisplayLink!
 
-    let _producer: StreamFrameProducer
+     /// フレームの保持と生成を担当するクラス
+    let _producer: StreamFrameProducer = StreamFrameProducer()
+
     /// 最後にピクセルバッファを取得した時刻
     private var _lastTimestamp: CFTimeInterval = 0
     /// 表示に使う時間の残り時間

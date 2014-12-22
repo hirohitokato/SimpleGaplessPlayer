@@ -16,12 +16,12 @@ public let kFrameRate: Int = 60
 class ViewController: UIViewController {
 
     @IBOutlet weak var playerView: HKLGLPixelBufferView!
-    private var player: HKLAVGaplessPlayer!
+    private let _player = HKLAVGaplessPlayer()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        player.playerView = playerView
+        _player.playerView = playerView
         loadVideoAssets()
     }
 
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func tapped(sender: AnyObject) {
-        player.play()
+        _player.play()
     }
 
     /**
@@ -62,7 +62,7 @@ class ViewController: UIViewController {
                     if let avasset = avasset {
                         dispatch_async(queue) {
                             // プロデューサーにアセットを追加
-                            self.player.appendAsset(avasset)
+                            self._player.appendAsset(avasset)
                         }
                     }
                 }

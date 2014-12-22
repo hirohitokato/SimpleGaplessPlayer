@@ -18,9 +18,8 @@
 		1AEABB471A47D15A00EF97E2 /* AssetReaderFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB041A47C3DF00EF97E2 /* AssetReaderFragment.swift */; };
 		1AEABB481A47D15D00EF97E2 /* HKLAVGaplessPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB051A47C3DF00EF97E2 /* HKLAVGaplessPlayer.swift */; };
 		1AEABB491A47D22F00EF97E2 /* HKLCoreGraphicsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */; };
-		1AEC3D1F1A43267B00EAFC38 /* GLESBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D191A43267B00EAFC38 /* GLESBridge.m */; };
-		1AEC3D211A43267B00EAFC38 /* HKLGLPixelBufferView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D1C1A43267B00EAFC38 /* HKLGLPixelBufferView.m */; };
-		1AEC3D221A43267B00EAFC38 /* HKLOpenGLUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC3D1D1A43267B00EAFC38 /* HKLOpenGLUtilities.c */; };
+		1AEABB521A47D32300EF97E2 /* HKLGLPixelBufferView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */; };
+		1AEABB531A47D32300EF97E2 /* HKLOpenGLUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB4F1A47D32300EF97E2 /* HKLOpenGLUtilities.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,12 +37,10 @@
 		1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCoreGraphicsUtils.swift; sourceTree = "<group>"; };
 		1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLThreadUtilities.swift; sourceTree = "<group>"; };
 		1AEABB121A47C44C00EF97E2 /* StreamFrameProducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamFrameProducer.swift; sourceTree = "<group>"; };
-		1AEC3D181A43267B00EAFC38 /* GLESBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLESBridge.h; sourceTree = "<group>"; };
-		1AEC3D191A43267B00EAFC38 /* GLESBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GLESBridge.m; sourceTree = "<group>"; };
-		1AEC3D1B1A43267B00EAFC38 /* HKLGLPixelBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLGLPixelBufferView.h; sourceTree = "<group>"; };
-		1AEC3D1C1A43267B00EAFC38 /* HKLGLPixelBufferView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HKLGLPixelBufferView.m; sourceTree = "<group>"; };
-		1AEC3D1D1A43267B00EAFC38 /* HKLOpenGLUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HKLOpenGLUtilities.c; sourceTree = "<group>"; };
-		1AEC3D1E1A43267B00EAFC38 /* HKLOpenGLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLOpenGLUtilities.h; sourceTree = "<group>"; };
+		1AEABB4D1A47D32300EF97E2 /* HKLGLPixelBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLGLPixelBufferView.h; sourceTree = "<group>"; };
+		1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HKLGLPixelBufferView.m; sourceTree = "<group>"; };
+		1AEABB4F1A47D32300EF97E2 /* HKLOpenGLUtilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HKLOpenGLUtilities.c; sourceTree = "<group>"; };
+		1AEABB501A47D32300EF97E2 /* HKLOpenGLUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLOpenGLUtilities.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +80,7 @@
 				1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */,
 				1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */,
 				1AF59D581A4797C100B830CE /* HKLGaplessPlayer */,
+				1AEABB4A1A47D32300EF97E2 /* HKLGLPixelBufferView */,
 				1AEC3D171A43267B00EAFC38 /* misc */,
 				1AA61A721A41044B00F2B2F6 /* Supporting Files */,
 			);
@@ -97,15 +95,20 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		1AEABB4A1A47D32300EF97E2 /* HKLGLPixelBufferView */ = {
+			isa = PBXGroup;
+			children = (
+				1AEABB4D1A47D32300EF97E2 /* HKLGLPixelBufferView.h */,
+				1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */,
+				1AEABB4F1A47D32300EF97E2 /* HKLOpenGLUtilities.c */,
+				1AEABB501A47D32300EF97E2 /* HKLOpenGLUtilities.h */,
+			);
+			path = HKLGLPixelBufferView;
+			sourceTree = "<group>";
+		};
 		1AEC3D171A43267B00EAFC38 /* misc */ = {
 			isa = PBXGroup;
 			children = (
-				1AEC3D181A43267B00EAFC38 /* GLESBridge.h */,
-				1AEC3D191A43267B00EAFC38 /* GLESBridge.m */,
-				1AEC3D1B1A43267B00EAFC38 /* HKLGLPixelBufferView.h */,
-				1AEC3D1C1A43267B00EAFC38 /* HKLGLPixelBufferView.m */,
-				1AEC3D1D1A43267B00EAFC38 /* HKLOpenGLUtilities.c */,
-				1AEC3D1E1A43267B00EAFC38 /* HKLOpenGLUtilities.h */,
 				1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtilities.swift */,
 				1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */,
 				1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtilities.swift */,
@@ -117,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				1AEABB051A47C3DF00EF97E2 /* HKLAVGaplessPlayer.swift */,
-				1AEABB041A47C3DF00EF97E2 /* AssetReaderFragment.swift */,
 				1AEABB121A47C44C00EF97E2 /* StreamFrameProducer.swift */,
+				1AEABB041A47C3DF00EF97E2 /* AssetReaderFragment.swift */,
 			);
 			path = HKLGaplessPlayer;
 			sourceTree = "<group>";
@@ -193,13 +196,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1AEC3D211A43267B00EAFC38 /* HKLGLPixelBufferView.m in Sources */,
-				1AEC3D221A43267B00EAFC38 /* HKLOpenGLUtilities.c in Sources */,
 				1AEABB0D1A47C40400EF97E2 /* ViewController.swift in Sources */,
-				1AEC3D1F1A43267B00EAFC38 /* GLESBridge.m in Sources */,
+				1AEABB531A47D32300EF97E2 /* HKLOpenGLUtilities.c in Sources */,
 				1AEABB111A47C42B00EF97E2 /* HKLThreadUtilities.swift in Sources */,
 				1AEABB471A47D15A00EF97E2 /* AssetReaderFragment.swift in Sources */,
 				1AEABB031A47C3A800EF97E2 /* HKLCMTimeUtilities.swift in Sources */,
+				1AEABB521A47D32300EF97E2 /* HKLGLPixelBufferView.m in Sources */,
 				1AEABB0C1A47C40400EF97E2 /* AppDelegate.swift in Sources */,
 				1AEABB461A47D15500EF97E2 /* StreamFrameProducer.swift in Sources */,
 				1AEABB481A47D15D00EF97E2 /* HKLAVGaplessPlayer.swift in Sources */,

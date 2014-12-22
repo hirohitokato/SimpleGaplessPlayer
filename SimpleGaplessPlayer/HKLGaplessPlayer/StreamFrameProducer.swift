@@ -15,7 +15,7 @@ import AVFoundation
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
 非同期でサンプルバッファを生成する
 */
-class StreamFrameProducer: NSObject {
+internal class StreamFrameProducer: NSObject {
 
     /// 格納しているアセットの合計再生時間
     var amountDuration: CMTime {

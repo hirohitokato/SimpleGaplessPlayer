@@ -13,7 +13,7 @@ import AVFoundation
 アセットリーダーと元アセットとを管理する型。時間も管理することで、60fps以下の
 ムービーでも滞りなく再生できるようにする
 */
-class AssetReaderFragment: NSObject {
+internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
     let reader: AVAssetReader!
     var frameInterval: CMTime = kCMTimeIndefinite
