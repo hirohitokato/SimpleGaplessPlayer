@@ -73,7 +73,7 @@ class HKLAVGaplessPlayer: NSObject {
         // 時間を消費
         _remainingPresentationTime -= displayLink.duration
 
-        // フレームの表示時間を
+        // フレームの表示時間を、消費したぶんだけ補充する
         while _remainingPresentationTime < 0.0 {
 
             // サンプルバッファの取得
