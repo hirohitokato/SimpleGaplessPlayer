@@ -38,14 +38,27 @@ class HKLAVGaplessPlayer: NSObject {
     }
 
     func play() {
+        if displayLink.paused == true {
+            _producer.startReading()
+            _lastTimestamp = CACurrentMediaTime()
+            _remainingPresentationTime = 0.0
+        }
         displayLink.paused = false
-        _lastTimestamp = CACurrentMediaTime()
-        _remainingPresentationTime = 0.0
     }
+    /**
+    再生の一時停止。再開可能
+    */
     func pause() {
         displayLink.paused = true
         _lastTimestamp = CACurrentMediaTime()
         _remainingPresentationTime = 0.0
+    }
+    /**
+    再生停止。再開は最初から
+    */
+    func stop() {
+        pause()
+        _producer.cancelReading()
     }
 
     // MARK: Private variables & methods
@@ -59,6 +72,9 @@ class HKLAVGaplessPlayer: NSObject {
     /// 表示に使う時間の残り時間
     private var _remainingPresentationTime: CFTimeInterval = 0.0
 
+    /// 再生速度の係数。1.0が通常速度、2.0だと倍速になる
+    private var _playbackRate : CFTimeInterval = 1.0
+
     // MARK: … CADisplayLink callback function
 
     /**
@@ -67,9 +83,12 @@ class HKLAVGaplessPlayer: NSObject {
     :param: displayLink CADisplayLink。現在時刻や直近の処理時間を取得できる
     */
     @objc func displayLinkCallback(displayLink: CADisplayLink) {
-        // 表示対象の時刻を計算
-        let callbackDuration = displayLink.duration * CFTimeInterval(displayLink.frameInterval)
-        let nextOutputHostTime = displayLink.timestamp + callbackDuration
+
+        // 表示対象の時刻を計算（再生レートも加味）
+        let callbackDuration =
+            displayLink.duration * CFTimeInterval(displayLink.frameInterval) * _playbackRate
+        //let nextOutputHostTime = displayLink.timestamp + callbackDuration
+
         // 時間を消費
         _remainingPresentationTime -= callbackDuration
 
