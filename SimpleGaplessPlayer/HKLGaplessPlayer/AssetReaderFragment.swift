@@ -25,7 +25,12 @@ internal class AssetReaderFragment: NSObject {
 
         // リーダーとなるコンポジションを作成する
         if let result = buildComposition(asset, startTime:startTime, endTime:endTime) {
-            (reader, frameInterval) = result
+            /*
+            (reader, frameInterval) = result で記述すると、以下のコンパイルエラー：
+            "Cannot express tuple conversion '(AVAssetReader, CMTime)' to '(AVAssetReader!, CMTime)'"
+            が出てしまうため、分解して代入するようにした
+            */
+            (reader, frameInterval) = (result.0, result.1)
         }
 
         if reader == nil || frameInterval == kCMTimeIndefinite {
@@ -69,7 +74,7 @@ internal class AssetReaderFragment: NSObject {
     */
     private func buildComposition(asset:AVAsset,
         startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
-        -> (AVAssetReader!, CMTime)!
+        -> (AVAssetReader, CMTime)!
     {
         var error: NSError? = nil
 
