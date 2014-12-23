@@ -25,8 +25,10 @@ internal class AssetReaderFragment: NSObject {
 
         // リーダーとなるコンポジションを作成する
         if let result = buildComposition(asset, startTime:startTime, endTime:endTime) {
-            (self.reader!, self.frameInterval) = result
-        } else {
+            (reader, frameInterval) = result
+        }
+
+        if reader == nil || frameInterval == kCMTimeIndefinite {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
@@ -67,7 +69,7 @@ internal class AssetReaderFragment: NSObject {
     */
     private func buildComposition(asset:AVAsset,
         startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
-        -> (AVAssetReader, CMTime)!
+        -> (AVAssetReader!, CMTime)!
     {
         var error: NSError? = nil
 
