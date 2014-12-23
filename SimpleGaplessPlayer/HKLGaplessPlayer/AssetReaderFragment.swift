@@ -23,12 +23,6 @@ internal class AssetReaderFragment: NSObject {
 
         super.init()
 
-        // 先頭の映像トラックを使ってフレームレートを取得する
-        if !asset.tracksWithMediaType(AVMediaTypeVideo).isEmpty {
-            let track = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
-            self.frameInterval = max(track.minFrameDuration, CMTime(value:1, kFrameRate))
-        }
-
         // リーダーとなるコンポジションを作成する
         if let result = buildComposition(asset, startTime:startTime, endTime:endTime) {
             (self.reader!, self.frameInterval) = result
