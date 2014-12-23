@@ -41,10 +41,9 @@ internal class AssetReaderFragment: NSObject {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
-    }
 
-    func startReading() -> Bool {
-        return reader.startReading()
+        // 読み込み開始
+        self.reader.startReading()
     }
 
     /**
