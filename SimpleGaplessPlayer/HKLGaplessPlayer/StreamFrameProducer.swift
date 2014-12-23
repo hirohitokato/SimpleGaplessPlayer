@@ -9,6 +9,8 @@ import Foundation
 import CoreMedia
 import AVFoundation
 
+let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
+
 /**
 :class: StreamFrameProducer
 :abstract:
@@ -36,14 +38,15 @@ internal class StreamFrameProducer: NSObject {
             self._assets.append(asset)
             self._amountDuration += asset.duration
 
-            if self._readers.count < 5 {
-                if let assetreader = AssetReaderFragment(asset: asset) {
+            // 読み込んだリーダーの数に応じて、追加でリーダーを作成する
+            if self._readers.count < kMaximumNumOfReaders {
+                if let assetreader = AssetReaderFragment(asset:asset) {
                     self._readers.append(assetreader)
-                    assetreader.startReading()
                 } else {
                     NSLog("Failed to instantiate a AssetReaderFragment.")
                 }
             }
+            
         }
     }
 
@@ -63,13 +66,31 @@ internal class StreamFrameProducer: NSObject {
         return nil
     }
 
+    func startReading() -> Bool {
+        let lock = ScopedLock(self)
+        if _assets.isEmpty {
+            return false
+        }
+        _prepareNextAssetReader()
+        return true
+    }
+
+    /**
+    読み込み前のリーダーをすべて削除し、読み込みをキャンセルする。
+
+    内部で保持しているAVAssetReaderOutputをすべて削除し、読み込み処理を
+    停止する。再び読み込めるようにする場合、startReading()を呼ぶか、別のアセットを
+    appendAsset()して、リーダーの準備をしておくこと
+    */
+    func cancelReading() {
+        let lock = ScopedLock(self)
+        _readers.removeAll(keepCapacity: false)
+    }
+
     // MARK: Privates
 
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]()
-    private let _requestSignal = dispatch_semaphore_create(0) // アセットリーダー生成時の排他処理
-
-    private let _kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
     /// 現在のアセットにおけるフレーム表示期間
     private var _frameInterval: CMTime = kCMTimeZero
@@ -102,7 +123,10 @@ internal class StreamFrameProducer: NSObject {
                     println("move to next")
                     // 次のムービーへ移動
                     _readers.removeAtIndex(0)
-                    _asyncPrepareNextAssetReader()
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                        [unowned self] in
+                        self._prepareNextAssetReader()
+                    }
                 }
             case .Completed:
                 // AVAssetReaderは.Reading状態でcopyNextSampleBufferを返した
@@ -116,33 +140,38 @@ internal class StreamFrameProducer: NSObject {
         return nil
     }
 
-    private func _asyncPrepareNextAssetReader() {
+    private func _prepareNextAssetReader() {
         let lock = ScopedLock(self)
 
-        // 読み込み済みリーダーの数が上限になっていれば何もしない
-        if (_readers.count > _kMaximumNumOfReaders) {
+        // 読み込み済みリーダーの数が上限になっているか、読み込むアセットが
+        // なければ何もしない
+        if (_readers.count >= kMaximumNumOfReaders && _assets.count == 0) {
             return
         }
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            [unowned self] in
 
-            let lock = ScopedLock(self)
+        // 読み込みしていないアセットがあれば読み込む
+        outer: for (i, asset) in enumerate(self._assets) {
 
-            // もしまだ読み込みしていないアセットがあれば読み込む
-            for (i, asset) in enumerate(self._assets) {
-                if self._readers.last?.asset === asset && i+1 < self._assets.count {
+            // 登録済みの最後のアセットを見つけて、それ以降のアセットを
+            // 追加対象として読み込む
+            if _readers.last?.asset === asset && i+1 < _assets.count {
+                for target_asset in _assets[i+1..<_assets.count] {
 
-                    if let assetreader = AssetReaderFragment(asset: self._assets[i+1]) {
-                        self._readers.append(assetreader)
-                        assetreader.startReading()
+                    if let assetreader = AssetReaderFragment(asset:target_asset) {
+                        _readers.append(assetreader)
                     } else {
                         NSLog("Failed to instantiate a AssetReaderFragment.")
+                        break outer
                     }
-                    
-                    break
+
+                    // 読み込み済みリーダーの数が上限になれば処理終了
+                    if (_readers.count >= kMaximumNumOfReaders) {
+                        break outer
+                    }
                 }
+
             }
+
         }
     }
-    
 }
