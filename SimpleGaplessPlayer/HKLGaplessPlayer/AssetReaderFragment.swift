@@ -30,14 +30,9 @@ internal class AssetReaderFragment: NSObject {
         }
 
         // リーダーとなるコンポジションを作成する
-        self.reader = buildComposition(asset, startTime:startTime, endTime:endTime)
-
-        if self.frameInterval == kCMTimeIndefinite {
-            NSLog("Not supported asset yet, which doesn't have video tracks.")
-            return nil
-        }
-
-        if self.reader == nil {
+        if let result = buildComposition(asset, startTime:startTime, endTime:endTime) {
+            (self.reader!, self.frameInterval) = result
+        } else {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
@@ -77,7 +72,8 @@ internal class AssetReaderFragment: NSObject {
     :returns: アセットリーダー
     */
     private func buildComposition(asset:AVAsset,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) -> AVAssetReader!
+        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
+        -> (AVAssetReader, CMTime)!
     {
         var error: NSError? = nil
 
@@ -113,7 +109,7 @@ internal class AssetReaderFragment: NSObject {
 
         // フレームレート指定のためにビデオコンポジションを作成・利用(60fps)
         let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
-        videoComposition.frameDuration = CMTime(value:1, kFrameRate)
+        videoComposition.frameDuration = max(videoTrack.minFrameDuration, CMTime(value:1, kFrameRate))
 
         // 60fps以下の場合、60fpsで出力出来るようスケールしたいが、scaleTimeRange()は
         // frameDuration以下のfpsのときには、読み出そうとしてもエラーになってしまう模様。
@@ -141,7 +137,7 @@ internal class AssetReaderFragment: NSObject {
             if reader.canAddOutput(output) {
                 reader.addOutput(output)
             }
-            return reader
+            return (reader, videoComposition.frameDuration)
         } else {
             NSLog("Failed to instantiate a reader for a composition:\(error)")
         }
