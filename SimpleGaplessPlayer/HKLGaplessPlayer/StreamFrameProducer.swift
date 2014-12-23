@@ -60,7 +60,7 @@ internal class StreamFrameProducer: NSObject {
         let lock = ScopedLock(self)
 
         // 一度取得したらnilに変わる
-        if let nextBuffer = self.prepareNextBuffer() {
+        if let nextBuffer = self._prepareNextBuffer() {
             return (nextBuffer, _frameInterval)
         }
         return nil
@@ -101,7 +101,7 @@ internal class StreamFrameProducer: NSObject {
     /**
     サンプルバッファの生成
     */
-    private func prepareNextBuffer() -> CMSampleBufferRef? {
+    private func _prepareNextBuffer() -> CMSampleBufferRef? {
         _frameInterval = kCMTimeIndefinite
 
         // サンプルバッファを生成する
