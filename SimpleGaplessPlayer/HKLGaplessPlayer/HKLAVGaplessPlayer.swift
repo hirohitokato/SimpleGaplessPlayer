@@ -68,10 +68,10 @@ class HKLAVGaplessPlayer: NSObject {
     */
     @objc func displayLinkCallback(displayLink: CADisplayLink) {
         // 表示対象の時刻を計算
-        let nextOutputHostTime = displayLink.timestamp + displayLink.duration
-
+        let callbackDuration = displayLink.duration * CFTimeInterval(displayLink.frameInterval)
+        let nextOutputHostTime = displayLink.timestamp + callbackDuration
         // 時間を消費
-        _remainingPresentationTime -= displayLink.duration
+        _remainingPresentationTime -= callbackDuration
 
         // フレームの表示時間を、消費したぶんだけ補充する
         while _remainingPresentationTime < 0.0 {
@@ -92,6 +92,7 @@ class HKLAVGaplessPlayer: NSObject {
                 }
             } else {
                 // サンプルバッファが得られなかった場合、今回の処理では何もしない
+                println("nil")
                 break
             }
         }
