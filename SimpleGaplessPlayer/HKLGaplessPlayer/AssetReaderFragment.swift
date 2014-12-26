@@ -54,10 +54,7 @@ internal class AssetReaderFragment: NSObject {
     (AVAssetReaderOutput)を返す。
     */
     var output: AVAssetReaderOutput! {
-        if !reader.outputs.isEmpty {
-            return reader.outputs[0] as? AVAssetReaderOutput
-        }
-        return nil
+        return reader.outputs.first as? AVAssetReaderOutput
     }
 
     // MARK: Private variables & methods

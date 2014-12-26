@@ -105,9 +105,7 @@ internal class StreamFrameProducer: NSObject {
         _frameInterval = kCMTimeIndefinite
 
         // サンプルバッファを生成する
-        while !_readers.isEmpty {
-
-            let target = _readers.first!
+        while let target = _readers.first {
 
             switch target.status {
             case .Reading:
