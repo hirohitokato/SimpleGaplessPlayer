@@ -10,10 +10,10 @@
 		1AA61A7A1A41044B00F2B2F6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A781A41044B00F2B2F6 /* Main.storyboard */; };
 		1AA61A7C1A41044B00F2B2F6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */; };
 		1AA61A7F1A41044B00F2B2F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */; };
-		1AEABB031A47C3A800EF97E2 /* HKLCMTimeUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtilities.swift */; };
+		1AEABB031A47C3A800EF97E2 /* HKLCMTimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtils.swift */; };
 		1AEABB0C1A47C40400EF97E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0A1A47C40400EF97E2 /* AppDelegate.swift */; };
 		1AEABB0D1A47C40400EF97E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0B1A47C40400EF97E2 /* ViewController.swift */; };
-		1AEABB111A47C42B00EF97E2 /* HKLThreadUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtilities.swift */; };
+		1AEABB111A47C42B00EF97E2 /* HKLThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtils.swift */; };
 		1AEABB461A47D15500EF97E2 /* StreamFrameProducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB121A47C44C00EF97E2 /* StreamFrameProducer.swift */; };
 		1AEABB471A47D15A00EF97E2 /* AssetReaderFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB041A47C3DF00EF97E2 /* AssetReaderFragment.swift */; };
 		1AEABB481A47D15D00EF97E2 /* HKLAVGaplessPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB051A47C3DF00EF97E2 /* HKLAVGaplessPlayer.swift */; };
@@ -30,13 +30,13 @@
 		1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		1AA61A7E1A41044B00F2B2F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleGaplessPlayer-Bridging-Header.h"; sourceTree = "<group>"; };
-		1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCMTimeUtilities.swift; sourceTree = "<group>"; };
+		1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCMTimeUtils.swift; sourceTree = "<group>"; };
 		1AEABB041A47C3DF00EF97E2 /* AssetReaderFragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetReaderFragment.swift; sourceTree = "<group>"; };
 		1AEABB051A47C3DF00EF97E2 /* HKLAVGaplessPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLAVGaplessPlayer.swift; sourceTree = "<group>"; };
 		1AEABB0A1A47C40400EF97E2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1AEABB0B1A47C40400EF97E2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCoreGraphicsUtils.swift; sourceTree = "<group>"; };
-		1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLThreadUtilities.swift; sourceTree = "<group>"; };
+		1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLThreadUtils.swift; sourceTree = "<group>"; };
 		1AEABB121A47C44C00EF97E2 /* StreamFrameProducer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamFrameProducer.swift; sourceTree = "<group>"; };
 		1AEABB4D1A47D32300EF97E2 /* HKLGLPixelBufferView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HKLGLPixelBufferView.h; sourceTree = "<group>"; };
 		1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HKLGLPixelBufferView.m; sourceTree = "<group>"; };
@@ -111,9 +111,9 @@
 		1AEC3D171A43267B00EAFC38 /* misc */ = {
 			isa = PBXGroup;
 			children = (
-				1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtilities.swift */,
+				1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtils.swift */,
 				1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */,
-				1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtilities.swift */,
+				1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtils.swift */,
 				1AEABB821A48E19900EF97E2 /* HKLAVFoundationUtils.swift */,
 			);
 			path = misc;
@@ -201,9 +201,9 @@
 			files = (
 				1AEABB0D1A47C40400EF97E2 /* ViewController.swift in Sources */,
 				1AEABB531A47D32300EF97E2 /* HKLOpenGLUtilities.c in Sources */,
-				1AEABB111A47C42B00EF97E2 /* HKLThreadUtilities.swift in Sources */,
+				1AEABB111A47C42B00EF97E2 /* HKLThreadUtils.swift in Sources */,
 				1AEABB471A47D15A00EF97E2 /* AssetReaderFragment.swift in Sources */,
-				1AEABB031A47C3A800EF97E2 /* HKLCMTimeUtilities.swift in Sources */,
+				1AEABB031A47C3A800EF97E2 /* HKLCMTimeUtils.swift in Sources */,
 				1AEABB521A47D32300EF97E2 /* HKLGLPixelBufferView.m in Sources */,
 				1AEABB0C1A47C40400EF97E2 /* AppDelegate.swift in Sources */,
 				1AEABB461A47D15500EF97E2 /* StreamFrameProducer.swift in Sources */,

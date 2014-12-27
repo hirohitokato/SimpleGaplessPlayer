@@ -1,5 +1,5 @@
 //
-//  HKLThreadUtilities.swift
+//  HKLThreadUtils.swift
 //
 //  Created by Hirohito Kato on 2014/12/20.
 //  Copyright (c) 2014年 Hirohito Kato. All rights reserved.
