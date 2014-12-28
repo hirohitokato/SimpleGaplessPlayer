@@ -2,12 +2,13 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="qFG-nD-IPX">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="LearningVideoComposition" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="SimpleGaplessPlayer" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
@@ -24,12 +25,21 @@
                                     <outletCollection property="gestureRecognizers" destination="Nm1-O4-2zc" appends="YES" id="DYe-z0-KPc"/>
                                 </connections>
                             </view>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cRN-jc-sLx">
+                                <rect key="frame" x="14" y="550" width="572" height="31"/>
+                                <connections>
+                                    <action selector="sliderUpdated:" destination="vXZ-lx-hvc" eventType="valueChanged" id="J2N-Jb-mbo"/>
+                                </connections>
+                            </slider>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="cRN-jc-sLx" secondAttribute="trailing" id="3Em-Wf-9ke"/>
                             <constraint firstAttribute="trailing" secondItem="aDi-tX-l2h" secondAttribute="trailing" id="7Vx-re-IqD"/>
+                            <constraint firstItem="cRN-jc-sLx" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="BqG-ub-tPl"/>
                             <constraint firstItem="aDi-tX-l2h" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="HNY-7r-syk"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="aDi-tX-l2h" secondAttribute="bottom" id="JgH-Sm-aS3"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="cRN-jc-sLx" secondAttribute="bottom" constant="20" id="SW8-Zy-Xsg"/>
                             <constraint firstItem="aDi-tX-l2h" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="bUs-L3-RgR"/>
                             <constraint firstItem="aDi-tX-l2h" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="-64" id="qYE-wK-PWC"/>
                         </constraints>

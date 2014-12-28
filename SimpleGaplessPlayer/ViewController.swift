@@ -39,6 +39,11 @@ class ViewController: UIViewController {
         _player.play()
     }
 
+    @IBAction func sliderUpdated(sender: UISlider) {
+        let result = _player._producer.playerInfoForPosition(sender.value)
+        println("position:\(sender.value) -> \(result)")
+    }
+
     /**
     カメラロールから古い順で10個のビデオを取り出し、リーダーをセットアップする
     */
