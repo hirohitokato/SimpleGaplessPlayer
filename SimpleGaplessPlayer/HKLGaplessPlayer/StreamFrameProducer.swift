@@ -64,9 +64,9 @@ internal class StreamFrameProducer: NSObject {
 
         // 一度取得したらnilに変わる
         if let nextBuffer = self._prepareNextBuffer() {
-            _currentPresentationTimestamp = CMSampleBufferGetPresentationTimeStamp(nextBuffer)
-
-            return (nextBuffer, CMSampleBufferGetDuration(nextBuffer))
+            // 現在時刻を更新
+            _currentPresentationTimestamp = CMSampleBufferGetPresentationTimeStamp(nextBuffer.sbuf)
+            return nextBuffer
         }
         return nil
     }
@@ -183,7 +183,7 @@ internal class StreamFrameProducer: NSObject {
     /**
     サンプルバッファの生成
     */
-    private func _prepareNextBuffer() -> CMSampleBufferRef? {
+    private func _prepareNextBuffer() -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)? {
 
         // サンプルバッファを生成する
         while let target = _readers.first {
@@ -193,10 +193,8 @@ internal class StreamFrameProducer: NSObject {
                 // サンプルバッファの読み込み
                 let out = target.output
                 if let sbuf = out.copyNextSampleBuffer() {
-
                     // 取得したサンプルバッファの情報で更新
-                    return sbuf
-
+                    return (sbuf, target.frameInterval)
                 } else {
                     println("move to next")
                     // 次のムービーへ移動
