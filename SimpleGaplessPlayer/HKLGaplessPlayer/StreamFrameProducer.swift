@@ -19,11 +19,14 @@ let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()してお
 */
 internal class StreamFrameProducer: NSObject {
 
-    /// 格納しているアセットの合計再生時間
+    /// 格納しているアセットの合計再生時間を返す
     var amountDuration: CMTime {
         let lock = ScopedLock(self)
         return _amountDuration
     }
+
+    /// アセット全体のうち再生対象となる時間。ウィンドウ時間
+    var maxDuration = CMTime(value: 30, 1)
 
     /**
     アセットを内部キューの末尾に保存する。余裕がある場合はアセットリーダーも
@@ -61,7 +64,9 @@ internal class StreamFrameProducer: NSObject {
 
         // 一度取得したらnilに変わる
         if let nextBuffer = self._prepareNextBuffer() {
-            return (nextBuffer, _frameInterval)
+            _currentPresentationTimestamp = CMSampleBufferGetPresentationTimeStamp(nextBuffer)
+
+            return (nextBuffer, CMSampleBufferGetDuration(nextBuffer))
         }
         return nil
     }
@@ -92,17 +97,93 @@ internal class StreamFrameProducer: NSObject {
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]()
 
-    /// 現在のアセットにおけるフレーム表示期間
-    private var _frameInterval: CMTime = kCMTimeZero
+    private var _currentPosition: Float = 0.0
+    private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
-    /// 内部管理用の総時間
+    /// アセット全体の総再生時間（内部管理用）
     private var _amountDuration = kCMTimeZero
+
+    // 現在のリーダーが指すアセットの位置を返す
+    private var _current: (index: Int, asset: AVAsset)! {
+        if let reader = _readers.first {
+            for (i, asset) in enumerate(self._assets) {
+                if reader.asset === asset {
+                    return (i, asset)
+                }
+            }
+        }
+        return nil
+    }
+
+    /**
+    指定した位置(0.0-1.0)に対するAVPlayerのインデックスと、その時刻を計算して返す
+
+    :param: position 一連のムービーにおける位置
+
+    :returns: アセット列におけるインデックスとシーク位置のタプル
+    */
+    private func playerInfoForPosition(position: Float) -> (index:Int, time:CMTime)? {
+        let lock = ScopedLock(self)
+
+        if _assets.isEmpty { return nil }
+
+        // 指定したポジションを、時間での表現に変換する
+        var expectedOffset = maxDuration * position
+
+        let positionAt = { (targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
+            -> (Int, CMTime)? in
+
+            var offset = offset
+            let targets = reverseOrder ? reverse(targets) : targets
+            for (i, asset) in enumerate(targets) {
+                let duration = asset.duration
+
+                if offset <= duration {
+                    let time = reverseOrder ? duration - offset : offset
+                    return (i, time)
+                }
+                offset -= duration
+            }
+            return nil
+        }
+
+        // 1) 0.0の位置を算出する
+        var indexAtZero: Int
+        var timeAtZero: CMTime
+
+        if _amountDuration <= maxDuration {
+            // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
+            (indexAtZero, timeAtZero) = (0, kCMTimeZero)
+        } else {
+            if let current = _current {
+                let targets = reverse(_assets[0...current.index])
+                // 現在の再生場所を起点にrate=0.0地点を探索するが、
+                // ループの中で先頭だけを特別視するのを避けるため(すべてdurationで計算したい)、
+                // ここでゲタを履かせておく
+                let initialOffsetTime = current.asset.duration - _currentPresentationTimestamp
+                var offset = maxDuration * _currentPosition + initialOffsetTime
+
+                if let resultAtZero = positionAt(targets, offset, true) {
+                    (indexAtZero, timeAtZero) = resultAtZero
+                    expectedOffset += timeAtZero
+                } else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+
+        // 2) 算出した0.0位置からexpectedOffsetを足した場所を調べて返す
+        let targets = Array(_assets[indexAtZero..<_assets.endIndex])
+        
+        return positionAt(targets, expectedOffset, false)
+    }
 
     /**
     サンプルバッファの生成
     */
     private func _prepareNextBuffer() -> CMSampleBufferRef? {
-        _frameInterval = kCMTimeIndefinite
 
         // サンプルバッファを生成する
         while let target = _readers.first {
@@ -114,7 +195,6 @@ internal class StreamFrameProducer: NSObject {
                 if let sbuf = out.copyNextSampleBuffer() {
 
                     // 取得したサンプルバッファの情報で更新
-                    _frameInterval = target.frameInterval
                     return sbuf
 
                 } else {
@@ -141,9 +221,8 @@ internal class StreamFrameProducer: NSObject {
     private func _prepareNextAssetReader() {
         let lock = ScopedLock(self)
 
-        // 読み込み済みリーダーの数が上限になっているか、読み込むアセットが
-        // なければ何もしない
-        if (_readers.count >= kMaximumNumOfReaders && _assets.count == 0) {
+        // 読み込み済みリーダーの数が上限になっていれば何もしない
+        if (_readers.count >= kMaximumNumOfReaders) {
             return
         }
 
