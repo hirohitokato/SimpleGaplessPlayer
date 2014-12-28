@@ -225,7 +225,7 @@ internal class StreamFrameProducer: NSObject {
                 // 次のタイミングで.Completedに遷移するため、ここには来ないはず
                 _readers.removeAtIndex(0)
             default:
-                assert(false, "Invalid state\(Int(target.status.rawValue)). Something is wrong.")
+                assert(false, "Invalid state \(Int(target.status.rawValue)). Something is wrong.")
                 _readers.removeAtIndex(0)
             }
         }
