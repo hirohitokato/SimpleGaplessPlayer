@@ -39,7 +39,10 @@ internal class AssetReaderFragment: NSObject {
         }
 
         // 読み込み開始
-        self.reader.startReading()
+        if self.reader.startReading() == false {
+            NSLog("Failed to start a reader:\(self.reader)\n error:\(self.reader.error)")
+            return nil
+        }
     }
 
     /**
@@ -105,7 +108,7 @@ internal class AssetReaderFragment: NSObject {
             return nil
         }
 
-        // フレームレート指定のためにビデオコンポジションを作成・利用(60fps)
+        // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
         let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
         videoComposition.frameDuration = max(videoTrack.minFrameDuration, CMTime(value:1, kFrameRate))
 
