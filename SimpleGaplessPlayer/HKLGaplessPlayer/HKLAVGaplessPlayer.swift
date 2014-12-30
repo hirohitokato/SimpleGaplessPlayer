@@ -37,6 +37,9 @@ class HKLAVGaplessPlayer: NSObject {
         _producer.appendAsset(asset)
     }
 
+    /**
+    現在位置からプレーヤーを再生
+    */
     func play() {
         if displayLink.paused == true {
             _producer.startReading()
@@ -59,6 +62,9 @@ class HKLAVGaplessPlayer: NSObject {
     func stop() {
         pause()
         _producer.cancelReading()
+    }
+    var isPlaying: Bool {
+        return !displayLink.paused
     }
 
     // MARK: Private variables & methods

@@ -36,7 +36,11 @@ class ViewController: UIViewController {
     }
 
     @IBAction func tapped(sender: AnyObject) {
-        _player.play()
+        if _player.isPlaying {
+            _player.pause()
+        } else {
+            _player.play()
+        }
     }
 
     @IBAction func sliderUpdated(sender: UISlider) {
