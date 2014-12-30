@@ -29,7 +29,7 @@ class HKLAVGaplessPlayer: NSObject {
             displayLink = CADisplayLink(target: self, selector: "displayLinkCallback:")
             displayLink.frameInterval = 60 / kFrameRate
             displayLink.paused = true
-            dispatch_sync(dispatch_get_main_queue()) {
+            dispatch_async(dispatch_get_main_queue()) {
                 self.displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
             }
         }
