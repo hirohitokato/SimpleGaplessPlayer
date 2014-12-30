@@ -16,7 +16,10 @@ public let kFrameRate: Int = 60
 class ViewController: UIViewController {
 
     @IBOutlet weak var playerView: HKLGLPixelBufferView!
+    @IBOutlet weak var msgLabel: UILabel!
     private let _player = HKLAVGaplessPlayer()
+
+    private var _timer: NSTimer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,6 +36,15 @@ class ViewController: UIViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 
+        _timer = NSTimer.scheduledTimerWithTimeInterval(
+            0.2, target: self, selector: "updateCpuInfo:",
+            userInfo: nil, repeats: true)
+    }
+
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        _timer.invalidate()
     }
 
     @IBAction func tapped(sender: AnyObject) {
@@ -46,6 +58,10 @@ class ViewController: UIViewController {
     @IBAction func sliderUpdated(sender: UISlider) {
         let result = _player._producer.playerInfoForPosition(sender.value)
         println("position:\(sender.value) -> \(result)")
+    }
+
+    @objc func updateCpuInfo(timer: NSTimer) {
+        msgLabel.text = "cpu: \(cpu_usage_in_percent())%"
     }
 
     /**
