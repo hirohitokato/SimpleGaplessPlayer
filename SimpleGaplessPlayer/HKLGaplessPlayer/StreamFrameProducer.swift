@@ -126,9 +126,10 @@ internal class StreamFrameProducer: NSObject {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty { return nil }
+        if _current == nil { return nil }
 
         // 指定したポジションを、時間での表現に変換する
-        var expectedOffset = maxDuration * position
+        var offsetTime = maxDuration * position
 
         // 1) 0.0の位置を算出する
         var indexAtZero: Int
@@ -138,20 +139,18 @@ internal class StreamFrameProducer: NSObject {
             // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
             (indexAtZero, timeAtZero) = (0, kCMTimeZero)
         } else {
-            if let current = _current {
-                let targets = reverse(_assets[0...current.index])
-                // 現在の再生場所を起点にrate=0.0地点を探索するが、
-                // ループの中で先頭だけを特別視するのを避けるため(すべてdurationで計算したい)、
-                // ここでゲタを履かせておく
-                let initialOffsetTime = current.asset.duration - _currentPresentationTimestamp
-                var offset = maxDuration * _currentPosition + initialOffsetTime
+            let current = _current
 
-                if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
-                    (indexAtZero, timeAtZero) = resultAtZero
-                    expectedOffset += timeAtZero
-                } else {
-                    return nil
-                }
+            // 現在の再生場所を起点にrate=0.0地点を探索するが、
+            // ループの中で先頭だけを特別視するのを避けるため(すべてdurationで計算したい)、
+            // ゲタを履かせた上で0.0位置を調べる
+            let initialOffset = current.asset.duration - _currentPresentationTimestamp
+            let offset = maxDuration * _currentPosition + initialOffset
+
+            let targets = reverse(_assets[0...current.index])
+            if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
+                indexAtZero = current.index - resultAtZero.0
+                timeAtZero = resultAtZero.1
             } else {
                 return nil
             }
@@ -160,7 +159,7 @@ internal class StreamFrameProducer: NSObject {
         // 2) 算出した0.0位置からexpectedOffsetを足した場所を調べて返す
         let targets = Array(_assets[indexAtZero..<_assets.endIndex])
 
-        if let result = _positionAt(targets, offset: expectedOffset, reverseOrder: false) {
+        if let result = _positionAt(targets, offset: offsetTime + timeAtZero, reverseOrder: false) {
             return (result.0 + indexAtZero, result.1)
         } else {
             return nil
@@ -182,15 +181,13 @@ internal class StreamFrameProducer: NSObject {
     {
 
         var offset = offset
-        let targets = reverseOrder ? reverse(targets) : targets
         for (i, asset) in enumerate(targets) {
-            let duration = asset.duration
 
-            if offset <= duration {
-                let time = reverseOrder ? duration - offset : offset
+            if offset <= asset.duration {
+                let time = reverseOrder ? asset.duration - offset : offset
                 return (i, time)
             }
-            offset -= duration
+            offset -= asset.duration
         }
         return nil
     }
@@ -225,7 +222,7 @@ internal class StreamFrameProducer: NSObject {
                 // 次のタイミングで.Completedに遷移するため、ここには来ないはず
                 _readers.removeAtIndex(0)
             default:
-                assert(false, "Invalid state \(Int(target.status.rawValue)). Something is wrong.")
+                NSLog("Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
                 _readers.removeAtIndex(0)
             }
         }
