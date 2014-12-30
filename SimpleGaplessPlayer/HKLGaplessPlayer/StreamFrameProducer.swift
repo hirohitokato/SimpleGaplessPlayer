@@ -35,7 +35,8 @@ internal class StreamFrameProducer: NSObject {
     :param: asset フレームの取り出し対象となるアセット
     */
     func appendAsset(asset: AVAsset) {
-        asset.loadValuesAsynchronouslyForKeys(["duration"]) { [unowned self] in
+        asset.loadValuesAsynchronouslyForKeys(["duration"]) {
+            [unowned self] in
             let lock = ScopedLock(self)
 
             self._assets.append(asset)
