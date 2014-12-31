@@ -126,7 +126,7 @@ internal class AssetReaderFragment: NSObject {
         // - IOSurfaceで作成しなくても再生できるが、念のため付けておく
         let compoVideoTracks = composition.tracksWithMediaType(AVMediaTypeVideo)
         var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
-            videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_32BGRA,
+            videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
                 kCVPixelBufferIOSurfacePropertiesKey : [:]])
         output.videoComposition = videoComposition
 
