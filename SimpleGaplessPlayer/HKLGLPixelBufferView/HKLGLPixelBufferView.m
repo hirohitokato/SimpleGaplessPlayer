@@ -275,7 +275,7 @@ bail:
             success = [self initializeProgramFor420v];
             break;
         default:
-            NSAssert(false, @"The format(%x) is not supported.", _pixelFormatType);
+            NSAssert(false, @"The format(%x) is not supported.", (unsigned int)_pixelFormatType);
             break;
     }
 
@@ -534,7 +534,7 @@ bail:
         glUniform1i( _uniforms[UNIFORM_Y], 0 );
         glUniform1i( _uniforms[UNIFORM_UV], 1 );
     } else {
-        NSAssert(false, @"The format(%x) is not supported.", _pixelFormatType);
+        NSAssert(false, @"The format(%x) is not supported.", (unsigned int)_pixelFormatType);
     }
 
     // Get video frame vertices preserved aspect ratio
