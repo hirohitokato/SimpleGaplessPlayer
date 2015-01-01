@@ -26,7 +26,7 @@ internal class StreamFrameProducer: NSObject {
     }
 
     /// アセット全体のうち再生対象となる時間。ウィンドウ時間
-    var maxDuration = CMTime(value: 30, 1)
+    var windowTime = CMTime(value: 30, 1)
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
     var _playbackRate: Float = 0.0
@@ -154,13 +154,13 @@ internal class StreamFrameProducer: NSObject {
         if _current == nil { return nil }
 
         // 指定したポジションを、時間での表現に変換する
-        var offsetTime = maxDuration * position
+        var offsetTime = windowTime * position
 
         // 1) 0.0の位置を算出する
         var indexAtZero: Int
         var timeAtZero: CMTime
 
-        if _amountDuration <= maxDuration {
+        if _amountDuration <= windowTime {
             // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
             (indexAtZero, timeAtZero) = (0, kCMTimeZero)
         } else {
@@ -170,7 +170,7 @@ internal class StreamFrameProducer: NSObject {
             // ループの中で先頭だけを特別視するのを避けるため(すべてdurationで計算したい)、
             // ゲタを履かせた上で0.0位置を調べる
             let initialOffset = current.asset.duration - _currentPresentationTimestamp
-            let offset = maxDuration * _currentPosition + initialOffset
+            let offset = windowTime * _currentPosition + initialOffset
 
             let targets = reverse(_assets[0...current.index])
             if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
@@ -267,11 +267,11 @@ internal class StreamFrameProducer: NSObject {
 
             if _readers.isEmpty {
                 if let assetreader = AssetReaderFragment(asset:asset, rate:_playbackRate) {
-                        _readers.append(assetreader)
-                    } else {
-                        NSLog("Failed to instantiate a AssetReaderFragment.")
-                        break outer
-                    }
+                    _readers.append(assetreader)
+                } else {
+                    NSLog("Failed to instantiate a AssetReaderFragment.")
+                    break outer
+                }
             }
 
             // 登録済みの最後のアセットを見つけて、それ以降のアセットを
