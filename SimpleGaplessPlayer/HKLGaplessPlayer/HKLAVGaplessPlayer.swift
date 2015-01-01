@@ -37,25 +37,40 @@ class HKLAVGaplessPlayer: NSObject {
         _producer.appendAsset(asset)
     }
 
+    func setRate(rate:Float, position:Float? = nil) {
+        assert(rate>=0.0, "Unable to set a negative value(\(rate)) to playback rate")
+
+        if rate == 0 {
+
+            // 一時停止
+            displayLink.paused = true
+            _lastTimestamp = CACurrentMediaTime()
+            _remainingPresentationTime = 0.0
+
+        } else {
+
+            // 指定レートで再生開始
+                _producer.startReading(rate: rate, position: position)
+                _lastTimestamp = CACurrentMediaTime()
+                _remainingPresentationTime = 0.0
+            displayLink.paused = false
+            _playbackRate = CFTimeInterval(rate)
+        }
+    }
+
     /**
     現在位置からプレーヤーを再生
     */
-    func play() {
-        if displayLink.paused == true {
-            _producer.startReading()
-            _lastTimestamp = CACurrentMediaTime()
-            _remainingPresentationTime = 0.0
-        }
-        displayLink.paused = false
+    func play(rate: Float=1.0) {
+        setRate(rate)
     }
     /**
     再生の一時停止。再開可能
     */
     func pause() {
-        displayLink.paused = true
-        _lastTimestamp = CACurrentMediaTime()
-        _remainingPresentationTime = 0.0
+        setRate(0.0)
     }
+
     /**
     再生停止。再開は最初から
     */
@@ -63,6 +78,9 @@ class HKLAVGaplessPlayer: NSObject {
         pause()
         _producer.cancelReading()
     }
+    /**
+    現在再生中かどうか
+    */
     var isPlaying: Bool {
         return !displayLink.paused
     }
@@ -92,7 +110,7 @@ class HKLAVGaplessPlayer: NSObject {
 
         // 表示対象の時刻を計算（再生レートも加味）
         let callbackDuration =
-            displayLink.duration * CFTimeInterval(displayLink.frameInterval) * _playbackRate
+        displayLink.duration * CFTimeInterval(displayLink.frameInterval)
         //let nextOutputHostTime = displayLink.timestamp + callbackDuration
 
         // 時間を消費

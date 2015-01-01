@@ -28,6 +28,12 @@ internal class StreamFrameProducer: NSObject {
     /// アセット全体のうち再生対象となる時間。ウィンドウ時間
     var maxDuration = CMTime(value: 30, 1)
 
+    /// 再生レート。1.0が通常再生、2.0だと倍速再生
+    var _playbackRate: Float = 0.0
+
+    /// 再生位置。windowTimeに対する先頭〜末尾を指す
+    var _position: Float = 0.0
+
     /**
     アセットを内部キューの末尾に保存する。余裕がある場合はアセットリーダーも
     同時に生成する
@@ -72,11 +78,29 @@ internal class StreamFrameProducer: NSObject {
         return nil
     }
 
-    func startReading() -> Bool {
+    /**
+    アセットリーダーから読み込みを開始する
+
+    :param: rate 再生レート
+    :param: position 再生位置。Float.NaNの場合は現在位置を継続
+
+    :returns: 読み込み開始に成功したかどうか
+    */
+    func startReading(rate:Float = 1.0, position:Float? = nil) -> Bool {
         let lock = ScopedLock(self)
         if _assets.isEmpty {
             return false
         }
+        // レートが異なる場合、再生位置の指定があった場合は
+        // リーダーを組み立て直してから再生準備を整える
+        if rate != _playbackRate || position != nil {
+            cancelReading()
+        }
+        _playbackRate = rate
+        if let position = position {
+            _position = position
+        }
+
         _prepareNextAssetReader()
         return true
     }
@@ -241,20 +265,29 @@ internal class StreamFrameProducer: NSObject {
         // 読み込みしていないアセットがあれば読み込む
         outer: for (i, asset) in enumerate(self._assets) {
 
-            // 登録済みの最後のアセットを見つけて、それ以降のアセットを
-            // 追加対象として読み込む
-            if _readers.last?.asset === asset && i+1 < _assets.count {
-                for target_asset in _assets[i+1..<_assets.count] {
-
-                    if let assetreader = AssetReaderFragment(asset:target_asset) {
+            if _readers.isEmpty {
+                if let assetreader = AssetReaderFragment(asset:asset, rate:_playbackRate) {
                         _readers.append(assetreader)
                     } else {
                         NSLog("Failed to instantiate a AssetReaderFragment.")
                         break outer
                     }
+            }
+
+            // 登録済みの最後のアセットを見つけて、それ以降のアセットを
+            // 追加対象として読み込む
+            if _readers.last?.asset === asset && i+1 < _assets.count {
+                for target_asset in _assets[i+1..<_assets.count] {
 
                     // 読み込み済みリーダーの数が上限になれば処理終了
                     if (_readers.count >= kMaximumNumOfReaders) {
+                        break outer
+                    }
+
+                    if let assetreader = AssetReaderFragment(asset:target_asset, rate:_playbackRate) {
+                        _readers.append(assetreader)
+                    } else {
+                        NSLog("Failed to instantiate a AssetReaderFragment.")
                         break outer
                     }
                 }

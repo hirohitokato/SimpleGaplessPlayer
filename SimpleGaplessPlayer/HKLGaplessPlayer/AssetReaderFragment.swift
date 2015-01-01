@@ -16,15 +16,17 @@ import AVFoundation
 internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
     let reader: AVAssetReader!
+    let rate: Float
     var frameInterval: CMTime = kCMTimeIndefinite
 
-    init!(asset:AVAsset, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
+    init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
         self.asset = asset
+        self.rate = rate
 
         super.init()
 
         // リーダーとなるコンポジションを作成する
-        if let result = _buildComposition(asset, startTime:startTime, endTime:endTime) {
+        if let result = _buildComposition(asset, rate:rate, startTime:startTime, endTime:endTime) {
             /*
             (reader, frameInterval) = result で記述すると、以下のコンパイルエラー：
             "Cannot express tuple conversion '(AVAssetReader, CMTime)' to '(AVAssetReader!, CMTime)'"
@@ -72,7 +74,7 @@ internal class AssetReaderFragment: NSObject {
 
     :returns: アセットリーダー
     */
-    private func _buildComposition(asset:AVAsset,
+    private func _buildComposition(asset:AVAsset, rate:Float,
         startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
         -> (AVAssetReader, CMTime)!
     {
@@ -110,7 +112,9 @@ internal class AssetReaderFragment: NSObject {
 
         // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
         let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
-        videoComposition.frameDuration = max(videoTrack.minFrameDuration, CMTime(value:1, kFrameRate))
+        let referenceRate = CMTime(value:1, Int(Float(kFrameRate) / rate))
+        videoComposition.frameDuration = max(videoTrack.minFrameDuration, referenceRate)
+        let frameDuration = videoComposition.frameDuration * (1.0/rate)
 
         // 60fps以下の場合、60fpsで出力出来るようスケールしたいが、scaleTimeRange()は
         // frameDuration以下のfpsのときには、読み出そうとしてもエラーになってしまう模様。
@@ -138,7 +142,7 @@ internal class AssetReaderFragment: NSObject {
             if reader.canAddOutput(output) {
                 reader.addOutput(output)
             }
-            return (reader, videoComposition.frameDuration)
+            return (reader, frameDuration)
         } else {
             NSLog("Failed to instantiate a reader for a composition:\(error)")
         }
