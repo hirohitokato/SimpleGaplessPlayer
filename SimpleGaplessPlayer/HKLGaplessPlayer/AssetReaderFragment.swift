@@ -112,9 +112,10 @@ internal class AssetReaderFragment: NSObject {
 
         // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
         let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
-        let referenceRate = CMTime(value:1, Int(Float(kFrameRate) / rate))
-        videoComposition.frameDuration = max(videoTrack.minFrameDuration, referenceRate)
-        let frameDuration = videoComposition.frameDuration * (1.0/rate)
+        let referenceRate = Float(kFrameRate) / rate
+        videoComposition.frameDuration =
+            CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
+        let displayDuration = videoComposition.frameDuration * (1.0/rate)
 
         // 60fps以下の場合、60fpsで出力出来るようスケールしたいが、scaleTimeRange()は
         // frameDuration以下のfpsのときには、読み出そうとしてもエラーになってしまう模様。
@@ -142,7 +143,7 @@ internal class AssetReaderFragment: NSObject {
             if reader.canAddOutput(output) {
                 reader.addOutput(output)
             }
-            return (reader, frameDuration)
+            return (reader, displayDuration)
         } else {
             NSLog("Failed to instantiate a reader for a composition:\(error)")
         }
