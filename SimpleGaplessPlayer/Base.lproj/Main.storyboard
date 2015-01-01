@@ -26,7 +26,7 @@
                                 </connections>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pFe-ID-r99">
-                                <rect key="frame" x="16" y="523.5" width="568" height="18"/>
+                                <rect key="frame" x="16" y="523" width="568" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -37,19 +37,37 @@
                                     <action selector="sliderUpdated:" destination="vXZ-lx-hvc" eventType="valueChanged" id="J2N-Jb-mbo"/>
                                 </connections>
                             </slider>
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="4" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="66z-3M-JKt">
+                                <rect key="frame" x="14" y="485" width="572" height="31"/>
+                                <connections>
+                                    <action selector="rateChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="fjL-Ze-PQs"/>
+                                </connections>
+                            </slider>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="rate: 1.0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m0K-h5-DhY">
+                                <rect key="frame" x="16" y="459" width="568" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="66z-3M-JKt" firstAttribute="top" secondItem="m0K-h5-DhY" secondAttribute="bottom" constant="8" id="0Rc-Dd-B97"/>
+                            <constraint firstItem="m0K-h5-DhY" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="1Gf-X4-hkl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cRN-jc-sLx" secondAttribute="trailing" id="3Em-Wf-9ke"/>
                             <constraint firstAttribute="trailing" secondItem="aDi-tX-l2h" secondAttribute="trailing" id="7Vx-re-IqD"/>
-                            <constraint firstItem="cRN-jc-sLx" firstAttribute="top" secondItem="pFe-ID-r99" secondAttribute="bottom" constant="8" id="8Rf-bQ-Acy"/>
+                            <constraint firstItem="cRN-jc-sLx" firstAttribute="top" secondItem="pFe-ID-r99" secondAttribute="bottom" constant="9" id="8Rf-bQ-Acy"/>
                             <constraint firstItem="cRN-jc-sLx" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="BqG-ub-tPl"/>
+                            <constraint firstItem="m0K-h5-DhY" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="C4B-pI-VG0"/>
+                            <constraint firstItem="pFe-ID-r99" firstAttribute="top" secondItem="66z-3M-JKt" secondAttribute="bottom" constant="8" id="Fvx-ik-g1D"/>
                             <constraint firstItem="aDi-tX-l2h" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="HNY-7r-syk"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="aDi-tX-l2h" secondAttribute="bottom" id="JgH-Sm-aS3"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="cRN-jc-sLx" secondAttribute="bottom" constant="20" id="SW8-Zy-Xsg"/>
+                            <constraint firstItem="66z-3M-JKt" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="ZWS-qo-Uqk"/>
                             <constraint firstItem="aDi-tX-l2h" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="bUs-L3-RgR"/>
                             <constraint firstAttribute="trailingMargin" secondItem="pFe-ID-r99" secondAttribute="trailing" id="oyQ-6j-prt"/>
                             <constraint firstItem="aDi-tX-l2h" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="-64" id="qYE-wK-PWC"/>
+                            <constraint firstItem="66z-3M-JKt" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="tcJ-bh-zdS"/>
                             <constraint firstItem="pFe-ID-r99" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="xzI-dj-QWu"/>
                         </constraints>
                         <variation key="default">
@@ -62,6 +80,7 @@
                     <connections>
                         <outlet property="msgLabel" destination="pFe-ID-r99" id="GAM-gU-mc6"/>
                         <outlet property="playerView" destination="aDi-tX-l2h" id="cDS-pV-SBH"/>
+                        <outlet property="rateLabel" destination="m0K-h5-DhY" id="dK0-Iq-MSe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

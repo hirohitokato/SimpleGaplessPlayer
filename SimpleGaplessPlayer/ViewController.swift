@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var msgLabel: UILabel!
     private let _player = HKLAVGaplessPlayer()
 
+    @IBOutlet weak var rateLabel: UILabel!
     private var _timer: NSTimer!
 
     override func viewDidLoad() {
@@ -60,6 +61,11 @@ class ViewController: UIViewController {
         println("position:\(sender.value) -> \(result)")
     }
 
+    @IBAction func rateChanged(sender: UISlider) {
+        rateLabel.text = "rate: \(sender.value)"
+        _player.play(rate: sender.value)
+    }
+
     @objc func updateCpuInfo(timer: NSTimer) {
         msgLabel.text = "cpu: \(cpu_usage_in_percent())%"
     }
@@ -69,6 +75,17 @@ class ViewController: UIViewController {
     */
     private func loadVideoAssets() {
 
+        if let path = NSBundle.mainBundle().pathForResource("30fps", ofType:"MOV") {
+            let url = NSURL(fileURLWithPath: path)
+            let asset = AVAsset.assetWithURL(url) as? AVAsset
+            self._player.appendAsset(asset!)
+        }
+        if let path = NSBundle.mainBundle().pathForResource("240fps", ofType:"MOV") {
+            let url = NSURL(fileURLWithPath: path)
+            let asset = AVAsset.assetWithURL(url) as? AVAsset
+            self._player.appendAsset(asset!)
+            return
+        }
         let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
