@@ -77,34 +77,43 @@ class ViewController: UIViewController {
 
         let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
+        // 収集したアセットをいったん格納する（最終的にindex順でソートして格納）
+        var avassets = [(Int, AVAsset)]()
+
+        // 「ビデオ」のスマートアルバムから収集
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
         collections.enumerateObjectsUsingBlock {
             [unowned self]  collection, index, stop  in
+            let collection = collection as PHAssetCollection
 
-            // 日付の古い順
+            // 日付の古い順に取得
             var options = PHFetchOptions()
             options.sortDescriptors = [ NSSortDescriptor(key: "creationDate", ascending: true) ]
 
-            let assets = PHAsset.fetchAssetsInAssetCollection(collection as PHAssetCollection, options: options)
-            assets.enumerateObjectsUsingBlock { asset, index, stop in
+            let assets = PHAsset.fetchAssetsInAssetCollection(collection, options: options)
+            assets.enumerateObjectsUsingBlock {
+                phAsset, index, stop in
+                let phAsset = phAsset as PHAsset
 
-                // この処理は非同期で行われる
-                _ = PHImageManager.defaultManager().requestAVAssetForVideo(asset as PHAsset, options:nil) {
+                // この処理は非同期で行われるので注意
+                _ = PHImageManager.defaultManager().requestAVAssetForVideo(phAsset, options:nil) {
                     avasset, audioMix, info in
 
                     if let avasset = avasset {
-                        dispatch_async(queue) {
-                            // プロデューサーにアセットを追加
-                            self._player.appendAsset(avasset)
-
-                            let track = avasset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
+                        avassets.append((index,avasset))
+                        if avassets.count == assets.count {
+                            dispatch_async(queue) {
+                                // プロデューサーにアセットを追加
+                                sort(&avassets) { $0.0 < $1.0 }
+                                for (_, a) in avassets {
+                                    self._player.appendAsset(a)
+                                }
+                            }
                         }
+
                     }
                 }
             }
         }
     }
-
 }
-
-
