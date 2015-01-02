@@ -124,7 +124,7 @@ class HKLAVGaplessPlayer: NSObject {
         while _remainingPresentationTime < 0.0 {
 
             // サンプルバッファの取得
-            if let (sbuf, duration) = _producer.nextSampleBuffer() {
+            if let (sbuf, _, duration) = _producer.nextSampleBuffer() {
                 if let imgbuf = CMSampleBufferGetImageBuffer(sbuf) {
 
                     // ピクセルバッファの最新取得時刻を更新し、

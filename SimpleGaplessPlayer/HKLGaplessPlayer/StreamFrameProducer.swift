@@ -56,7 +56,6 @@ internal class StreamFrameProducer: NSObject {
                     NSLog("Failed to instantiate a AssetReaderFragment.")
                 }
             }
-            
         }
     }
 
@@ -75,14 +74,14 @@ internal class StreamFrameProducer: NSObject {
 
     :returns: リーダーから読み込まれたサンプルバッファ
     */
-    func nextSampleBuffer() -> (CMSampleBufferRef, CMTime)! {
+    func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)! {
         let lock = ScopedLock(self)
 
         // 一度取得したらnilに変わる
         if let nextBuffer = self._prepareNextBuffer() {
             // 現在時刻を更新
             _currentPresentationTimestamp = nextBuffer.presentationTimeStamp
-            return (nextBuffer.sbuf, nextBuffer.frameDuration)
+            return nextBuffer
         }
         return nil
     }
