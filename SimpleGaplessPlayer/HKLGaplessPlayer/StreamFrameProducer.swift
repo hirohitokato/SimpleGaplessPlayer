@@ -268,31 +268,36 @@ internal class StreamFrameProducer: NSObject {
         let startIndex = (initial == nil) ? 0 : find(_assets, initial!) ?? 0
         // startTimeの設定は初回のみ有効
         var startTime = time
-println("startTime:\(startTime)")
+
+        // リーダーが空の場合、まず先頭のアセットを読み込む
+        if _readers.isEmpty && startIndex < _assets.count {
+            if let assetreader = AssetReaderFragment(asset:_assets[startIndex],
+                rate:_playbackRate, startTime:startTime)
+            {
+                startTime = kCMTimeZero
+                _readers.append(assetreader)
+            } else {
+                NSLog("Failed to instantiate a AssetReaderFragment.")
+            }
+        }
+
         // 読み込みしていないアセットがあれば読み込む
         outer: for (i, asset) in enumerate(_assets[startIndex..<_assets.count]) {
 
-            if _readers.isEmpty {
-                if let assetreader = AssetReaderFragment(asset:asset, rate:_playbackRate, startTime:startTime) {
-                    startTime = kCMTimeZero
-                    _readers.append(assetreader)
-                } else {
-                    NSLog("Failed to instantiate a AssetReaderFragment.")
-                    break outer
-                }
-            }
-
+            let actualIndex = i + startIndex
             // 登録済みの最後のアセットを見つけて、それ以降のアセットを
             // 追加対象として読み込む
-            if _readers.last?.asset === asset && i+1 < _assets.count {
-                for target_asset in _assets[i+1..<_assets.count] {
+            if _readers.last?.asset === asset && actualIndex+1 < _assets.count {
+                for target_asset in _assets[actualIndex+1..<_assets.count] {
 
                     // 読み込み済みリーダーの数が上限になれば処理終了
                     if (_readers.count >= kMaximumNumOfReaders) {
                         break outer
                     }
 
-                    if let assetreader = AssetReaderFragment(asset:target_asset, rate:_playbackRate, startTime:startTime) {
+                    if let assetreader = AssetReaderFragment(asset:target_asset,
+                        rate:_playbackRate, startTime:startTime)
+                    {
                         startTime = kCMTimeZero
                         _readers.append(assetreader)
                     } else {
