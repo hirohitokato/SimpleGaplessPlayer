@@ -235,6 +235,7 @@ internal class StreamFrameProducer: NSObject {
                     println("move to next")
                     // 次のムービーへ移動
                     _readers.removeAtIndex(0)
+                    _currentPresentationTimestamp = kCMTimeZero
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
                         [unowned self] in
                         self._prepareNextAssetReader()
@@ -244,9 +245,11 @@ internal class StreamFrameProducer: NSObject {
                 // AVAssetReaderは.Reading状態でcopyNextSampleBufferを返した
                 // 次のタイミングで.Completedに遷移するため、ここには来ないはず
                 _readers.removeAtIndex(0)
+                _currentPresentationTimestamp = kCMTimeZero
             default:
                 NSLog("Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
                 _readers.removeAtIndex(0)
+                _currentPresentationTimestamp = kCMTimeZero
             }
         }
         return nil
