@@ -128,7 +128,7 @@ internal class StreamFrameProducer: NSObject {
     /// アセット全体の総再生時間（内部管理用）
     private var _amountDuration = kCMTimeZero
 
-    // 現在のリーダーが指すアセットの位置を返す
+    /// 現在のリーダーが指すアセットの位置を返す
     private var _current: (index: Int, asset: AVAsset)! {
         if let reader = _readers.first {
             if let i = find(self._assets, reader.asset) {
