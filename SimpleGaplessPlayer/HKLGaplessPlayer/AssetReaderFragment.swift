@@ -17,11 +17,15 @@ internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
     let reader: AVAssetReader!
     let rate: Float
+    let startTime: CMTime
+    let endTime: CMTime
     var frameInterval: CMTime = kCMTimeIndefinite
 
     init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
         self.asset = asset
         self.rate = rate
+        self.startTime = startTime
+        self.endTime = endTime
 
         super.init()
 
