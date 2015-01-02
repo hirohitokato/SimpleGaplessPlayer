@@ -22,7 +22,7 @@ class HKLAVGaplessPlayer: NSObject {
         super.init()
 
         // DisplayLinkを作成
-        displayLink = CADisplayLink(target: self, selector: "displayLinkCallback:")
+        displayLink = CADisplayLink(target: self, selector: "_displayLinkCallback:")
         displayLink.frameInterval = 60 / kFrameRate
         displayLink.paused = true
         dispatch_async(dispatch_get_main_queue()) {
@@ -128,7 +128,7 @@ class HKLAVGaplessPlayer: NSObject {
 
     :param: displayLink CADisplayLink。現在時刻や直近の処理時間を取得できる
     */
-    @objc func displayLinkCallback(displayLink: CADisplayLink) {
+    @objc func _displayLinkCallback(displayLink: CADisplayLink) {
 
         // 表示対象の時刻を計算（再生レートも加味）
         let callbackDuration =
