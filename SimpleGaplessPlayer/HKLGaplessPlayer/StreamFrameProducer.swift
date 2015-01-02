@@ -33,9 +33,6 @@ internal class StreamFrameProducer: NSObject {
         return _playbackRate
     }
 
-    /// 再生位置。windowTimeに対する先頭〜末尾を指す
-    var _position: Float = 0.0
-
     /**
     アセットを内部キューの末尾に保存する。余裕がある場合はアセットリーダーも
     同時に生成する
@@ -113,7 +110,7 @@ internal class StreamFrameProducer: NSObject {
         if let position = position {
             if let playerInfo = _playerInfoForPosition(position) {
                 currentAsset = _assets[playerInfo.index]
-                _currentPosition = position
+                _position = position
                 _currentPresentationTimestamp = playerInfo.timeStamp
             }
         } else {
@@ -140,7 +137,8 @@ internal class StreamFrameProducer: NSObject {
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    private var _currentPosition: Float = 0.0
+    /// 再生位置。windowTimeに対する先頭〜末尾を指す
+    private var _position: Float = 0.0
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
@@ -166,7 +164,9 @@ internal class StreamFrameProducer: NSObject {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    private func _playerInfoForPosition(position: Float) -> (index:Int, timeStamp:CMTime)? {
+    private func _playerInfoForPosition(position: Float)
+        -> (index:Int, timeStamp:CMTime)?
+    {
         let lock = ScopedLock(self)
 
         /**
@@ -215,7 +215,7 @@ internal class StreamFrameProducer: NSObject {
             // ループの中で先頭だけを特別視するのを避けるため(すべてdurationで計算したい)、
             // ゲタを履かせた上で0.0位置を調べる
             let initialOffset = current.asset.duration - _currentPresentationTimestamp
-            let offset = windowTime * _currentPosition + initialOffset
+            let offset = windowTime * _position + initialOffset
 
             let targets = reverse(_assets[0...current.index])
             if let resultAtZero = _positionAt(targets, offset, true) {
@@ -226,10 +226,10 @@ internal class StreamFrameProducer: NSObject {
             }
         }
 
-        // 2) 算出した0.0位置からexpectedOffsetを足した場所を調べて返す
+        // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
         let targets = Array(_assets[indexAtZero..<_assets.endIndex])
 
-        if let result = _positionAt(targets, offsetTime + timeAtZero, false) {
+        if let result = _positionAt(targets, timeAtZero + offsetTime, false) {
             return (result.0 + indexAtZero, result.1)
         } else {
             return nil
