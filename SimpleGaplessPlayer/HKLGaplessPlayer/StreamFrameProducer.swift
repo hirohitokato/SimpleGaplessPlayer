@@ -29,7 +29,10 @@ internal class StreamFrameProducer: NSObject {
     var windowTime = CMTime(value: 30, 1)
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
-    var _playbackRate: Float = 0.0
+    private var _playbackRate: Float = 0.0
+    var playbackRate: Float {
+        return _playbackRate
+    }
 
     /// 再生位置。windowTimeに対する先頭〜末尾を指す
     var _position: Float = 0.0
