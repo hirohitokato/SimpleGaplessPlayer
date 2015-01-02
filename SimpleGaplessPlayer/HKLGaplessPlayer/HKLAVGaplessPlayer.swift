@@ -26,7 +26,7 @@ class HKLAVGaplessPlayer: NSObject {
         displayLink.frameInterval = 60 / kFrameRate
         displayLink.paused = true
         dispatch_async(dispatch_get_main_queue()) {
-            self.displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+            self.displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         }
     }
     /**
