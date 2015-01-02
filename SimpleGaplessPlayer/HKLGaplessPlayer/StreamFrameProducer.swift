@@ -262,13 +262,11 @@ internal class StreamFrameProducer: NSObject {
         let lock = ScopedLock(self)
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
-        if (_readers.count >= kMaximumNumOfReaders) {
-            return
-        }
+        if (_readers.count >= kMaximumNumOfReaders) { return }
 
-        // アセットをどこから読み込むかを引数に渡されたアセットで決定する
+        // アセットをどこから読み込むかを決定する
         let startIndex = (initial == nil) ? 0 : find(_assets, initial!) ?? 0
-        // startTimeの設定は
+        // startTimeの設定は初回のみ有効
         var startTime = time
 println("startTime:\(startTime)")
         // 読み込みしていないアセットがあれば読み込む
