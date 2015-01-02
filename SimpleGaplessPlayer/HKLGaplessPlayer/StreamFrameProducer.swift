@@ -131,10 +131,8 @@ internal class StreamFrameProducer: NSObject {
     // 現在のリーダーが指すアセットの位置を返す
     private var _current: (index: Int, asset: AVAsset)! {
         if let reader = _readers.first {
-            for (i, asset) in enumerate(self._assets) {
-                if reader.asset === asset {
-                    return (i, asset)
-                }
+            if let i = find(self._assets, reader.asset) {
+                return (i, reader.asset)
             }
         }
         return nil
