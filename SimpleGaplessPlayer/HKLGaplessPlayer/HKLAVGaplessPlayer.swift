@@ -50,27 +50,6 @@ class HKLAVGaplessPlayer: NSObject {
         return _producer.playbackRate
     }
 
-    func setRate(rate:Float, position:Float? = nil) {
-        assert(rate>=0.0, "Unable to set a negative value(\(rate)) to playback rate")
-
-        if rate == 0 {
-
-            // 一時停止
-            displayLink.paused = true
-            _lastTimestamp = CACurrentMediaTime()
-            _remainingPresentationTime = 0.0
-
-        } else {
-
-            // 指定レートで再生開始
-                _producer.startReading(rate: rate, position: position)
-                _lastTimestamp = CACurrentMediaTime()
-                _remainingPresentationTime = 0.0
-            displayLink.paused = false
-            _playbackRate = CFTimeInterval(rate)
-        }
-    }
-
     /**
     プレーヤーを再生開始
 
@@ -78,13 +57,13 @@ class HKLAVGaplessPlayer: NSObject {
     :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
     func play(rate: Float=1.0, position:Float? = nil) {
-        setRate(rate, position:position)
+        _setRate(rate, position:position)
     }
     /**
     再生の一時停止。再開可能
     */
     func pause() {
-        setRate(0.0)
+        _setRate(0.0)
     }
 
     /**
@@ -114,6 +93,33 @@ class HKLAVGaplessPlayer: NSObject {
 
     /// 再生速度の係数。1.0が通常速度、2.0だと倍速になる
     private var _playbackRate : CFTimeInterval = 1.0
+
+    /**
+    プレーヤーを再生開始
+
+    :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
+    :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
+    */
+    private func _setRate(rate:Float, position:Float? = nil) {
+        assert(rate>=0.0, "Unable to set a negative value(\(rate)) to playback rate")
+
+        if rate == 0 {
+
+            // 一時停止
+            displayLink.paused = true
+            _lastTimestamp = CACurrentMediaTime()
+            _remainingPresentationTime = 0.0
+
+        } else {
+
+            // 指定レートで再生開始
+            _producer.startReading(rate: rate, position: position)
+            _lastTimestamp = CACurrentMediaTime()
+            _remainingPresentationTime = 0.0
+            displayLink.paused = false
+            _playbackRate = CFTimeInterval(rate)
+        }
+    }
 
     // MARK: … CADisplayLink callback function
 
