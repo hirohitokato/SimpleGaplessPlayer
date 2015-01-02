@@ -75,17 +75,6 @@ class ViewController: UIViewController {
     */
     private func loadVideoAssets() {
 
-        if let path = NSBundle.mainBundle().pathForResource("30fps", ofType:"MOV") {
-            let url = NSURL(fileURLWithPath: path)
-            let asset = AVAsset.assetWithURL(url) as? AVAsset
-            self._player.appendAsset(asset!)
-        }
-        if let path = NSBundle.mainBundle().pathForResource("240fps", ofType:"MOV") {
-            let url = NSURL(fileURLWithPath: path)
-            let asset = AVAsset.assetWithURL(url) as? AVAsset
-            self._player.appendAsset(asset!)
-            return
-        }
         let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
