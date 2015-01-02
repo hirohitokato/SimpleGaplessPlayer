@@ -148,6 +148,32 @@ internal class StreamFrameProducer: NSObject {
     func playerInfoForPosition(position: Float) -> (index:Int, time:CMTime)? {
         let lock = ScopedLock(self)
 
+        /**
+        アセット列から指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
+        無い場合はnilを返す
+
+        :param: targets      探索対象のアセット列
+        :param: offset       アセット先頭(reverseOrderがtrueの場合は末尾)からのオフセット
+        :param: reverseOrder 逆方向で探索するかどうか。
+
+        :returns: 対象のアセット
+        */
+        func _positionAt(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
+            -> (Int, CMTime)?
+        {
+
+            var offset = offset
+            for (i, asset) in enumerate(targets) {
+
+                if offset <= asset.duration {
+                    let time = reverseOrder ? asset.duration - offset : offset
+                    return (i, time)
+                }
+                offset -= asset.duration
+            }
+            return nil
+        }
+
         if _assets.isEmpty { return nil }
         if _current == nil { return nil }
 
@@ -171,7 +197,7 @@ internal class StreamFrameProducer: NSObject {
             let offset = windowTime * _currentPosition + initialOffset
 
             let targets = reverse(_assets[0...current.index])
-            if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
+            if let resultAtZero = _positionAt(targets, offset, true) {
                 indexAtZero = current.index - resultAtZero.0
                 timeAtZero = resultAtZero.1
             } else {
@@ -182,39 +208,12 @@ internal class StreamFrameProducer: NSObject {
         // 2) 算出した0.0位置からexpectedOffsetを足した場所を調べて返す
         let targets = Array(_assets[indexAtZero..<_assets.endIndex])
 
-        if let result = _positionAt(targets, offset: offsetTime + timeAtZero, reverseOrder: false) {
+        if let result = _positionAt(targets, offsetTime + timeAtZero, false) {
             return (result.0 + indexAtZero, result.1)
         } else {
             return nil
         }
     }
-
-    /**
-    アセット列から指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
-    無い場合はnilを返す
-
-    :param: targets      探索対象のアセット列
-    :param: offset       アセット先頭(reverseOrderがtrueの場合は末尾)からのオフセット
-    :param: reverseOrder 逆方向で探索するかどうか。
-
-    :returns: 対象のアセット
-    */
-    private func _positionAt(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
-        -> (Int, CMTime)?
-    {
-
-        var offset = offset
-        for (i, asset) in enumerate(targets) {
-
-            if offset <= asset.duration {
-                let time = reverseOrder ? asset.duration - offset : offset
-                return (i, time)
-            }
-            offset -= asset.duration
-        }
-        return nil
-    }
-
 
     /**
     サンプルバッファの生成
