@@ -101,7 +101,7 @@ internal class StreamFrameProducer: NSObject {
         if _assets.isEmpty {
             return false
         }
-        let currentAsset = _readers.first?.asset
+        var currentAsset: AVAsset? = nil
 
         // レートが異なる場合、再生位置の指定があった場合は
         // リーダーを組み立て直してから再生準備を整える
@@ -109,10 +109,16 @@ internal class StreamFrameProducer: NSObject {
             cancelReading()
         }
         _playbackRate = rate
-        if let position = position {
-            _position = position
-        }
 
+        if let position = position {
+            if let playerInfo = _playerInfoForPosition(position) {
+                currentAsset = _assets[playerInfo.index]
+                _currentPosition = position
+                _currentPresentationTimestamp = playerInfo.timeStamp
+            }
+        } else {
+            currentAsset = _readers.first?.asset
+        }
         _prepareNextAssetReader(initial: currentAsset, atTime:_currentPresentationTimestamp)
         return true
     }
@@ -160,7 +166,7 @@ internal class StreamFrameProducer: NSObject {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    func playerInfoForPosition(position: Float) -> (index:Int, time:CMTime)? {
+    private func _playerInfoForPosition(position: Float) -> (index:Int, timeStamp:CMTime)? {
         let lock = ScopedLock(self)
 
         /**

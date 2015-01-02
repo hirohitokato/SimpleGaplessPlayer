@@ -61,8 +61,7 @@ class ViewController: UIViewController {
     }
 
     @IBAction func sliderUpdated(sender: UISlider) {
-        let result = _player._producer.playerInfoForPosition(sender.value)
-        println("position:\(sender.value) -> \(result)")
+        _player.play(rate: _player.rate, position: sender.value)
     }
 
     @IBAction func rateChanged(sender: UISlider) {
