@@ -72,8 +72,8 @@ internal class StreamFrameProducer: NSObject {
         // 一度取得したらnilに変わる
         if let nextBuffer = self._prepareNextBuffer() {
             // 現在時刻を更新
-            _currentPresentationTimestamp = CMSampleBufferGetPresentationTimeStamp(nextBuffer.sbuf)
-            return nextBuffer
+            _currentPresentationTimestamp = nextBuffer.presentationTimeStamp
+            return (nextBuffer.sbuf, nextBuffer.frameDuration)
         }
         return nil
     }
@@ -91,6 +91,8 @@ internal class StreamFrameProducer: NSObject {
         if _assets.isEmpty {
             return false
         }
+        let currentAsset = _readers.first?.asset
+
         // レートが異なる場合、再生位置の指定があった場合は
         // リーダーを組み立て直してから再生準備を整える
         if rate != _playbackRate || position != nil {
@@ -101,7 +103,7 @@ internal class StreamFrameProducer: NSObject {
             _position = position
         }
 
-        _prepareNextAssetReader()
+        _prepareNextAssetReader(initial: currentAsset, atTime:_currentPresentationTimestamp)
         return true
     }
 
@@ -218,7 +220,7 @@ internal class StreamFrameProducer: NSObject {
     /**
     サンプルバッファの生成
     */
-    private func _prepareNextBuffer() -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)? {
+    private func _prepareNextBuffer() -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)? {
 
         // サンプルバッファを生成する
         while let target = _readers.first {
@@ -229,7 +231,9 @@ internal class StreamFrameProducer: NSObject {
                 let out = target.output
                 if let sbuf = out.copyNextSampleBuffer() {
                     // 取得したサンプルバッファの情報で更新
-                    return (sbuf, target.frameInterval)
+                    return ( sbuf,
+                        CMSampleBufferGetPresentationTimeStamp(sbuf)+target.startTime,
+                        target.frameInterval )
                 } else {
                     println("move to next")
                     // 次のムービーへ移動
@@ -254,7 +258,7 @@ internal class StreamFrameProducer: NSObject {
         return nil
     }
 
-    private func _prepareNextAssetReader() {
+    private func _prepareNextAssetReader(initial: AVAsset? = nil, atTime time: CMTime = kCMTimeZero) {
         let lock = ScopedLock(self)
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
@@ -262,11 +266,17 @@ internal class StreamFrameProducer: NSObject {
             return
         }
 
+        // アセットをどこから読み込むかを引数に渡されたアセットで決定する
+        let startIndex = (initial == nil) ? 0 : find(_assets, initial!) ?? 0
+        // startTimeの設定は
+        var startTime = time
+println("startTime:\(startTime)")
         // 読み込みしていないアセットがあれば読み込む
-        outer: for (i, asset) in enumerate(_assets) {
+        outer: for (i, asset) in enumerate(_assets[startIndex..<_assets.count]) {
 
             if _readers.isEmpty {
-                if let assetreader = AssetReaderFragment(asset:asset, rate:_playbackRate) {
+                if let assetreader = AssetReaderFragment(asset:asset, rate:_playbackRate, startTime:startTime) {
+                    startTime = kCMTimeZero
                     _readers.append(assetreader)
                 } else {
                     NSLog("Failed to instantiate a AssetReaderFragment.")
@@ -284,7 +294,8 @@ internal class StreamFrameProducer: NSObject {
                         break outer
                     }
 
-                    if let assetreader = AssetReaderFragment(asset:target_asset, rate:_playbackRate) {
+                    if let assetreader = AssetReaderFragment(asset:target_asset, rate:_playbackRate, startTime:startTime) {
+                        startTime = kCMTimeZero
                         _readers.append(assetreader)
                     } else {
                         NSLog("Failed to instantiate a AssetReaderFragment.")
