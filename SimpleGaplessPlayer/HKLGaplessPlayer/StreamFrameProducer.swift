@@ -29,7 +29,6 @@ internal class StreamFrameProducer: NSObject {
     var windowTime = CMTime(value: 30, 1)
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
-    private var _playbackRate: Float = 0.0
     var playbackRate: Float {
         return _playbackRate
     }
@@ -133,13 +132,16 @@ internal class StreamFrameProducer: NSObject {
     // MARK: Privates
 
     private var _assets = [AVAsset]() // アセット
-    private var _readers = [AssetReaderFragment]()
+    private var _readers = [AssetReaderFragment]() // リーダー
 
     private var _currentPosition: Float = 0.0
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
     private var _amountDuration = kCMTimeZero
+
+    /// 再生レート。1.0が通常再生、2.0だと倍速再生
+    private var _playbackRate: Float = 0.0
 
     /// 現在のリーダーが指すアセットの位置を返す
     private var _current: (index: Int, asset: AVAsset)! {
