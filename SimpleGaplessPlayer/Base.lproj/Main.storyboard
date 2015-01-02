@@ -23,6 +23,7 @@
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="Nm1-O4-2zc" appends="YES" id="DYe-z0-KPc"/>
+                                    <outletCollection property="gestureRecognizers" destination="l6b-8H-mBk" appends="YES" id="blB-LM-xtR"/>
                                 </connections>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pFe-ID-r99">
@@ -89,6 +90,11 @@
                         <action selector="tapped:" destination="vXZ-lx-hvc" id="XuF-Fk-SUi"/>
                     </connections>
                 </tapGestureRecognizer>
+                <swipeGestureRecognizer direction="left" id="l6b-8H-mBk">
+                    <connections>
+                        <action selector="swipedToLeft:" destination="vXZ-lx-hvc" id="GkA-qB-u2G"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
         </scene>
         <!--Navigation Controller-->

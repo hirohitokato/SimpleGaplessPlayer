@@ -56,6 +56,10 @@ class ViewController: UIViewController {
         }
     }
 
+    @IBAction func swipedToLeft(sender: AnyObject) {
+        _player.advanceToNextAsset()
+    }
+
     @IBAction func sliderUpdated(sender: UISlider) {
         let result = _player._producer.playerInfoForPosition(sender.value)
         println("position:\(sender.value) -> \(result)")

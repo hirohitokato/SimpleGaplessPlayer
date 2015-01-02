@@ -60,6 +60,15 @@ internal class StreamFrameProducer: NSObject {
         }
     }
 
+    func advanceToNextAsset() {
+        if !_readers.isEmpty {
+            _readers.removeAtIndex(0)
+            if !_readers.isEmpty {
+                _prepareNextAssetReader()
+            }
+        }
+    }
+
     /**
     生成された最新のサンプルバッファを返す。読み込まれた後、サンプルバッファは
     次に読み込まれるまでnilに

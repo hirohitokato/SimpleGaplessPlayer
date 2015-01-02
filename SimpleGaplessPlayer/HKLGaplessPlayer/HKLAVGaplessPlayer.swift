@@ -37,6 +37,10 @@ class HKLAVGaplessPlayer: NSObject {
         _producer.appendAsset(asset)
     }
 
+    func advanceToNextAsset() {
+        _producer.advanceToNextAsset()
+    }
+
     func setRate(rate:Float, position:Float? = nil) {
         assert(rate>=0.0, "Unable to set a negative value(\(rate)) to playback rate")
 
