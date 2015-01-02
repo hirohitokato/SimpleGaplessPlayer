@@ -61,8 +61,8 @@ class HKLAVGaplessPlayer: NSObject {
     /**
     現在位置からプレーヤーを再生
     */
-    func play(rate: Float=1.0) {
-        setRate(rate)
+    func play(rate: Float=1.0, position:Float? = nil) {
+        setRate(rate, position:position)
     }
     /**
     再生の一時停止。再開可能
