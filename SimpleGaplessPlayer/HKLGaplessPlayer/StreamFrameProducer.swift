@@ -261,7 +261,7 @@ internal class StreamFrameProducer: NSObject {
         }
 
         // 読み込みしていないアセットがあれば読み込む
-        outer: for (i, asset) in enumerate(self._assets) {
+        outer: for (i, asset) in enumerate(_assets) {
 
             if _readers.isEmpty {
                 if let assetreader = AssetReaderFragment(asset:asset, rate:_playbackRate) {
