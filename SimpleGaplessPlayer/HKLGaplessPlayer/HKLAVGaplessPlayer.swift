@@ -18,22 +18,23 @@ import AVFoundation
 class HKLAVGaplessPlayer: NSObject {
     weak var playerView: HKLGLPixelBufferView! = nil
 
+    override init() {
+        super.init()
+
+        // DisplayLinkを作成
+        displayLink = CADisplayLink(target: self, selector: "displayLinkCallback:")
+        displayLink.frameInterval = 60 / kFrameRate
+        displayLink.paused = true
+        dispatch_async(dispatch_get_main_queue()) {
+            self.displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+        }
+    }
     /**
     アセットを内部キューの末尾に追加する
 
     :param: asset 再生対象となるアセット
     */
     func appendAsset(asset: AVAsset) {
-        if displayLink == nil {
-            // DisplayLinkを作成
-            displayLink = CADisplayLink(target: self, selector: "displayLinkCallback:")
-            displayLink.frameInterval = 60 / kFrameRate
-            displayLink.paused = true
-            dispatch_async(dispatch_get_main_queue()) {
-                self.displayLink.addToRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
-            }
-        }
-
         _producer.appendAsset(asset)
     }
 
