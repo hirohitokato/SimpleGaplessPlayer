@@ -103,17 +103,21 @@ class ViewController: UIViewController {
                     avasset, audioMix, info in
 
                     if let avasset = avasset {
-                        avassets.append((index,avasset))
-                        if avassets.count == assets.count {
+                        // プレーヤー内部で読み込んでいるdurationを先読みして
+                        // おくことで、再生順序が日付順になるよう試みる
+                        avasset.loadValuesAsynchronouslyForKeys(["duration"]) {
                             dispatch_async(queue) {
-                                // プロデューサーにアセットを追加
-                                sort(&avassets) { $0.0 < $1.0 }
-                                for (_, a) in avassets {
-                                    self._player.appendAsset(a)
+                                avassets.append((index,avasset))
+                                if avassets.count == assets.count {
+                                    println("Finished gathering video assets.")
+                                    // プロデューサーにアセットを追加
+                                    sort(&avassets) { $0.0 < $1.0 }
+                                    for (_, a) in avassets {
+                                        self._player.appendAsset(a)
+                                    }
                                 }
                             }
                         }
-
                     }
                 }
             }
