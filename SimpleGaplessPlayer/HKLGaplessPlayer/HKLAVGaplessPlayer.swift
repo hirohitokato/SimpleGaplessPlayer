@@ -125,8 +125,10 @@ class HKLAVGaplessPlayer: NSObject {
             _playbackRate = CFTimeInterval(rate)
         }
     }
+}
 
-    // MARK: … CADisplayLink callback function
+// MARK: … CADisplayLink callback function
+extension HKLAVGaplessPlayer {
 
     /**
     CADisplayLinkのコールバック関数。frameInterval間隔で、画面更新のタイミングで呼ばれる
