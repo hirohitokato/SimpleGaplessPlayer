@@ -141,7 +141,7 @@ internal class StreamFrameProducer: NSObject {
     private var _readers = [AssetReaderFragment]() // リーダー
 
     /// 再生位置。windowTimeに対する先頭〜末尾を指す
-    private var _position: Float = 0.0
+    var _position: Float = 0.0
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
@@ -149,47 +149,6 @@ internal class StreamFrameProducer: NSObject {
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
     private var _playbackRate: Float = 0.0
-
-    /// 現在のリーダーが指すアセットの位置を返す
-    private var _current: (index: Int, asset: AVAsset)! {
-        if let reader = _readers.first {
-            if let i = find(self._assets, reader.asset) {
-                return (i, reader.asset)
-            }
-        }
-        return nil
-    }
-
-    /**
-    指定した位置(0.0-1.0)に対するAVPlayerのインデックスと、その時刻を計算して返す
-
-    :param: position 一連のムービーにおける位置
-
-    :returns: アセット列におけるインデックスとシーク位置のタプル
-    */
-    private func _playerInfoForPosition(position: Float)
-        -> (index:Int, timeStamp:CMTime)?
-    {
-        let lock = ScopedLock(self)
-
-        if _assets.isEmpty { return nil }
-        if _current == nil { return nil }
-
-        // 0) 指定したポジションを、時間での表現に変換する
-        var offset = windowTime * position
-
-        // 1) 0.0の位置を算出する
-        if let zero = _positionAtZero() {
-
-            // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
-            let targets = Array(_assets[zero.index ..< _assets.endIndex])
-
-            if let result = _positionAt(targets, offset: zero.time + offset, reverseOrder: false) {
-                return (result.0 + zero.index, result.1)
-            }
-        }
-        return nil
-    }
 
     /**
     サンプルバッファの生成
@@ -290,6 +249,47 @@ internal class StreamFrameProducer: NSObject {
 *  再生位置を決めるための処理
 */
 extension StreamFrameProducer {
+    /// 現在のリーダーが指すアセットの位置を返す
+    private var _current: (index: Int, asset: AVAsset)! {
+        if let reader = _readers.first {
+            if let i = find(self._assets, reader.asset) {
+                return (i, reader.asset)
+            }
+        }
+        return nil
+    }
+
+    /**
+    指定した位置(0.0-1.0)に対するAVPlayerのインデックスと、その時刻を計算して返す
+
+    :param: position 一連のムービーにおける位置
+
+    :returns: アセット列におけるインデックスとシーク位置のタプル
+    */
+    func _playerInfoForPosition(position: Float)
+        -> (index:Int, timeStamp:CMTime)?
+    {
+        let lock = ScopedLock(self)
+
+        if _assets.isEmpty { return nil }
+        if _current == nil { return nil }
+
+        // 0) 指定したポジションを、時間での表現に変換する
+        var offset = windowTime * position
+
+        // 1) 0.0の位置を算出する
+        if let zero = _positionAtZero() {
+
+            // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
+            let targets = Array(_assets[zero.index ..< _assets.endIndex])
+
+            if let result = _positionAt(targets, offset: zero.time + offset, reverseOrder: false) {
+                return (result.0 + zero.index, result.1)
+            }
+        }
+        return nil
+    }
+
     /**
     positionがゼロのときのアセットと、その位置(PTS)を返す
 
