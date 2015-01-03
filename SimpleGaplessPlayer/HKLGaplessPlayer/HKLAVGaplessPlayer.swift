@@ -101,7 +101,12 @@ class HKLAVGaplessPlayer: NSObject {
     :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
     private func _setRate(rate:Float, position:Float? = nil) {
-        assert(rate>=0.0, "Unable to set a negative value(\(rate)) to playback rate")
+        if rate < 0.0 {
+            assert(false, "Unable to set a negative value(\(rate)) to playback rate")
+        }
+        if position != nil && (position < 0.0 || position > 1.0) {
+            assert(false, "position(\(rate)) must be 0.0...1.0")
+        }
 
         if rate == 0 {
 
