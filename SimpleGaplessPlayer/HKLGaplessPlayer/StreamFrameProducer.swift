@@ -58,6 +58,9 @@ internal class StreamFrameProducer: NSObject {
         }
     }
 
+    /**
+    再生対象のアセットを１つ進める。存在しない場合は何もしない
+    */
     func advanceToNextAsset() {
         if !_readers.isEmpty {
             _readers.removeAtIndex(0)
@@ -169,77 +172,31 @@ internal class StreamFrameProducer: NSObject {
     {
         let lock = ScopedLock(self)
 
-        /**
-        アセット列から指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
-        無い場合はnilを返す
-
-        :param: targets      探索対象のアセット列
-        :param: offset       アセット先頭(reverseOrderがtrueの場合は末尾)からのオフセット
-        :param: reverseOrder 逆方向で探索するかどうか。
-
-        :returns: 対象のアセット
-        */
-        func _positionAt(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
-            -> (Int, CMTime)?
-        {
-
-            var offset = offset
-            for (i, asset) in enumerate(targets) {
-
-                if offset <= asset.duration {
-                    let time = reverseOrder ? asset.duration - offset : offset
-                    return (i, time)
-                }
-                offset -= asset.duration
-            }
-            return nil
-        }
-
         if _assets.isEmpty { return nil }
         if _current == nil { return nil }
 
-        // 指定したポジションを、時間での表現に変換する
-        var offsetTime = windowTime * position
+        // 0) 指定したポジションを、時間での表現に変換する
+        var offset = windowTime * position
 
         // 1) 0.0の位置を算出する
-        var indexAtZero: Int
-        var timeAtZero: CMTime
+        if let zero = _positionAtZero() {
 
-        if _amountDuration <= windowTime {
-            // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
-            (indexAtZero, timeAtZero) = (0, kCMTimeZero)
-        } else {
-            let current = _current
+            // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
+            let targets = Array(_assets[zero.index ..< _assets.endIndex])
 
-            // 現在の再生場所を起点にrate=0.0地点を探索するが、
-            // ループの中で先頭だけを特別視するのを避けるため(すべてdurationで計算したい)、
-            // ゲタを履かせた上で0.0位置を調べる
-            let initialOffset = current.asset.duration - _currentPresentationTimestamp
-            let offset = windowTime * _position + initialOffset
-
-            let targets = reverse(_assets[0...current.index])
-            if let resultAtZero = _positionAt(targets, offset, true) {
-                indexAtZero = current.index - resultAtZero.0
-                timeAtZero = resultAtZero.1
-            } else {
-                return nil
+            if let result = _positionAt(targets, offset: zero.time + offset, reverseOrder: false) {
+                return (result.0 + zero.index, result.1)
             }
         }
-
-        // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
-        let targets = Array(_assets[indexAtZero..<_assets.endIndex])
-
-        if let result = _positionAt(targets, timeAtZero + offsetTime, false) {
-            return (result.0 + indexAtZero, result.1)
-        } else {
-            return nil
-        }
+        return nil
     }
 
     /**
     サンプルバッファの生成
     */
-    private func _prepareNextBuffer() -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)? {
+    private func _prepareNextBuffer()
+        -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)?
+    {
 
         // サンプルバッファを生成する
         while let target = _readers.first {
@@ -324,9 +281,66 @@ internal class StreamFrameProducer: NSObject {
                         break outer
                     }
                 }
-
             }
-
         }
     }
+}
+
+/**
+*  再生位置を決めるための処理
+*/
+extension StreamFrameProducer {
+    /**
+    positionがゼロのときのアセットと、その位置(PTS)を返す
+
+    :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
+    */
+    private func _positionAtZero()
+        -> (index:Int, time:CMTime)?
+    {
+        if _amountDuration <= windowTime {
+            // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
+            return (0, kCMTimeZero)
+        } else {
+            let current = _current
+
+            // 現在の再生場所を起点にrate=0.0地点を探索するが、
+            // 先頭のアセットだけを特別視するのを避けるため(すべてdurationで計算したい)、
+            // ゲタを履かせた上で0.0位置を調べる
+            let initialOffset = current.asset.duration - _currentPresentationTimestamp
+            let offset = windowTime * _position + initialOffset
+
+            let targets = reverse(_assets[0...current.index])
+            if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
+                return (current.index - resultAtZero.index, resultAtZero.time)
+            }
+        }
+        return nil
+    }
+
+    /**
+    アセット列から指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
+    無い場合はnilを返す
+
+    :param: targets      探索対象のアセット列
+    :param: offset       アセット先頭(reverseOrderがtrueの場合は末尾)からのオフセット
+    :param: reverseOrder 逆方向で探索するかどうか。
+
+    :returns: 対象のアセット
+    */
+    private func _positionAt(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
+        -> (index: Int, time: CMTime)?
+    {
+        var offset = offset
+        for (i, asset) in enumerate(targets) {
+
+            if offset <= asset.duration {
+                let time = reverseOrder ? asset.duration - offset : offset
+                return (i, time)
+            }
+            offset -= asset.duration
+        }
+        return nil
+    }
+
 }
