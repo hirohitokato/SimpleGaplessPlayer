@@ -38,7 +38,7 @@
                                     <action selector="sliderUpdated:" destination="vXZ-lx-hvc" eventType="valueChanged" id="J2N-Jb-mbo"/>
                                 </connections>
                             </slider>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="4" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="66z-3M-JKt">
+                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="66z-3M-JKt">
                                 <rect key="frame" x="14" y="485" width="572" height="31"/>
                                 <connections>
                                     <action selector="rateChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="fjL-Ze-PQs"/>
