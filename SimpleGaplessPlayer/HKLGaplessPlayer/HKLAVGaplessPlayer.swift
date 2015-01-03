@@ -65,7 +65,6 @@ class HKLAVGaplessPlayer: NSObject {
     func pause() {
         _setRate(0.0)
     }
-
     /**
     再生停止。再開は最初から
     */
