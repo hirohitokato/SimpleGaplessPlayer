@@ -22,6 +22,10 @@ class ViewController: UIViewController {
     @IBOutlet weak var rateLabel: UILabel!
     private var _timer: NSTimer!
 
+    @IBOutlet weak var posZeroLabel: UILabel!
+    @IBOutlet weak var posCurrentLabel: UILabel!
+    @IBOutlet weak var posOneLabel: UILabel!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,7 +42,7 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
 
         _timer = NSTimer.scheduledTimerWithTimeInterval(
-            0.2, target: self, selector: "updateCpuInfo:",
+            0.2, target: self, selector: "updateUI:",
             userInfo: nil, repeats: true)
     }
 
@@ -69,8 +73,23 @@ class ViewController: UIViewController {
         _player.play(rate: sender.value)
     }
 
-    @objc func updateCpuInfo(timer: NSTimer) {
+    @objc func updateUI(timer: NSTimer) {
         msgLabel.text = "cpu: \(cpu_usage_in_percent())%"
+        if let zero = _player._producer._playerInfoForPosition(0.0) {
+            posZeroLabel.text = NSString(format: "%d/%.2f", zero.index, CMTimeGetSeconds(zero.timeStamp))
+        } else {
+            posZeroLabel.text = "---"
+        }
+        if let current = _player._producer._playerInfoForPosition(_player._producer._position) {
+            posCurrentLabel.text = NSString(format: "%d/%.2f", current.index, CMTimeGetSeconds(current.timeStamp))
+        } else {
+            posCurrentLabel.text = "---"
+        }
+        if let one = _player._producer._playerInfoForPosition(1.0) {
+            posOneLabel.text = NSString(format: "%d/%.2f", one.index, CMTimeGetSeconds(one.timeStamp))
+        } else {
+            posOneLabel.text = "---"
+        }
     }
 
     /**
