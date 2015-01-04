@@ -103,13 +103,6 @@ internal class StreamFrameProducer: NSObject {
         }
         var currentAsset: AVAsset? = nil
 
-        // レートが異なる場合、再生位置の指定があった場合は
-        // リーダーを組み立て直してから再生準備を整える
-        if rate != _playbackRate || position != nil {
-            cancelReading()
-        }
-        _playbackRate = rate
-
         if let position = position {
             if let playerInfo = _playerInfoForPosition(position) {
                 currentAsset = _assets[playerInfo.index]
@@ -119,6 +112,15 @@ internal class StreamFrameProducer: NSObject {
         } else {
             currentAsset = _readers.first?.asset
         }
+
+        // レートが異なる場合、再生位置の指定があった場合は
+        // リーダーを組み立て直してから再生準備を整える
+        if rate != _playbackRate || position != nil {
+            println("cancelReading()")
+            cancelReading()
+        }
+        _playbackRate = rate
+
         _prepareNextAssetReader(initial: currentAsset, atTime:_currentPresentationTimestamp)
         return true
     }
