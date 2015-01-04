@@ -286,7 +286,9 @@ extension StreamFrameProducer {
             let targets = Array(_assets[zero.index ..< _assets.endIndex])
 
             if let result = _positionAt(targets, offset: zero.time + offset, reverseOrder: false) {
-                return (result.0 + zero.index, result.1)
+                // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
+                let time = CMTimeConvertScale(result.time, 600, .QuickTime)
+                return (result.index + zero.index, time)
             }
         }
         return nil
