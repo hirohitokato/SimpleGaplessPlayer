@@ -75,17 +75,17 @@ class ViewController: UIViewController {
 
     @objc func updateUI(timer: NSTimer) {
         msgLabel.text = "cpu: \(cpu_usage_in_percent())%"
-        if let zero = _player._producer._playerInfoForPosition(0.0) {
+        if let zero = _player._producer._getAssetInfoForPosition(0.0) {
             posZeroLabel.text = NSString(format: "%d/%.2f", zero.index, CMTimeGetSeconds(zero.timeStamp))
         } else {
             posZeroLabel.text = "---"
         }
-        if let current = _player._producer._playerInfoForPosition(_player._producer._position) {
+        if let current = _player._producer._getAssetInfoForPosition(_player._producer._position) {
             posCurrentLabel.text = NSString(format: "%d/%.2f", current.index, CMTimeGetSeconds(current.timeStamp))
         } else {
             posCurrentLabel.text = "---"
         }
-        if let one = _player._producer._playerInfoForPosition(1.0) {
+        if let one = _player._producer._getAssetInfoForPosition(1.0) {
             posOneLabel.text = NSString(format: "%d/%.2f", one.index, CMTimeGetSeconds(one.timeStamp))
         } else {
             posOneLabel.text = "---"

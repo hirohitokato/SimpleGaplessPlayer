@@ -104,7 +104,7 @@ internal class StreamFrameProducer: NSObject {
         var currentAsset: AVAsset? = nil
 
         if let position = position {
-            if let playerInfo = _playerInfoForPosition(position) {
+            if let playerInfo = _getAssetInfoForPosition(position) {
                 currentAsset = _assets[playerInfo.index]
                 _position = position
                 _currentPresentationTimestamp = playerInfo.timeStamp
@@ -262,13 +262,13 @@ extension StreamFrameProducer {
     }
 
     /**
-    指定した位置(0.0-1.0)に対するAVPlayerのインデックスと、その時刻を計算して返す
+    指定した位置(0.0-1.0)に対するアセットのインデックス番号と、その時刻を計算して返す
 
     :param: position 一連のムービーにおける位置
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    func _playerInfoForPosition(position: Float)
+    func _getAssetInfoForPosition(position: Float)
         -> (index:Int, timeStamp:CMTime)?
     {
         let lock = ScopedLock(self)
@@ -280,12 +280,12 @@ extension StreamFrameProducer {
         var offset = window * position
 
         // 1) 0.0の位置を算出する
-        if let zero = _positionAtZero() {
+        if let zero = _getPositionAtZero() {
 
             // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
             let targets = Array(_assets[zero.index ..< _assets.endIndex])
 
-            if let result = _positionAt(targets, offset: zero.time + offset, reverseOrder: false) {
+            if let result = _getIndexAndTime(targets, offset: zero.time + offset, reverseOrder: false) {
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
                 let time = CMTimeConvertScale(result.time, 600, .QuickTime)
                 return (result.index + zero.index, time)
@@ -299,7 +299,7 @@ extension StreamFrameProducer {
 
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
-    private func _positionAtZero()
+    private func _getPositionAtZero()
         -> (index:Int, time:CMTime)?
     {
         if _amountDuration <= window {
@@ -315,7 +315,7 @@ extension StreamFrameProducer {
             let offset = window * _position + initialOffset
 
             let targets = reverse(_assets[0...current.index])
-            if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
+            if let resultAtZero = _getIndexAndTime(targets, offset: offset, reverseOrder: true) {
                 return (current.index - resultAtZero.index, resultAtZero.time)
             }
         }
@@ -332,7 +332,7 @@ extension StreamFrameProducer {
 
     :returns: 対象のアセット
     */
-    private func _positionAt(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
+    private func _getIndexAndTime(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
         -> (index: Int, time: CMTime)?
     {
         var offset = offset
