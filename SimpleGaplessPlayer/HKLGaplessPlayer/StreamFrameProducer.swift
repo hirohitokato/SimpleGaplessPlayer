@@ -25,8 +25,8 @@ internal class StreamFrameProducer: NSObject {
         return _amountDuration
     }
 
-    /// アセット全体のうち再生対象となる時間。ウィンドウ時間
-    var windowTime = CMTime(value: 30, 1)
+    /// アセット全体のうち再生対象となる時間。時間窓に相当
+    var window = CMTime(value: 30, 1)
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
     var playbackRate: Float {
@@ -277,7 +277,7 @@ extension StreamFrameProducer {
         if _current == nil { return nil }
 
         // 0) 指定したポジションを、時間での表現に変換する
-        var offset = windowTime * position
+        var offset = window * position
 
         // 1) 0.0の位置を算出する
         if let zero = _positionAtZero() {
@@ -302,7 +302,7 @@ extension StreamFrameProducer {
     private func _positionAtZero()
         -> (index:Int, time:CMTime)?
     {
-        if _amountDuration <= windowTime {
+        if _amountDuration <= window {
             // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
             return (0, kCMTimeZero)
         } else {
@@ -312,7 +312,7 @@ extension StreamFrameProducer {
             // 先頭のアセットだけを特別視するのを避けるため(すべてdurationで計算したい)、
             // ゲタを履かせた上で0.0位置を調べる
             let initialOffset = current.asset.duration - _currentPresentationTimestamp
-            let offset = windowTime * _position + initialOffset
+            let offset = window * _position + initialOffset
 
             let targets = reverse(_assets[0...current.index])
             if let resultAtZero = _positionAt(targets, offset: offset, reverseOrder: true) {
