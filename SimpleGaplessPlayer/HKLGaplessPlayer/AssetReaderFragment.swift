@@ -104,12 +104,7 @@ internal class AssetReaderFragment: NSObject {
 
         // アセットのビデオトラックを配置するためのコンポジションを作成
         let composition = AVMutableComposition()
-        let compoVideoTrack = composition.addMutableTrackWithMediaType(AVMediaTypeVideo,
-            preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
-
-        // アセットのうち指定範囲をコンポジションのトラック上に配置する。
-        compoVideoTrack.insertTimeRange(timeRange, ofTrack: videoTrack, atTime: kCMTimeZero, error: &error)
-        if error != nil {
+        if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
             NSLog("Failed to insert a video track to composition:\(error)")
             return nil
         }
