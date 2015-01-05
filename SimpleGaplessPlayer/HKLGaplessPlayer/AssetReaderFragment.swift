@@ -84,6 +84,8 @@ internal class AssetReaderFragment: NSObject {
     {
         var error: NSError? = nil
 
+        // ビデオトラックを抽出
+        /* durationを調べるためだけに使う */
         let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
@@ -102,7 +104,18 @@ internal class AssetReaderFragment: NSObject {
         * └ [AVVideoComposition]              : フレームレート指定
         */
 
-        // アセットのビデオトラックを配置するためのコンポジションを作成
+        // アセットのビデオトラックを配置するためのコンポジションを作成、配置
+        /* 2015/01/05 memo:
+        下のコードのようにAVMutableCompositionTrackを作ってトラックを挿入する方法だと
+        一部のアセットで再生できない問題が発生してしまった。
+
+        let compoVideoTrack = composition.addMutableTrackWithMediaType(AVMediaTypeVideo,
+          preferredTrackID: Int32(kCMPersistentTrackID_Invalid))
+        if !compoVideoTrack.insertTimeRange(timeRange, ofTrack: videoTrack, atTime: kCMTimeZero, error: &error) {…
+        
+        何か理由があるのだろうが、現状では解決できなかったため、norio_nomura氏による
+        下記コード（AVMutableCompositionにアセットをそのまま入れる）を使用する。
+        */
         let composition = AVMutableComposition()
         if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
             NSLog("Failed to insert a video track to composition:\(error)")
