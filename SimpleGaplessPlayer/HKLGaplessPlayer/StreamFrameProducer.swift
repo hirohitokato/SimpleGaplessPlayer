@@ -280,7 +280,7 @@ extension StreamFrameProducer {
         var offset = window * position
 
         // 1) 0.0の位置を算出する
-        if let zero = _getPositionAtZero() {
+        if let zero = _getAssetInfoAtZero() {
 
             // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
             let targets = Array(_assets[zero.index ..< _assets.endIndex])
@@ -299,7 +299,7 @@ extension StreamFrameProducer {
 
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
-    private func _getPositionAtZero()
+    private func _getAssetInfoAtZero()
         -> (index:Int, time:CMTime)?
     {
         if _amountDuration <= window {
