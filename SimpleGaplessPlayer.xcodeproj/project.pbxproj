@@ -46,12 +46,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1A25A0BA1A5BE41800106B11 /* PBXContainerItemProxy */ = {
+		1A67A24C1A5C3F45003FCDDD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1AA61A671A41044B00F2B2F6 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1A25A0A41A5BE41800106B11;
-			remoteInfo = HKLGaplessPlayer;
+			remoteInfo = HKLAVGaplessPlayer;
+		};
+		1A67A24E1A5C3F45003FCDDD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AA61A671A41044B00F2B2F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A4DC6081A5C24FA003C3DC2;
+			remoteInfo = UniversalLib;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -152,8 +159,8 @@
 			isa = PBXGroup;
 			children = (
 				1A25A0DA1A5BEC1900106B11 /* HKLAVGaplessPlayer.swift */,
-				1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */,
 				1A25A0DB1A5BEC1900106B11 /* StreamFrameProducer.swift */,
+				1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */,
 			);
 			path = HKLAVGaplessPlayer;
 			sourceTree = "<group>";
@@ -163,8 +170,8 @@
 			children = (
 				1A25A0DD1A5BEC1900106B11 /* HKLGLPixelBufferView.h */,
 				1A25A0DE1A5BEC1900106B11 /* HKLGLPixelBufferView.m */,
-				1A25A0DF1A5BEC1900106B11 /* HKLOpenGLUtilities.c */,
 				1A25A0E01A5BEC1900106B11 /* HKLOpenGLUtilities.h */,
+				1A25A0DF1A5BEC1900106B11 /* HKLOpenGLUtilities.c */,
 			);
 			path = HKLGLPixelBufferView;
 			sourceTree = "<group>";
@@ -277,7 +284,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				1A25A0BB1A5BE41800106B11 /* PBXTargetDependency */,
+				1A67A24D1A5C3F45003FCDDD /* PBXTargetDependency */,
+				1A67A24F1A5C3F45003FCDDD /* PBXTargetDependency */,
 			);
 			name = SimpleGaplessPlayer;
 			productName = LearningVideoComposition;
@@ -390,10 +398,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1A25A0BB1A5BE41800106B11 /* PBXTargetDependency */ = {
+		1A67A24D1A5C3F45003FCDDD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1A25A0A41A5BE41800106B11 /* HKLAVGaplessPlayer */;
-			targetProxy = 1A25A0BA1A5BE41800106B11 /* PBXContainerItemProxy */;
+			targetProxy = 1A67A24C1A5C3F45003FCDDD /* PBXContainerItemProxy */;
+		};
+		1A67A24F1A5C3F45003FCDDD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A4DC6081A5C24FA003C3DC2 /* UniversalLib */;
+			targetProxy = 1A67A24E1A5C3F45003FCDDD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -599,6 +612,7 @@
 				1A4DC60B1A5C24FA003C3DC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1AA61A6A1A41044B00F2B2F6 /* Build configuration list for PBXProject "SimpleGaplessPlayer" */ = {
 			isa = XCConfigurationList;
