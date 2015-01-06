@@ -142,8 +142,8 @@ public class StreamFrameProducer: NSObject {
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    /// 再生位置。windowTimeに対する先頭〜末尾を指す
-    public var _position: Float = 0.0
+    /// 再生位置。windowに対する先頭(古)〜末尾(新)を0.0-1.0の数値で表す
+    public var _position: Float = 1.0
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
@@ -276,47 +276,42 @@ extension StreamFrameProducer {
         if _assets.isEmpty { return nil }
         if _current == nil { return nil }
 
-        // 0) 指定したポジションを、時間での表現に変換する
-        var offset = window * position
+        // 0) 指定したポジションを、1.0位置からの時間表現に変換する
+        var offset = window * (1.0 - position)
 
-        // 1) 0.0の位置を算出する
-        if let zero = _getAssetInfoAtZero() {
+        // 1) 1.0の位置を算出する
+        if let one = _getAssetInfoAtOne() {
 
-            // 2) 算出した0.0位置からoffsetTimeを足した場所を調べて返す
-            let targets = Array(_assets[zero.index ..< _assets.endIndex])
+            // 2) 算出した1.0位置からoffsetTimeを引いた場所を調べて返す
+            let targets = reverse(_assets[0 ... one.index])
 
-            if let result = _getIndexAndTime(targets, offset: zero.time + offset, reverseOrder: false) {
+            if let result = _getIndexAndTime(targets,
+                offset: offset + (_assets[one.index].duration - one.time), reverseOrder: true)
+            {
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
-                let time = CMTimeConvertScale(result.time, 600, .QuickTime)
-                return (result.index + zero.index, time)
+                let time = CMTimeConvertScale(result.time, 600, .RoundHalfAwayFromZero)
+                return (one.index - result.index, time)
             }
         }
         return nil
     }
 
     /**
-    positionがゼロのときのアセットと、その位置(PTS)を返す
+    positionが1.0のときのアセットと、その位置(PTS)を返す
 
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
-    private func _getAssetInfoAtZero()
-        -> (index:Int, time:CMTime)?
-    {
-        if _amountDuration <= window {
-            // アセットの総時間が最大時間よりも少ないため、先頭が起点になる
-            return (0, kCMTimeZero)
-        } else {
-            let current = _current
+    private func _getAssetInfoAtOne() -> (index:Int, time:CMTime)? {
+        if let current = _current {
+            // 現在の再生場所を起点にしてposition=1.0地点を探索するが、
+            // 先頭のアセットだけを特別視するのを避けて
+            // すべてkCMTimeZeroからの位置で計算するため、現在のPTSを
+            // 引いた上で1.0となる位置を調べる
+            let offset = window * (1.0 - _position) + _currentPresentationTimestamp
 
-            // 現在の再生場所を起点にrate=0.0地点を探索するが、
-            // 先頭のアセットだけを特別視するのを避けるため(すべてdurationで計算したい)、
-            // ゲタを履かせた上で0.0位置を調べる
-            let initialOffset = current.asset.duration - _currentPresentationTimestamp
-            let offset = window * _position + initialOffset
-
-            let targets = reverse(_assets[0...current.index])
-            if let resultAtZero = _getIndexAndTime(targets, offset: offset, reverseOrder: true) {
-                return (current.index - resultAtZero.index, resultAtZero.time)
+            let targets = Array(_assets[current.index ..< _assets.count])
+            if let resultAtOne = _getIndexAndTime(targets, offset: offset, reverseOrder: false) {
+                return (resultAtOne.index + current.index, resultAtOne.time)
             }
         }
         return nil
