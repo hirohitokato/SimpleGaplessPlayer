@@ -17,10 +17,10 @@ let kFrameRate: Int = 60
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
 非同期でサンプルバッファを生成する
 */
-class HKLAVGaplessPlayer: NSObject {
+public class HKLAVGaplessPlayer: NSObject {
     weak var playerView: HKLGLPixelBufferView! = nil
 
-    override init() {
+    override public init() {
         super.init()
 
         // DisplayLinkを作成
@@ -36,19 +36,19 @@ class HKLAVGaplessPlayer: NSObject {
 
     :param: asset 再生対象となるアセット
     */
-    func appendAsset(asset: AVAsset) {
+    public func appendAsset(asset: AVAsset) {
         _producer.appendAsset(asset)
     }
 
     /**
     次のアセットへ再生位置を進める
     */
-    func advanceToNextAsset() {
+    public func advanceToNextAsset() {
         _producer.advanceToNextAsset()
     }
 
     /// 現在の再生レートを返す
-    var rate: Float {
+    public var rate: Float {
         return _producer.playbackRate
     }
 
@@ -58,26 +58,26 @@ class HKLAVGaplessPlayer: NSObject {
     :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
     :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
-    func play(rate: Float=1.0, position:Float? = nil) {
+    public func play(rate: Float=1.0, position:Float? = nil) {
         _setRate(rate, position:position)
     }
     /**
     再生の一時停止。再開可能
     */
-    func pause() {
+    public func pause() {
         _setRate(0.0)
     }
     /**
     再生停止。再開は最初から
     */
-    func stop() {
+    public func stop() {
         pause()
         _producer.cancelReading()
     }
     /**
     現在再生中かどうか
     */
-    var isPlaying: Bool {
+    public var isPlaying: Bool {
         return !displayLink.paused
     }
 
