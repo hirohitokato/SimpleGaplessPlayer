@@ -83,7 +83,6 @@
 				1AA61A781A41044B00F2B2F6 /* Main.storyboard */,
 				1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */,
 				1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */,
-				1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */,
 				1AF59D581A4797C100B830CE /* HKLGaplessPlayer */,
 				1AEABB4A1A47D32300EF97E2 /* HKLGLPixelBufferView */,
 				1AEC3D171A43267B00EAFC38 /* misc */,
@@ -96,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				1AA61A731A41044B00F2B2F6 /* Info.plist */,
+				1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
