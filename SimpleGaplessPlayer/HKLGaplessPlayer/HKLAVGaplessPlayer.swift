@@ -18,7 +18,7 @@ let kFrameRate: Int = 60
 非同期でサンプルバッファを生成する
 */
 public class HKLAVGaplessPlayer: NSObject {
-    weak var playerView: HKLGLPixelBufferView! = nil
+    public weak var playerView: HKLGLPixelBufferView! = nil
 
     override public init() {
         super.init()
