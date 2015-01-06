@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A25A0AA1A5BE41800106B11 /* HKLGaplessPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A25A0A91A5BE41800106B11 /* HKLGaplessPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A25A0BC1A5BE41800106B11 /* HKLGaplessPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */; };
-		1A25A0BD1A5BE41800106B11 /* HKLGaplessPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A25A0AA1A5BE41800106B11 /* HKLAVGaplessPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A25A0A91A5BE41800106B11 /* HKLAVGaplessPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A25A0BC1A5BE41800106B11 /* HKLAVGaplessPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLAVGaplessPlayer.framework */; };
+		1A25A0BD1A5BE41800106B11 /* HKLAVGaplessPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLAVGaplessPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1A25A0C61A5BE4C100106B11 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0C51A5BE4C100106B11 /* AVFoundation.framework */; };
 		1A25A0C91A5BE50F00106B11 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0C81A5BE50F00106B11 /* CoreMedia.framework */; };
 		1A25A0E11A5BEC1900106B11 /* AssetReaderFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */; };
@@ -48,7 +48,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1A25A0BD1A5BE41800106B11 /* HKLGaplessPlayer.framework in Embed Frameworks */,
+				1A25A0BD1A5BE41800106B11 /* HKLAVGaplessPlayer.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,9 +56,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HKLGaplessPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A25A0A51A5BE41800106B11 /* HKLAVGaplessPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HKLAVGaplessPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A25A0A81A5BE41800106B11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1A25A0A91A5BE41800106B11 /* HKLGaplessPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HKLGaplessPlayer.h; sourceTree = "<group>"; };
+		1A25A0A91A5BE41800106B11 /* HKLAVGaplessPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HKLAVGaplessPlayer.h; sourceTree = "<group>"; };
 		1A25A0C51A5BE4C100106B11 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		1A25A0C81A5BE50F00106B11 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetReaderFragment.swift; sourceTree = "<group>"; };
@@ -98,23 +98,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A25A0BC1A5BE41800106B11 /* HKLGaplessPlayer.framework in Frameworks */,
+				1A25A0BC1A5BE41800106B11 /* HKLAVGaplessPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1A25A0A61A5BE41800106B11 /* HKLGaplessPlayer */ = {
+		1A25A0A61A5BE41800106B11 /* HKLAVGaplessPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				1A25A0A91A5BE41800106B11 /* HKLGaplessPlayer.h */,
-				1A25A0D81A5BEC1900106B11 /* HKLGaplessPlayer */,
+				1A25A0A91A5BE41800106B11 /* HKLAVGaplessPlayer.h */,
+				1A25A0D81A5BEC1900106B11 /* HKLAVGaplessPlayer */,
 				1A25A0DC1A5BEC1900106B11 /* HKLGLPixelBufferView */,
 				1A25A0E81A5BEC7100106B11 /* misc */,
 				1A25A0A71A5BE41800106B11 /* Supporting Files */,
 			);
-			path = HKLGaplessPlayer;
+			path = HKLAVGaplessPlayer;
 			sourceTree = "<group>";
 		};
 		1A25A0A71A5BE41800106B11 /* Supporting Files */ = {
@@ -134,16 +134,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1A25A0D81A5BEC1900106B11 /* HKLGaplessPlayer */ = {
+		1A25A0D81A5BEC1900106B11 /* HKLAVGaplessPlayer */ = {
 			isa = PBXGroup;
 			children = (
-				1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */,
 				1A25A0DA1A5BEC1900106B11 /* HKLAVGaplessPlayer.swift */,
+				1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */,
 				1A25A0DB1A5BEC1900106B11 /* StreamFrameProducer.swift */,
 			);
-			name = HKLGaplessPlayer;
-			path = HKLGaplessPlayer/HKLGaplessPlayer;
-			sourceTree = SOURCE_ROOT;
+			path = HKLAVGaplessPlayer;
+			sourceTree = "<group>";
 		};
 		1A25A0DC1A5BEC1900106B11 /* HKLGLPixelBufferView */ = {
 			isa = PBXGroup;
@@ -153,9 +152,8 @@
 				1A25A0DF1A5BEC1900106B11 /* HKLOpenGLUtilities.c */,
 				1A25A0E01A5BEC1900106B11 /* HKLOpenGLUtilities.h */,
 			);
-			name = HKLGLPixelBufferView;
-			path = HKLGaplessPlayer/HKLGLPixelBufferView;
-			sourceTree = SOURCE_ROOT;
+			path = HKLGLPixelBufferView;
+			sourceTree = "<group>";
 		};
 		1A25A0E81A5BEC7100106B11 /* misc */ = {
 			isa = PBXGroup;
@@ -172,7 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				1AA61A711A41044B00F2B2F6 /* SimpleGaplessPlayer */,
-				1A25A0A61A5BE41800106B11 /* HKLGaplessPlayer */,
+				1A25A0A61A5BE41800106B11 /* HKLAVGaplessPlayer */,
 				1A25A0C71A5BE4D500106B11 /* Frameworks */,
 				1AA61A701A41044B00F2B2F6 /* Products */,
 			);
@@ -182,7 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */,
-				1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */,
+				1A25A0A51A5BE41800106B11 /* HKLAVGaplessPlayer.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -226,7 +224,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A25A0AA1A5BE41800106B11 /* HKLGaplessPlayer.h in Headers */,
+				1A25A0AA1A5BE41800106B11 /* HKLAVGaplessPlayer.h in Headers */,
 				1A25A0E41A5BEC1900106B11 /* HKLGLPixelBufferView.h in Headers */,
 				1A25A0E71A5BEC1900106B11 /* HKLOpenGLUtilities.h in Headers */,
 			);
@@ -235,9 +233,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */ = {
+		1A25A0A41A5BE41800106B11 /* HKLAVGaplessPlayer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1A25A0BE1A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLGaplessPlayer" */;
+			buildConfigurationList = 1A25A0BE1A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLAVGaplessPlayer" */;
 			buildPhases = (
 				1A25A0A01A5BE41800106B11 /* Sources */,
 				1A25A0A11A5BE41800106B11 /* Frameworks */,
@@ -248,9 +246,9 @@
 			);
 			dependencies = (
 			);
-			name = HKLGaplessPlayer;
+			name = HKLAVGaplessPlayer;
 			productName = HKLGaplessPlayer;
-			productReference = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */;
+			productReference = 1A25A0A51A5BE41800106B11 /* HKLAVGaplessPlayer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */ = {
@@ -303,7 +301,7 @@
 			projectRoot = "";
 			targets = (
 				1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */,
-				1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */,
+				1A25A0A41A5BE41800106B11 /* HKLAVGaplessPlayer */,
 			);
 		};
 /* End PBXProject section */
@@ -360,7 +358,7 @@
 /* Begin PBXTargetDependency section */
 		1A25A0BB1A5BE41800106B11 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */;
+			target = 1A25A0A41A5BE41800106B11 /* HKLAVGaplessPlayer */;
 			targetProxy = 1A25A0BA1A5BE41800106B11 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -397,7 +395,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = HKLGaplessPlayer/Info.plist;
+				INFOPLIST_FILE = HKLAVGaplessPlayer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -418,7 +416,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = HKLGaplessPlayer/Info.plist;
+				INFOPLIST_FILE = HKLAVGaplessPlayer/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -537,7 +535,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1A25A0BE1A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLGaplessPlayer" */ = {
+		1A25A0BE1A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLAVGaplessPlayer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A25A0BF1A5BE41800106B11 /* Debug */,

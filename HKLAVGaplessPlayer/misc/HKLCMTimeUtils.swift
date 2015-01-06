@@ -7,7 +7,7 @@
 import CoreMedia
 
 // MARK: Initialization
-extension CMTime {
+public extension CMTime {
     public init(value: Int64, _ timescale: Int = 1) {
         self = CMTimeMake(value, Int32(timescale))
     }
