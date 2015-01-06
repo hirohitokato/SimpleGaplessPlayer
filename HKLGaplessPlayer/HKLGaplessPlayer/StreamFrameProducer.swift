@@ -347,4 +347,15 @@ extension StreamFrameProducer {
         return nil
     }
 
+    /**
+    指定したインデックス、プレゼンテーション時間で求めるポジションを返す
+
+    :param: index アセットのインデックス。_assets内のインデックス番号のこと。
+    :param: time  アセット上の時間
+
+    :returns: 再生位置
+    */
+    private func _getPosition(index:Int, time:CMTime) -> Float {
+        return 0.0
+    }
 }
