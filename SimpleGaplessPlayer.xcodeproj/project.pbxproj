@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A25A0AA1A5BE41800106B11 /* HKLGaplessPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A25A0A91A5BE41800106B11 /* HKLGaplessPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A25A0B01A5BE41800106B11 /* HKLGaplessPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */; };
+		1A25A0BC1A5BE41800106B11 /* HKLGaplessPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */; };
+		1A25A0BD1A5BE41800106B11 /* HKLGaplessPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1A25A0C61A5BE4C100106B11 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0C51A5BE4C100106B11 /* AVFoundation.framework */; };
+		1A25A0C91A5BE50F00106B11 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0C81A5BE50F00106B11 /* CoreMedia.framework */; };
+		1A25A0CA1A5BE53D00106B11 /* HKLCMTimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB021A47C3A800EF97E2 /* HKLCMTimeUtils.swift */; };
+		1A25A0CB1A5BE53D00106B11 /* HKLCoreGraphicsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0E1A47C42B00EF97E2 /* HKLCoreGraphicsUtils.swift */; };
+		1A25A0CC1A5BE53D00106B11 /* HKLThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0F1A47C42B00EF97E2 /* HKLThreadUtils.swift */; };
+		1A25A0CD1A5BE53D00106B11 /* HKLAVFoundationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB821A48E19900EF97E2 /* HKLAVFoundationUtils.swift */; };
+		1A25A0D01A5BE56000106B11 /* HKLAVGaplessPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB051A47C3DF00EF97E2 /* HKLAVGaplessPlayer.swift */; };
+		1A25A0D11A5BE56300106B11 /* StreamFrameProducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB121A47C44C00EF97E2 /* StreamFrameProducer.swift */; };
+		1A25A0D21A5BE56500106B11 /* AssetReaderFragment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB041A47C3DF00EF97E2 /* AssetReaderFragment.swift */; };
+		1A25A0D31A5BE56900106B11 /* HKLGLPixelBufferView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB4E1A47D32300EF97E2 /* HKLGLPixelBufferView.m */; };
+		1A25A0D41A5BE56C00106B11 /* HKLOpenGLUtilities.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB4F1A47D32300EF97E2 /* HKLOpenGLUtilities.c */; };
+		1A25A0D51A5BE64500106B11 /* HKLGLPixelBufferView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEABB4D1A47D32300EF97E2 /* HKLGLPixelBufferView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1A25A0D61A5BE64E00106B11 /* HKLOpenGLUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEABB501A47D32300EF97E2 /* HKLOpenGLUtilities.h */; };
 		1AA61A7A1A41044B00F2B2F6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A781A41044B00F2B2F6 /* Main.storyboard */; };
 		1AA61A7C1A41044B00F2B2F6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */; };
 		1AA61A7F1A41044B00F2B2F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */; };
@@ -24,7 +41,51 @@
 		1AEC97791A52F84100ACE922 /* taskInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC97771A52F84100ACE922 /* taskInfo.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1A25A0B11A5BE41800106B11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AA61A671A41044B00F2B2F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A25A0A41A5BE41800106B11;
+			remoteInfo = HKLGaplessPlayer;
+		};
+		1A25A0B31A5BE41800106B11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AA61A671A41044B00F2B2F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1AA61A6E1A41044B00F2B2F6;
+			remoteInfo = SimpleGaplessPlayer;
+		};
+		1A25A0BA1A5BE41800106B11 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1AA61A671A41044B00F2B2F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1A25A0A41A5BE41800106B11;
+			remoteInfo = HKLGaplessPlayer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1A25A0C11A5BE41800106B11 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1A25A0BD1A5BE41800106B11 /* HKLGaplessPlayer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = HKLGaplessPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A25A0A81A5BE41800106B11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A25A0A91A5BE41800106B11 /* HKLGaplessPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HKLGaplessPlayer.h; sourceTree = "<group>"; };
+		1A25A0AF1A5BE41800106B11 /* HKLGaplessPlayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HKLGaplessPlayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A25A0C51A5BE4C100106B11 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		1A25A0C81A5BE50F00106B11 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleGaplessPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA61A731A41044B00F2B2F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1AA61A791A41044B00F2B2F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -49,20 +110,66 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1A25A0A11A5BE41800106B11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A25A0C91A5BE50F00106B11 /* CoreMedia.framework in Frameworks */,
+				1A25A0C61A5BE4C100106B11 /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A25A0AC1A5BE41800106B11 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A25A0B01A5BE41800106B11 /* HKLGaplessPlayer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AA61A6C1A41044B00F2B2F6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A25A0BC1A5BE41800106B11 /* HKLGaplessPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A25A0A61A5BE41800106B11 /* HKLGaplessPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				1A25A0A91A5BE41800106B11 /* HKLGaplessPlayer.h */,
+				1A25A0A71A5BE41800106B11 /* Supporting Files */,
+			);
+			path = HKLGaplessPlayer;
+			sourceTree = "<group>";
+		};
+		1A25A0A71A5BE41800106B11 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1A25A0A81A5BE41800106B11 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		1A25A0C71A5BE4D500106B11 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1A25A0C81A5BE50F00106B11 /* CoreMedia.framework */,
+				1A25A0C51A5BE4C100106B11 /* AVFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		1AA61A661A41044B00F2B2F6 = {
 			isa = PBXGroup;
 			children = (
 				1AA61A711A41044B00F2B2F6 /* SimpleGaplessPlayer */,
+				1A25A0A61A5BE41800106B11 /* HKLGaplessPlayer */,
+				1A25A0C71A5BE4D500106B11 /* Frameworks */,
 				1AA61A701A41044B00F2B2F6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,6 +178,8 @@
 			isa = PBXGroup;
 			children = (
 				1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */,
+				1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */,
+				1A25A0AF1A5BE41800106B11 /* HKLGaplessPlayerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,7 +245,57 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		1A25A0A21A5BE41800106B11 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A25A0AA1A5BE41800106B11 /* HKLGaplessPlayer.h in Headers */,
+				1A25A0D61A5BE64E00106B11 /* HKLOpenGLUtilities.h in Headers */,
+				1A25A0D51A5BE64500106B11 /* HKLGLPixelBufferView.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A25A0BE1A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLGaplessPlayer" */;
+			buildPhases = (
+				1A25A0A01A5BE41800106B11 /* Sources */,
+				1A25A0A11A5BE41800106B11 /* Frameworks */,
+				1A25A0A21A5BE41800106B11 /* Headers */,
+				1A25A0A31A5BE41800106B11 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HKLGaplessPlayer;
+			productName = HKLGaplessPlayer;
+			productReference = 1A25A0A51A5BE41800106B11 /* HKLGaplessPlayer.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		1A25A0AE1A5BE41800106B11 /* HKLGaplessPlayerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A25A0C21A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLGaplessPlayerTests" */;
+			buildPhases = (
+				1A25A0AB1A5BE41800106B11 /* Sources */,
+				1A25A0AC1A5BE41800106B11 /* Frameworks */,
+				1A25A0AD1A5BE41800106B11 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1A25A0B21A5BE41800106B11 /* PBXTargetDependency */,
+				1A25A0B41A5BE41800106B11 /* PBXTargetDependency */,
+			);
+			name = HKLGaplessPlayerTests;
+			productName = HKLGaplessPlayerTests;
+			productReference = 1A25A0AF1A5BE41800106B11 /* HKLGaplessPlayerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1AA61A8E1A41044B00F2B2F6 /* Build configuration list for PBXNativeTarget "SimpleGaplessPlayer" */;
@@ -144,10 +303,12 @@
 				1AA61A6B1A41044B00F2B2F6 /* Sources */,
 				1AA61A6C1A41044B00F2B2F6 /* Frameworks */,
 				1AA61A6D1A41044B00F2B2F6 /* Resources */,
+				1A25A0C11A5BE41800106B11 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				1A25A0BB1A5BE41800106B11 /* PBXTargetDependency */,
 			);
 			name = SimpleGaplessPlayer;
 			productName = LearningVideoComposition;
@@ -163,6 +324,13 @@
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Hirohito Kato";
 				TargetAttributes = {
+					1A25A0A41A5BE41800106B11 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					1A25A0AE1A5BE41800106B11 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 1AA61A6E1A41044B00F2B2F6;
+					};
 					1AA61A6E1A41044B00F2B2F6 = {
 						CreatedOnToolsVersion = 6.1.1;
 					};
@@ -182,11 +350,27 @@
 			projectRoot = "";
 			targets = (
 				1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */,
+				1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */,
+				1A25A0AE1A5BE41800106B11 /* HKLGaplessPlayerTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1A25A0A31A5BE41800106B11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A25A0AD1A5BE41800106B11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AA61A6D1A41044B00F2B2F6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -200,6 +384,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1A25A0A01A5BE41800106B11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A25A0D01A5BE56000106B11 /* HKLAVGaplessPlayer.swift in Sources */,
+				1A25A0D11A5BE56300106B11 /* StreamFrameProducer.swift in Sources */,
+				1A25A0D21A5BE56500106B11 /* AssetReaderFragment.swift in Sources */,
+				1A25A0D31A5BE56900106B11 /* HKLGLPixelBufferView.m in Sources */,
+				1A25A0D41A5BE56C00106B11 /* HKLOpenGLUtilities.c in Sources */,
+				1A25A0CA1A5BE53D00106B11 /* HKLCMTimeUtils.swift in Sources */,
+				1A25A0CB1A5BE53D00106B11 /* HKLCoreGraphicsUtils.swift in Sources */,
+				1A25A0CC1A5BE53D00106B11 /* HKLThreadUtils.swift in Sources */,
+				1A25A0CD1A5BE53D00106B11 /* HKLAVFoundationUtils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A25A0AB1A5BE41800106B11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1AA61A6B1A41044B00F2B2F6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -221,6 +428,24 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		1A25A0B21A5BE41800106B11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */;
+			targetProxy = 1A25A0B11A5BE41800106B11 /* PBXContainerItemProxy */;
+		};
+		1A25A0B41A5BE41800106B11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */;
+			targetProxy = 1A25A0B31A5BE41800106B11 /* PBXContainerItemProxy */;
+		};
+		1A25A0BB1A5BE41800106B11 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1A25A0A41A5BE41800106B11 /* HKLGaplessPlayer */;
+			targetProxy = 1A25A0BA1A5BE41800106B11 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		1AA61A781A41044B00F2B2F6 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -241,6 +466,86 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		1A25A0BF1A5BE41800106B11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HKLGaplessPlayer/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		1A25A0C01A5BE41800106B11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = HKLGaplessPlayer/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		1A25A0C31A5BE41800106B11 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HKLGaplessPlayerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SimpleGaplessPlayer.app/SimpleGaplessPlayer";
+			};
+			name = Debug;
+		};
+		1A25A0C41A5BE41800106B11 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = HKLGaplessPlayerTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SimpleGaplessPlayer.app/SimpleGaplessPlayer";
+			};
+			name = Release;
+		};
 		1AA61A8C1A41044B00F2B2F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -348,6 +653,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1A25A0BE1A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLGaplessPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A25A0BF1A5BE41800106B11 /* Debug */,
+				1A25A0C01A5BE41800106B11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		1A25A0C21A5BE41800106B11 /* Build configuration list for PBXNativeTarget "HKLGaplessPlayerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A25A0C31A5BE41800106B11 /* Debug */,
+				1A25A0C41A5BE41800106B11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		1AA61A6A1A41044B00F2B2F6 /* Build configuration list for PBXProject "SimpleGaplessPlayer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
