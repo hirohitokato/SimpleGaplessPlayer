@@ -17,7 +17,7 @@ let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()してお
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
 非同期でサンプルバッファを生成する
 */
-internal class StreamFrameProducer: NSObject {
+public class StreamFrameProducer: NSObject {
 
     /// 格納しているアセットの合計再生時間を返す
     var amountDuration: CMTime {
@@ -143,7 +143,7 @@ internal class StreamFrameProducer: NSObject {
     private var _readers = [AssetReaderFragment]() // リーダー
 
     /// 再生位置。windowTimeに対する先頭〜末尾を指す
-    var _position: Float = 0.0
+    public var _position: Float = 0.0
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
@@ -268,7 +268,7 @@ extension StreamFrameProducer {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    func _getAssetInfoForPosition(position: Float)
+    public func _getAssetInfoForPosition(position: Float)
         -> (index:Int, timeStamp:CMTime)?
     {
         let lock = ScopedLock(self)
