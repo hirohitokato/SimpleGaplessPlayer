@@ -10,9 +10,6 @@ import UIKit
 import Photos
 import AVFoundation
 
-/// フレームレート
-public let kFrameRate: Int = 60
-
 class ViewController: UIViewController {
 
     @IBOutlet weak var playerView: HKLGLPixelBufferView!

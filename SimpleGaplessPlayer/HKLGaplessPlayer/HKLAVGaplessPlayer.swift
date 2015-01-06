@@ -9,6 +9,8 @@ import Foundation
 import CoreMedia
 import AVFoundation
 
+let kFrameRate: Int = 60
+
 /**
 :class: HKLAVGaplessPlayer
 :abstract:
