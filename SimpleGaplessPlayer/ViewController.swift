@@ -9,6 +9,7 @@
 import UIKit
 import Photos
 import AVFoundation
+import HKLGaplessPlayer
 
 class ViewController: UIViewController {
 
