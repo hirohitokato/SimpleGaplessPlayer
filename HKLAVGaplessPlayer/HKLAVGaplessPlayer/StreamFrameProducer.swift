@@ -96,17 +96,17 @@ public class StreamFrameProducer: NSObject {
 
     :returns: 読み込み開始に成功したかどうか
     */
-    func startReading(rate:Float = 1.0, position:Float? = nil) -> Bool {
+    func startReading(rate:Float = 1.0, atPosition pos:Float? = nil) -> Bool {
         let lock = ScopedLock(self)
         if _assets.isEmpty {
             return false
         }
         var currentAsset: AVAsset? = nil
 
-        if let position = position {
+        if let pos = pos {
             if let playerInfo = _getAssetInfoForPosition(position) {
                 currentAsset = _assets[playerInfo.index]
-                _position = position
+                position = pos
                 _currentPresentationTimestamp = playerInfo.timeStamp
             }
         } else {
@@ -115,7 +115,7 @@ public class StreamFrameProducer: NSObject {
 
         // レートが異なる場合、再生位置の指定があった場合は
         // リーダーを組み立て直してから再生準備を整える
-        if rate != _playbackRate || position != nil {
+        if rate != _playbackRate || pos != nil {
             println("cancelReading()")
             cancelReading()
         }
@@ -136,6 +136,11 @@ public class StreamFrameProducer: NSObject {
         let lock = ScopedLock(self)
         _readers.removeAll(keepCapacity: false)
     }
+
+    // MARK: Internals
+
+    /// 再生位置。windowに対する先頭(古)〜末尾(新)を0.0-1.0の数値で表す
+    dynamic var position: Float = 1.0
 
     // MARK: Privates
 
@@ -307,7 +312,7 @@ extension StreamFrameProducer {
             // 先頭のアセットだけを特別視するのを避けて
             // すべてkCMTimeZeroからの位置で計算するため、現在のPTSを
             // 引いた上で1.0となる位置を調べる
-            let offset = window * (1.0 - _position) + _currentPresentationTimestamp
+            let offset = window * (1.0 - position) + _currentPresentationTimestamp
 
             let targets = Array(_assets[current.index ..< _assets.count])
             if let resultAtOne = _getIndexAndTime(targets, offset: offset, reverseOrder: false) {
