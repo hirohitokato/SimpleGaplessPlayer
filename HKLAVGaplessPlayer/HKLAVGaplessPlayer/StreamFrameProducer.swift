@@ -169,13 +169,17 @@ public class StreamFrameProducer: NSObject {
                 // サンプルバッファの読み込み
                 let out = target.output
                 if let sbuf = out.copyNextSampleBuffer() {
-                    // 取得したサンプルバッファの情報で更新
-                    return ( sbuf,
-                        CMSampleBufferGetPresentationTimeStamp(sbuf)+target.startTime,
-                        target.frameInterval )
+                    // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
+                    // 表示用としてサンプルバッファを返す
+                    let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
+                    let pos = _getPosition(find(_assets, target.asset)!, time: pts)
+                    if pos <= 1.0 + 0.02/*tolerance*/ {
+                        return ( sbuf, pts, target.frameInterval )
+                    }
                 } else {
                     println("move to next")
-                    // 次のムービーへ移動
+                    // リーダーのサンプルバッファが枯渇した場合、または取得した
+                    // サンプルバッファの位置が1.0を超えていた場合は、次のムービーへ移動する
                     _readers.removeAtIndex(0)
                     _currentPresentationTimestamp = kCMTimeZero
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
