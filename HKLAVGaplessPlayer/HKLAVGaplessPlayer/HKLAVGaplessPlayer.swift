@@ -10,6 +10,7 @@ import CoreMedia
 import AVFoundation
 
 let kFrameRate: Int = 60
+let kFrameInterval: Float = 1.0/Float(kFrameRate)
 
 /**
 :class: HKLAVGaplessPlayer
