@@ -30,7 +30,14 @@ public class HKLAVGaplessPlayer: NSObject {
         dispatch_async(dispatch_get_main_queue()) {
             self.displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         }
+
+        _producer.addObserver(self, forKeyPath: "position", options: .New, context: &_positionContext)
     }
+
+    deinit {
+        _producer.removeObserver(self, forKeyPath: "position", context: &position)
+    }
+
     /**
     アセットを内部キューの末尾に追加する
 
@@ -51,6 +58,9 @@ public class HKLAVGaplessPlayer: NSObject {
     public var rate: Float {
         return _producer.playbackRate
     }
+
+    /// 現在の再生位置を返す
+    dynamic public private(set) var position: Float = 1.0
 
     /**
     プレーヤーを再生開始
@@ -94,6 +104,8 @@ public class HKLAVGaplessPlayer: NSObject {
 
     /// 再生速度の係数。1.0が通常速度、2.0だと倍速になる
     private var _playbackRate : CFTimeInterval = 1.0
+
+    private var _positionContext = 0
 
     /**
     プレーヤーを再生開始
@@ -177,3 +189,16 @@ extension HKLAVGaplessPlayer {
     }
 }
 
+// MARK: … KVO
+extension HKLAVGaplessPlayer {
+    public override func observeValueForKeyPath(keyPath: String,
+        ofObject object: AnyObject, change: [NSObject : AnyObject],
+        context: UnsafeMutablePointer<Void>)
+    {
+        if context == &_positionContext {
+            position = _producer.position
+        } else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+}
