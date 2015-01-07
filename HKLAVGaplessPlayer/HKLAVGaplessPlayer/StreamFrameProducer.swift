@@ -343,14 +343,58 @@ extension StreamFrameProducer {
     }
 
     /**
-    指定したインデックス、プレゼンテーション時間で求めるポジションを返す
+    現在の位置を元に、指定したインデックス、プレゼンテーション時間が表すポジションを返す
 
     :param: index アセットのインデックス。_assets内のインデックス番号のこと。
     :param: time  アセット上の時間
 
-    :returns: 再生位置
+    :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    private func _getPosition(index:Int, time:CMTime) -> Float {
-        return 0.0
+    private func _getPosition(index:Int, time:CMTime) -> Float? {
+        let target = (index:index, time:time)
+
+        // 複数アセットを跨いでの差分
+        func _calculateDelta(lhs: (index:Int, time:CMTime), rhs: (index:Int, time:CMTime)) -> CMTime {
+            var sumTime: CMTime = kCMTimeZero
+
+            // lhsとrhsのどちらが大きい(=1.0に近い)アセットかを調べる
+            if lhs.index == rhs.index {
+                return lhs.time - rhs.time
+            }
+
+            // 中間のアセットのduration合計を求める
+            let intermediates = (lhs.index < rhs.index) ?
+                _assets[lhs.index+1 ..< rhs.index] : _assets[rhs.index+1 ..< lhs.index]
+            sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
+
+            if lhs.index < rhs.index {
+                // -(lhsの残り時間 + rhs)
+                sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
+                return kCMTimeZero - sumTime
+            } else {
+                // lhs + rhsの残り時間
+                sumTime += lhs.time + (_assets[rhs.index].duration - rhs.time)
+                return sumTime
+            }
+        }
+
+        /*
+        「offset = window * position」であることを利用して位置を求める
+
+        offset = window * position
+        → position = offset/window
+        (※ offset = t(target) - t0 なので)
+        → position = (t(target) - t0)/window
+        (※ t0 = t1 - window なので)
+        → position = (t(target) - t1 + window)/window
+        ∴ position = (window + target - t1) / window
+        */
+        if let t1 = _getAssetInfoAtOne() {
+            let numer = window + _calculateDelta(target, t1)
+            let position = numer.f / window.f
+            println("position of (\(index)/%.2f): \(position)", time.f)
+            return position
+        }
+        return nil
     }
 }
