@@ -107,6 +107,16 @@ extension CMTime {
         return isNearlyEqualTo(time, CMTime(seconds:tolerance))
     }
 }
+
+extension CMTime {
+    var f: Float {
+        return Float(self.f64)
+    }
+    var f64: Float64 {
+        return CMTimeGetSeconds(self)
+    }
+}
+
 func == (time: CMTime, seconds: Float64) -> Bool {
     return time == CMTime(seconds: seconds)
 }
