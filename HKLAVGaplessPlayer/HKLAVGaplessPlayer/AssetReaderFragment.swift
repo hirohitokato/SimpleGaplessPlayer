@@ -124,7 +124,7 @@ internal class AssetReaderFragment: NSObject {
 
         // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
         let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
-        let referenceRate = kFrameInterval * rate
+        let referenceRate = Float(kFrameRate) / rate
         videoComposition.frameDuration =
             CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
         let displayDuration = videoComposition.frameDuration * (1.0/rate)
