@@ -156,7 +156,7 @@ extension HKLAVGaplessPlayer {
                     // ピクセルバッファの最新取得時刻を更新し、
                     // 得られた時間を表示可能時間として補充する
                     _lastTimestamp = displayLink.timestamp
-                    _remainingPresentationTime += CMTimeGetSeconds(duration)
+                    _remainingPresentationTime += duration.f64
 
                     // 表示処理はループの最後で1回だけ実行
                     if _remainingPresentationTime >= 0.0 {

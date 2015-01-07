@@ -132,7 +132,7 @@ internal class AssetReaderFragment: NSObject {
         // 60fps以下の場合、60fpsで出力出来るようスケールしたいが、scaleTimeRange()は
         // frameDuration以下のfpsのときには、読み出そうとしてもエラーになってしまう模様。
         // → DisplayLinkの複数回の呼び出しで同じ画像を返せるよう、ロジックを変更する
-        //        let stretchRate = max(CMTimeGetSeconds(videoTrack.minFrameDuration), (1.0/60)) * 60.0
+        //        let stretchRate = max(videoTrack.minFrameDuration.f, (1.0/60)) * 60.0
         //        println("stretchRate:\(timeRange) (\(timeRange.duration)-> \(timeRange.duration*stretchRate))")
         //        composition.scaleTimeRange(timeRange, toDuration:timeRange.duration*0.5)
 
