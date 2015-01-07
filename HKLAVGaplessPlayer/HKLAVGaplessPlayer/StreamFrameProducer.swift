@@ -147,7 +147,7 @@ public class StreamFrameProducer: NSObject {
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    private var _currentPresentationTimestamp: CMTime = kCMTimeZero
+    public var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
     private var _amountDuration = kCMTimeZero
@@ -255,7 +255,7 @@ public class StreamFrameProducer: NSObject {
 */
 extension StreamFrameProducer {
     /// 現在のリーダーが指すアセットの位置を返す
-    private var _currentAsset: (index: Int, asset: AVAsset)! {
+    public var _currentAsset: (index: Int, asset: AVAsset)! {
         if let reader = _readers.first {
             if let i = find(self._assets, reader.asset) {
                 return (i, reader.asset)
@@ -271,7 +271,7 @@ extension StreamFrameProducer {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    public func _getAssetInfoForPosition(position: Float)
+    private func _getAssetInfoForPosition(position: Float)
         -> (index:Int, timeStamp:CMTime)?
     {
         let lock = ScopedLock(self)
@@ -356,7 +356,7 @@ extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    private func _getPosition(index:Int, time:CMTime) -> Float? {
+    public func _getPosition(index:Int, time:CMTime) -> Float? {
         let target = (index:index, time:time)
 
         // 複数アセットを跨いでの差分
