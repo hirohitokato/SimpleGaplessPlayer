@@ -20,9 +20,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var rateLabel: UILabel!
     private var _timer: NSTimer!
 
-    @IBOutlet weak var posZeroLabel: UILabel!
-    @IBOutlet weak var posCurrentLabel: UILabel!
-    @IBOutlet weak var posOneLabel: UILabel!
+    @IBOutlet weak var positionSlider: UISlider!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,18 +34,21 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
+    private var positionContext = 0
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 
         _timer = NSTimer.scheduledTimerWithTimeInterval(
             0.2, target: self, selector: "updateUI:",
             userInfo: nil, repeats: true)
+        _player.addObserver(self, forKeyPath: "position", options: .New, context: &positionContext)
     }
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
 
         _timer.invalidate()
+        _player.removeObserver(self, forKeyPath: "position", context: &positionContext)
     }
 
     @IBAction func tapped(sender: AnyObject) {
@@ -72,21 +73,23 @@ class ViewController: UIViewController {
     }
 
     @objc func updateUI(timer: NSTimer) {
-        msgLabel.text = "cpu: \(cpu_usage_in_percent())%"
-        if let zero = _player._producer._getAssetInfoForPosition(0.0) {
-            posZeroLabel.text = NSString(format: "%d/%.2f", zero.index, CMTimeGetSeconds(zero.timeStamp))
+        if _player._producer._currentAsset != nil {
+            msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)/\(_player._producer._getPosition(_player._producer._currentAsset!.index, time: _player._producer._currentPresentationTimestamp)!)"
         } else {
-            posZeroLabel.text = "---"
+            msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:-"
         }
-        if let current = _player._producer._getAssetInfoForPosition(_player._producer._position) {
-            posCurrentLabel.text = NSString(format: "%d/%.2f", current.index, CMTimeGetSeconds(current.timeStamp))
-        } else {
-            posCurrentLabel.text = "---"
         }
-        if let one = _player._producer._getAssetInfoForPosition(1.0) {
-            posOneLabel.text = NSString(format: "%d/%.2f", one.index, CMTimeGetSeconds(one.timeStamp))
+
+    override func observeValueForKeyPath(keyPath: String,
+        ofObject object: AnyObject, change: [NSObject: AnyObject],
+        context: UnsafeMutablePointer<Void>)
+    {
+        if context == &positionContext {
+            if (object as? NSNumber != nil) {
+               positionSlider.value = _player.position
+            }
         } else {
-            posOneLabel.text = "---"
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
 

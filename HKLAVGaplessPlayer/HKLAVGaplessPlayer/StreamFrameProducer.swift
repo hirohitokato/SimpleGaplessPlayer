@@ -147,8 +147,6 @@ public class StreamFrameProducer: NSObject {
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    /// 再生位置。windowに対する先頭(古)〜末尾(新)を0.0-1.0の数値で表す
-    public var _position: Float = 1.0
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
