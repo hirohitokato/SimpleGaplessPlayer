@@ -368,7 +368,7 @@ extension StreamFrameProducer {
             sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
 
             if lhs.index < rhs.index {
-                // -(lhsの残り時間 + rhs)
+                // (lhsの残り時間 + rhs)の符号反転
                 sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
                 return kCMTimeZero - sumTime
             } else {
@@ -392,7 +392,6 @@ extension StreamFrameProducer {
         if let t1 = _getAssetInfoAtOne() {
             let numer = window + _calculateDelta(target, t1)
             let position = numer.f / window.f
-            println("position of (\(index)/%.2f): \(position)", time.f)
             return position
         }
         return nil
