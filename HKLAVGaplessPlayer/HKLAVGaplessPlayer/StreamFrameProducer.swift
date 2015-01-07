@@ -252,7 +252,7 @@ public class StreamFrameProducer: NSObject {
 */
 extension StreamFrameProducer {
     /// 現在のリーダーが指すアセットの位置を返す
-    private var _current: (index: Int, asset: AVAsset)! {
+    private var _currentAsset: (index: Int, asset: AVAsset)! {
         if let reader = _readers.first {
             if let i = find(self._assets, reader.asset) {
                 return (i, reader.asset)
@@ -274,7 +274,7 @@ extension StreamFrameProducer {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty { return nil }
-        if _current == nil { return nil }
+        if _currentAsset == nil { return nil }
 
         // 0) 指定したポジションを、1.0位置からの時間表現に変換する
         var offset = window * (1.0 - position)
@@ -302,7 +302,7 @@ extension StreamFrameProducer {
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
     private func _getAssetInfoAtOne() -> (index:Int, time:CMTime)? {
-        if let current = _current {
+        if let current = _currentAsset {
             // 現在の再生場所を起点にしてposition=1.0地点を探索するが、
             // 先頭のアセットだけを特別視するのを避けて
             // すべてkCMTimeZeroからの位置で計算するため、現在のPTSを
