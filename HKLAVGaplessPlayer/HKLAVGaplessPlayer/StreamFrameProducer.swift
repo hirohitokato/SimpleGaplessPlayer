@@ -312,6 +312,9 @@ extension StreamFrameProducer {
             let targets = Array(_assets[current.index ..< _assets.count])
             if let resultAtOne = _getIndexAndTime(targets, offset: offset, reverseOrder: false) {
                 return (resultAtOne.index + current.index, resultAtOne.time)
+            } else {
+                // 見つからなかった場合、全アセットの再後端を1.0として扱う
+                return (_assets.count-1, _assets.last!.duration)
             }
         }
         return nil
