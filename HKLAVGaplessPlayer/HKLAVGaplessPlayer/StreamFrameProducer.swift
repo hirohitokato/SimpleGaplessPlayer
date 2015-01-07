@@ -102,9 +102,8 @@ public class StreamFrameProducer: NSObject {
             return false
         }
         var currentAsset: AVAsset? = nil
-
         if let pos = pos {
-            if let playerInfo = _getAssetInfoForPosition(position) {
+            if let playerInfo = _getAssetInfoForPosition(pos) {
                 currentAsset = _assets[playerInfo.index]
                 position = pos
                 _currentPresentationTimestamp = playerInfo.timeStamp

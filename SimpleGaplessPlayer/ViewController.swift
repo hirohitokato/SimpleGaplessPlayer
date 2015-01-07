@@ -85,9 +85,7 @@ class ViewController: UIViewController {
         context: UnsafeMutablePointer<Void>)
     {
         if context == &positionContext {
-            if (object as? NSNumber != nil) {
                positionSlider.value = _player.position
-            }
         } else {
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
