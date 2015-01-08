@@ -262,16 +262,6 @@ public class StreamFrameProducer: NSObject {
 *  再生位置を決めるための処理
 */
 extension StreamFrameProducer {
-    /// 現在のリーダーが指すアセットの位置を返す
-    public func _getCurrentAsset() -> (index: Int, asset: AVAsset)! {
-        if let reader = _readers.first {
-            if let i = find(self._assets, reader.asset) {
-                return (i, reader.asset)
-            }
-        }
-        return nil
-    }
-
     /**
     指定した位置(0.0-1.0)に対するアセットのインデックス番号と、その時刻を計算して返す
 
@@ -284,8 +274,7 @@ extension StreamFrameProducer {
     {
         let lock = ScopedLock(self)
 
-        if _assets.isEmpty { return nil }
-        if _getCurrentAsset() == nil { return nil }
+        if _assets.isEmpty || _readers.isEmpty { return nil }
 
         // 1) 1.0の位置を算出する
         if let one = _getWindowEnd() {
@@ -311,16 +300,19 @@ extension StreamFrameProducer {
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
     private func _getWindowEnd() -> (index:Int, time:CMTime)? {
-        if let current = _getCurrentAsset() {
+
+        if _assets.isEmpty || _readers.isEmpty { return nil }
+
+        if let i_t1 = find(self._assets, _readers.first!.asset) {
             // 現在の再生場所を起点にしてposition=1.0地点を探索するが、
             // 先頭のアセットだけを特別視するのを避けて
             // すべてkCMTimeZeroからの位置で計算するため、現在のPTSを
             // 引いた上で1.0となる位置を調べる
             let offset = window * (1.0 - position) + _currentPresentationTimestamp
 
-            let targets = _assets[current.index ..< _assets.count]
+            let targets = _assets[i_t1 ..< _assets.count]
             if let resultAtOne = _getIndexAndTime(Array(targets), offset: offset, reverseOrder: false) {
-                return (resultAtOne.index + current.index, resultAtOne.time)
+                return (resultAtOne.index + i_t1, resultAtOne.time)
             } else {
                 // 見つからなかった場合、全アセットの再後端を1.0として扱う
                 return (_assets.count-1, _assets.last!.duration)

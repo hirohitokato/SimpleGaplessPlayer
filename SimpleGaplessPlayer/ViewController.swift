@@ -73,11 +73,7 @@ class ViewController: UIViewController {
     }
 
     @objc func updateUI(timer: NSTimer) {
-        if _player._producer._getCurrentAsset() != nil {
-            msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)/\(_player._producer._getPosition(_player._producer._getCurrentAsset()!.index, time: _player._producer._currentPresentationTimestamp)!)"
-        } else {
-            msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:-"
-        }
+        msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)"
         }
 
     override func observeValueForKeyPath(keyPath: String,
