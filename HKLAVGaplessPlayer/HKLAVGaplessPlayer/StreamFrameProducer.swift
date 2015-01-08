@@ -151,7 +151,7 @@ public class StreamFrameProducer: NSObject {
     private var _assets = [AVAsset]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    public var _currentPresentationTimestamp: CMTime = kCMTimeZero
+    private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
     /// アセット全体の総再生時間（内部管理用）
     private var _amountDuration = kCMTimeZero
@@ -177,7 +177,7 @@ public class StreamFrameProducer: NSObject {
                     // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
                     // 表示用としてサンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                    let pos = _getPosition(find(_assets, target.asset)!, time: pts)
+                    let pos = getPositionOf(find(_assets, target.asset)!, time: pts)
                     if pos <= 1.0 + 0.02/*tolerance*/ {
                         return ( sbuf, pts, target.frameInterval )
                     }
@@ -356,7 +356,7 @@ extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    public func _getPosition(index:Int, time:CMTime) -> Float? {
+    func getPositionOf(index:Int, time:CMTime) -> Float? {
         let target = (index:index, time:time)
 
         /*
