@@ -108,7 +108,7 @@ public class StreamFrameProducer: NSObject {
         }
         var currentAsset: AVAsset? = nil
         if let pos = pos {
-            if let playerInfo = _getAssetInfoForPosition(pos) {
+            if let playerInfo = _getAssetInfoOf(pos) {
                 currentAsset = _assets[playerInfo.index]
                 position = pos
                 _currentPresentationTimestamp = playerInfo.time
@@ -269,9 +269,7 @@ extension StreamFrameProducer {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    private func _getAssetInfoForPosition(position: Float)
-        -> (index:Int, time:CMTime)?
-    {
+    private func _getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
@@ -295,7 +293,7 @@ extension StreamFrameProducer {
     }
 
     /**
-    Window末尾(=positionが1.0)のときのアセットと、その位置(PTS)を返す
+    Window末尾(=positionが1.0)のときのアセットと、その位置(PTS)を計算して返す
 
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
