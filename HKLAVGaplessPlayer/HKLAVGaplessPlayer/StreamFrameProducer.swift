@@ -33,6 +33,10 @@ public class StreamFrameProducer: NSObject {
         return _playbackRate
     }
 
+    /// AVAssetReaderで事前にstartReading()しておくムービーの数。
+    /// 注意：多くても5個程度にしておくこと。さもないとアプリが落ちるため
+    var maxNumOfReaders: Int = kMaximumNumOfReaders
+
     /**
     アセットを内部キューの末尾に保存する。余裕がある場合はアセットリーダーも
     同時に生成する
@@ -49,7 +53,7 @@ public class StreamFrameProducer: NSObject {
             self._amountDuration += asset.duration
 
             // 読み込んだリーダーの数に応じて、追加でリーダーを作成する
-            if self._readers.count < kMaximumNumOfReaders {
+            if self._readers.count < self.maxNumOfReaders {
                 if let assetreader = AssetReaderFragment(asset:asset) {
                     self._readers.append(assetreader)
                 } else {
@@ -206,7 +210,7 @@ public class StreamFrameProducer: NSObject {
         let lock = ScopedLock(self)
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
-        if (_readers.count >= kMaximumNumOfReaders) { return }
+        if (_readers.count >= maxNumOfReaders) { return }
 
         // アセットをどこから読み込むかを決定する
         let startIndex = (initial == nil) ? 0 : find(_assets, initial!) ?? 0
@@ -235,7 +239,7 @@ public class StreamFrameProducer: NSObject {
                 for target_asset in _assets[actualIndex+1..<_assets.count] {
 
                     // 読み込み済みリーダーの数が上限になれば処理終了
-                    if (_readers.count >= kMaximumNumOfReaders) {
+                    if (_readers.count >= maxNumOfReaders) {
                         break outer
                     }
 
