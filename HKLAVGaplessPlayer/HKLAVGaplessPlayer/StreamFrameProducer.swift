@@ -281,20 +281,18 @@ extension StreamFrameProducer {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty { return nil }
-        if _currentAsset == nil { return nil }
-
-        // 0) 指定したポジションを、1.0位置からの時間表現に変換する
-        var offset = window * (1.0 - position)
+        if _getCurrentAsset() == nil { return nil }
 
         // 1) 1.0の位置を算出する
-        if let one = _getAssetInfoAtOne() {
+        if let one = _getWindowEnd() {
 
-            // 2) 算出した1.0位置からoffsetTimeを引いた場所を調べて返す
-            let targets = reverse(_assets[0 ... one.index])
+            // 2) 算出した1.0位置からのoffsetTimeを引いた場所を調べて返す
 
-            if let result = _getIndexAndTime(targets,
-                offset: offset + (_assets[one.index].duration - one.time), reverseOrder: true)
-            {
+            // 指定したポジションを、1.0位置からのオフセット時間に変換する
+            let offset = window * (1.0 - position) + (_assets[one.index].duration - one.time)
+
+            if let result = _getIndexAndTime(Array(_assets[0 ... one.index]),
+                offset: offset, reverseOrder: true) {
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
                 let time = CMTimeConvertScale(result.time, 600, .RoundHalfAwayFromZero)
                 return (one.index - result.index, time)
@@ -316,8 +314,8 @@ extension StreamFrameProducer {
             // 引いた上で1.0となる位置を調べる
             let offset = window * (1.0 - position) + _currentPresentationTimestamp
 
-            let targets = Array(_assets[current.index ..< _assets.count])
-            if let resultAtOne = _getIndexAndTime(targets, offset: offset, reverseOrder: false) {
+            let targets = _assets[current.index ..< _assets.count]
+            if let resultAtOne = _getIndexAndTime(Array(targets), offset: offset, reverseOrder: false) {
                 return (resultAtOne.index + current.index, resultAtOne.time)
             } else {
                 // 見つからなかった場合、全アセットの再後端を1.0として扱う
@@ -341,6 +339,8 @@ extension StreamFrameProducer {
         -> (index: Int, time: CMTime)?
     {
         var offset = offset
+
+        let targets = reverseOrder ? reverse(targets) : targets
         for (i, asset) in enumerate(targets) {
 
             if offset <= asset.duration {
