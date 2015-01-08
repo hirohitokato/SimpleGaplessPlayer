@@ -66,7 +66,7 @@ public class StreamFrameProducer: NSObject {
         if !_readers.isEmpty {
             _readers.removeAtIndex(0)
             if !_readers.isEmpty {
-                _prepareNextAssetReader()
+                _prepareNextAssetReaders()
             }
         }
     }
@@ -107,7 +107,7 @@ public class StreamFrameProducer: NSObject {
             if let playerInfo = _getAssetInfoForPosition(pos) {
                 currentAsset = _assets[playerInfo.index]
                 position = pos
-                _currentPresentationTimestamp = playerInfo.timeStamp
+                _currentPresentationTimestamp = playerInfo.time
             }
         } else {
             currentAsset = _readers.first?.asset
@@ -121,7 +121,7 @@ public class StreamFrameProducer: NSObject {
         }
         _playbackRate = rate
 
-        _prepareNextAssetReader(initial: currentAsset, atTime:_currentPresentationTimestamp)
+        _prepareNextAssetReaders(initial: currentAsset, atTime:_currentPresentationTimestamp)
         return true
     }
 
@@ -185,7 +185,7 @@ public class StreamFrameProducer: NSObject {
                     _currentPresentationTimestamp = kCMTimeZero
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
                         [unowned self] in
-                        self._prepareNextAssetReader()
+                        self._prepareNextAssetReaders()
                     }
                 }
             case .Completed:
@@ -202,7 +202,7 @@ public class StreamFrameProducer: NSObject {
         return nil
     }
 
-    private func _prepareNextAssetReader(initial: AVAsset? = nil, atTime time: CMTime = kCMTimeZero) {
+    private func _prepareNextAssetReaders(initial: AVAsset? = nil, atTime time: CMTime = kCMTimeZero) {
         let lock = ScopedLock(self)
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
@@ -259,7 +259,7 @@ public class StreamFrameProducer: NSObject {
 */
 extension StreamFrameProducer {
     /// 現在のリーダーが指すアセットの位置を返す
-    public var _currentAsset: (index: Int, asset: AVAsset)! {
+    public func _getCurrentAsset() -> (index: Int, asset: AVAsset)! {
         if let reader = _readers.first {
             if let i = find(self._assets, reader.asset) {
                 return (i, reader.asset)
@@ -276,7 +276,7 @@ extension StreamFrameProducer {
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
     private func _getAssetInfoForPosition(position: Float)
-        -> (index:Int, timeStamp:CMTime)?
+        -> (index:Int, time:CMTime)?
     {
         let lock = ScopedLock(self)
 
@@ -304,12 +304,12 @@ extension StreamFrameProducer {
     }
 
     /**
-    positionが1.0のときのアセットと、その位置(PTS)を返す
+    Window末尾(=positionが1.0)のときのアセットと、その位置(PTS)を返す
 
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
-    private func _getAssetInfoAtOne() -> (index:Int, time:CMTime)? {
-        if let current = _currentAsset {
+    private func _getWindowEnd() -> (index:Int, time:CMTime)? {
+        if let current = _getCurrentAsset() {
             // 現在の再生場所を起点にしてposition=1.0地点を探索するが、
             // 先頭のアセットだけを特別視するのを避けて
             // すべてkCMTimeZeroからの位置で計算するため、現在のPTSを
@@ -363,11 +363,37 @@ extension StreamFrameProducer {
     public func _getPosition(index:Int, time:CMTime) -> Float? {
         let target = (index:index, time:time)
 
-        // 複数アセットを跨いでの差分
-        func _calculateDelta(lhs: (index:Int, time:CMTime), rhs: (index:Int, time:CMTime)) -> CMTime {
+        /*
+        「offset = window * position」であることを利用して位置を求める
+
+        offset = window * position
+        → position = offset/window
+        (※ offset = t(target) - t0 なので)
+        → position = (t(target) - t0)/window
+        (※ t0 = t1 - window なので)
+        → position = (t(target) - t1 + window)/window
+        ∴ position = (window + target - t1) / window
+        */
+        if let t1 = _getWindowEnd() {
+            let numer = window + _getDurationBetweenAssets(from:target, to:t1)
+            let position = numer.f / window.f
+            return position
+        }
+        return nil
+    }
+
+    /**
+    複数アセットを跨いだ、アセット間の時間を求める。from>toの場合は負値が返る。
+
+    :param: from lhs 起点
+    :param: to rhs 終点
+
+    :returns: 指定期間内のduration.
+    */
+    func _getDurationBetweenAssets(from lhs: (index:Int, time:CMTime), to rhs: (index:Int, time:CMTime)) -> CMTime {
             var sumTime: CMTime = kCMTimeZero
 
-            // lhsとrhsのどちらが大きい(=1.0に近い)アセットかを調べる
+        // lhsとrhsが同じアセットの場合は、単純に時間の差を返す
             if lhs.index == rhs.index {
                 return lhs.time - rhs.time
             }
@@ -388,22 +414,4 @@ extension StreamFrameProducer {
             }
         }
 
-        /*
-        「offset = window * position」であることを利用して位置を求める
-
-        offset = window * position
-        → position = offset/window
-        (※ offset = t(target) - t0 なので)
-        → position = (t(target) - t0)/window
-        (※ t0 = t1 - window なので)
-        → position = (t(target) - t1 + window)/window
-        ∴ position = (window + target - t1) / window
-        */
-        if let t1 = _getAssetInfoAtOne() {
-            let numer = window + _calculateDelta(target, t1)
-            let position = numer.f / window.f
-            return position
-        }
-        return nil
-    }
 }
