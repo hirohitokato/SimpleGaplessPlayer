@@ -64,17 +64,17 @@ class ViewController: UIViewController {
     }
 
     @IBAction func sliderUpdated(sender: UISlider) {
-        _player.play(rate: _player.rate, position: sender.value)
+        _player.play(_player.rate, position: sender.value)
     }
 
     @IBAction func rateChanged(sender: UISlider) {
         rateLabel.text = "rate: \(sender.value)"
-        _player.play(rate: sender.value)
+        _player.play(sender.value)
     }
 
     @objc func updateUI(timer: NSTimer) {
-        if _player._producer._currentAsset != nil {
-            msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)/\(_player._producer._getPosition(_player._producer._currentAsset!.index, time: _player._producer._currentPresentationTimestamp)!)"
+        if _player._producer._getCurrentAsset() != nil {
+            msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)/\(_player._producer._getPosition(_player._producer._getCurrentAsset()!.index, time: _player._producer._currentPresentationTimestamp)!)"
         } else {
             msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:-"
         }
