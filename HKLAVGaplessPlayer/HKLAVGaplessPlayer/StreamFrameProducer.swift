@@ -108,7 +108,7 @@ public class StreamFrameProducer: NSObject {
         }
         var currentAsset: AVAsset? = nil
         if let pos = pos {
-            if let playerInfo = _getAssetInfoOf(pos) {
+            if let playerInfo = getAssetInfoOf(pos) {
                 currentAsset = _assets[playerInfo.index]
                 position = pos
                 _currentPresentationTimestamp = playerInfo.time
@@ -269,7 +269,7 @@ extension StreamFrameProducer {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    private func _getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
+    func getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
@@ -292,6 +292,36 @@ extension StreamFrameProducer {
         return nil
     }
 
+    /**
+    現在の位置を元に、指定したインデックス、プレゼンテーション時間が表すポジションを返す
+
+    :param: index アセットのインデックス。_assets内のインデックス番号のこと。
+    :param: time  アセット上の時間
+
+    :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
+    */
+    func getPositionOf(index:Int, time:CMTime) -> Float? {
+        let target = (index:index, time:time)
+
+        /*
+        「offset = window * position」であることを利用して位置を求める
+
+        offset = window * position
+        → position = offset/window
+        (※ offset = t(target) - t0 なので)
+        → position = (t(target) - t0)/window
+        (※ t0 = t1 - window なので)
+        → position = (t(target) - t1 + window)/window
+        ∴ position = (window + target - t1) / window
+        */
+        if let t1 = _getWindowEnd() {
+            let numer = window + _getDurationBetweenAssets(from:target, to:t1)
+            let position = numer.f / window.f
+            return position
+        }
+        return nil
+    }
+    
     /**
     Window末尾(=positionが1.0)のときのアセットと、その位置(PTS)を計算して返す
 
@@ -342,36 +372,6 @@ extension StreamFrameProducer {
                 return (i, time)
             }
             offset -= asset.duration
-        }
-        return nil
-    }
-
-    /**
-    現在の位置を元に、指定したインデックス、プレゼンテーション時間が表すポジションを返す
-
-    :param: index アセットのインデックス。_assets内のインデックス番号のこと。
-    :param: time  アセット上の時間
-
-    :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
-    */
-    func getPositionOf(index:Int, time:CMTime) -> Float? {
-        let target = (index:index, time:time)
-
-        /*
-        「offset = window * position」であることを利用して位置を求める
-
-        offset = window * position
-        → position = offset/window
-        (※ offset = t(target) - t0 なので)
-        → position = (t(target) - t0)/window
-        (※ t0 = t1 - window なので)
-        → position = (t(target) - t1 + window)/window
-        ∴ position = (window + target - t1) / window
-        */
-        if let t1 = _getWindowEnd() {
-            let numer = window + _getDurationBetweenAssets(from:target, to:t1)
-            let position = numer.f / window.f
-            return position
         }
         return nil
     }
