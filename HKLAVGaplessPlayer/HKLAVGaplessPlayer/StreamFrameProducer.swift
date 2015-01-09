@@ -116,7 +116,7 @@ public class StreamFrameProducer: NSObject {
         }
         var currentAsset: AVAsset? = nil
         if let pos = pos {
-            if let playerInfo = getAssetInfoOf(pos) {
+            if let playerInfo = _getAssetPositionOf(pos) {
                 currentAsset = _assets[playerInfo.index]
                 position = pos
                 _currentPresentationTimestamp = playerInfo.time
@@ -185,7 +185,7 @@ public class StreamFrameProducer: NSObject {
                     // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
                     // 表示用としてサンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                    let pos = getPositionOf(find(_assets, target.asset)!, time: pts)
+                    let pos = _getRelativePositionOf(find(_assets, target.asset)!, time: pts)
                     if pos <= 1.0 + 0.02/*tolerance*/ {
                         return ( sbuf, pts, target.frameInterval )
                     }
@@ -278,7 +278,7 @@ extension StreamFrameProducer {
 
     :returns: 指定した再生位置に相当するアセット位置
     */
-    private func getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
+    private func _getAssetPositionOf(position: Float) -> AssetPosition? {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
@@ -294,7 +294,7 @@ extension StreamFrameProducer {
 
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
                 let time = CMTimeConvertScale(result.time, 600, .RoundHalfAwayFromZero)
-                return (result.index, time)
+                return AssetPosition(index: result.index, time: time)
             }
         }
         return nil
@@ -308,7 +308,7 @@ extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    private func getPositionOf(index:Int, time:CMTime) -> Float? {
+    private func _getRelativePositionOf(index:Int, time:CMTime) -> Float? {
         let target = AssetPosition(index:index, time:time)
 
         /*
