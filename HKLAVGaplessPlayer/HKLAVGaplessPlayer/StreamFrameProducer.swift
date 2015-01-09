@@ -269,7 +269,7 @@ public class StreamFrameProducer: NSObject {
 /**
 *  再生位置を決めるための処理
 */
-extension StreamFrameProducer {
+private extension StreamFrameProducer {
     // MARK: Internals
     /**
     指定した再生位置(0.0-1.0)に対するアセット位置を計算して返す
@@ -278,7 +278,7 @@ extension StreamFrameProducer {
 
     :returns: 指定した再生位置に相当するアセット位置
     */
-    private func _getAssetPositionOf(position: Float) -> AssetPosition? {
+    func _getAssetPositionOf(position: Float) -> AssetPosition? {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
@@ -308,7 +308,7 @@ extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    private func _getRelativePositionOf(index:Int, time:CMTime) -> Float? {
+    func _getRelativePositionOf(index:Int, time:CMTime) -> Float? {
         let target = AssetPosition(index:index, time:time)
 
         /*
@@ -336,7 +336,7 @@ extension StreamFrameProducer {
 
     :returns: _assets内の、position=1.0となるアセット位置
     */
-    private func _getWindowEnd() -> AssetPosition? {
+    func _getWindowEnd() -> AssetPosition? {
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
@@ -366,7 +366,7 @@ extension StreamFrameProducer {
 
     :returns: アセット位置(インデックス, 時刻)
     */
-    private func _findAsset(assets:[AVAsset], from:AssetPosition, offset:CMTime)
+    func _findAsset(assets:[AVAsset], from:AssetPosition, offset:CMTime)
         -> AssetPosition?
     {
         if from.index < 0 || from.index >= assets.count { return nil }
@@ -400,7 +400,7 @@ extension StreamFrameProducer {
 
     :returns: 指定期間内のduration.
     */
-    private func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
+    func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
             var sumTime: CMTime = kCMTimeZero
 
         // lhsとrhsが同じアセットの場合は、単純に時間の差を返す
