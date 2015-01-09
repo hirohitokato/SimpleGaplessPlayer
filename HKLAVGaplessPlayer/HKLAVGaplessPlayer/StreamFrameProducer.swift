@@ -385,33 +385,6 @@ extension StreamFrameProducer {
     }
 
     /**
-    アセット列から指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
-    無い場合はnilを返す
-
-    :param: targets      探索対象のアセット列
-    :param: offset       アセット先頭(reverseOrderがtrueの場合は末尾)からのオフセット
-    :param: reverseOrder 逆方向で探索するかどうか。
-
-    :returns: 対象のアセット
-    */
-    private func _getIndexAndTime(targets:[AVAsset], offset:CMTime, reverseOrder: Bool)
-        -> (index: Int, time: CMTime)?
-    {
-        var offset = offset
-
-        let targets = reverseOrder ? reverse(targets) : targets
-        for (i, asset) in enumerate(targets) {
-
-            if offset <= asset.duration {
-                let time = reverseOrder ? asset.duration - offset : offset
-                return (i, time)
-            }
-            offset -= asset.duration
-        }
-        return nil
-    }
-
-    /**
     複数アセットを跨いだ、アセット間の時間を求める。from>toの場合は負値が返る。
 
     :param: from lhs 起点
