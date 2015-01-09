@@ -16,6 +16,7 @@ import AVFoundation
 internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
     let reader: AVAssetReader!
+    let output: AVAssetReaderOutput!
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
@@ -37,9 +38,10 @@ internal class AssetReaderFragment: NSObject {
             が出てしまうため、分解して代入するようにした
             */
             (reader, frameInterval) = (result.0, result.1)
+            output = reader.outputs.first as? AVAssetReaderOutput
         }
 
-        if reader == nil || frameInterval == kCMTimeIndefinite {
+        if reader == nil || output == nil || frameInterval == kCMTimeIndefinite {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
@@ -56,14 +58,6 @@ internal class AssetReaderFragment: NSObject {
     */
     var status: AVAssetReaderStatus {
         return reader.status
-    }
-
-    /**
-    内包しているAVAssetReaderの、アウトプット群の先頭にあるオブジェクト
-    (AVAssetReaderOutput)を返す。
-    */
-    var output: AVAssetReaderOutput! {
-        return reader.outputs.first as? AVAssetReaderOutput
     }
 
     // MARK: Private variables & methods
