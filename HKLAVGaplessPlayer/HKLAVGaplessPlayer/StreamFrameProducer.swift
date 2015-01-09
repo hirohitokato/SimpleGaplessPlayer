@@ -12,6 +12,14 @@ import AVFoundation
 let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
+*  アセット配列の中における位置を特定するためのデータ構造
+*/
+struct AssetPosition {
+    var index: Int
+    var time: CMTime
+}
+
+/**
 :class: StreamFrameProducer
 :abstract:
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
@@ -301,7 +309,7 @@ extension StreamFrameProducer {
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
     func getPositionOf(index:Int, time:CMTime) -> Float? {
-        let target = (index:index, time:time)
+        let target = AssetPosition(index:index, time:time)
 
         /*
         「offset = window * position」であることを利用して位置を求める
@@ -328,21 +336,21 @@ extension StreamFrameProducer {
 
     :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
     */
-    private func _getWindowEnd() -> (index:Int, time:CMTime)? {
+    private func _getWindowEnd() -> AssetPosition? {
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
         // 現在の再生場所を起点にしてposition=1.0地点を探索する
         if let i_t1 = find(self._assets, _readers.first!.asset) {
 
-            let t1 = (i_t1, _currentPresentationTimestamp)
+            let t1 = AssetPosition(index: i_t1, time: _currentPresentationTimestamp)
             let offset = window * (1.0 - position)
 
             if let windowEnd = _findAsset(_assets, from: t1, offset: offset) {
                 return windowEnd
             } else {
                 // 見つからなかった場合、全アセットの最後端を1.0として扱う
-                return (_assets.count-1, _assets.last!.duration)
+                return AssetPosition(index:_assets.count-1, time:_assets.last!.duration)
             }
         }
         return nil
@@ -358,8 +366,8 @@ extension StreamFrameProducer {
 
     :returns: 対象となるアセットの位置(インデックス, 時刻)
     */
-    private func _findAsset(assets:[AVAsset], from:(index:Int, time:CMTime), offset:CMTime)
-        -> (index: Int, time: CMTime)?
+    private func _findAsset(assets:[AVAsset], from:AssetPosition, offset:CMTime)
+        -> AssetPosition?
     {
         if from.index < 0 || from.index >= assets.count { return nil }
         if offset.isZero { return from }
@@ -376,8 +384,8 @@ extension StreamFrameProducer {
 
             if offset <= asset.duration {
                 return offset.isSignMinus ?
-                    (from.index - i, asset.duration - offset) :
-                    (from.index + i, offset)
+                    AssetPosition(index: from.index - i, time: asset.duration - offset) :
+                    AssetPosition(index: from.index + i, time: offset)
             }
             offset -= asset.duration
         }
@@ -392,7 +400,7 @@ extension StreamFrameProducer {
 
     :returns: 指定期間内のduration.
     */
-    func _getDurationBetweenAssets(from lhs: (index:Int, time:CMTime), to rhs: (index:Int, time:CMTime)) -> CMTime {
+    func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
             var sumTime: CMTime = kCMTimeZero
 
         // lhsとrhsが同じアセットの場合は、単純に時間の差を返す
