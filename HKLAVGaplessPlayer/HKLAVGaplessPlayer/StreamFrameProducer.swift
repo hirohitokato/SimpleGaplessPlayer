@@ -12,7 +12,7 @@ import AVFoundation
 let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
-*  アセット配列の中における位置を特定するためのデータ構造
+*  アセット配列の中における位置（アセット位置）を表現するデータ構造
 */
 private struct AssetPosition {
     var index: Int
@@ -33,10 +33,10 @@ public class StreamFrameProducer: NSObject {
         return _amountDuration
     }
 
-    /// アセット全体のうち再生対象となる時間。時間窓に相当
+    /// アセット全体のうち再生対象となる時間。いわゆる時間窓に相当
     var window = CMTime(value: 30, 1)
 
-    /// 再生レート。1.0が通常再生、2.0だと倍速再生
+    /// 再生のスピード。1.0が通常再生、2.0だと倍速再生。負数は非対応
     var playbackRate: Float {
         return _playbackRate
     }
@@ -105,7 +105,7 @@ public class StreamFrameProducer: NSObject {
     アセットリーダーから読み込みを開始する
 
     :param: rate 再生レート
-    :param: position 再生位置。Float.NaNの場合は現在位置を継続
+    :param: position 再生開始する位置(0.0-1.0)。Float.NaNの場合は現在位置を継続
 
     :returns: 読み込み開始に成功したかどうか
     */
@@ -151,7 +151,7 @@ public class StreamFrameProducer: NSObject {
 
     // MARK: Internals
 
-    /// 再生位置。windowに対する先頭(古)〜末尾(新)を0.0-1.0の数値で表す
+    /// 再生位置。window内における先頭(古)〜末尾(新)を、0.0-1.0の数値で表す
     dynamic var position: Float = 1.0
 
     // MARK: Privates
@@ -272,24 +272,24 @@ public class StreamFrameProducer: NSObject {
 extension StreamFrameProducer {
     // MARK: Internals
     /**
-    指定した位置(0.0-1.0)に対するアセットのインデックス番号と、その時刻を計算して返す
+    指定した再生位置(0.0-1.0)に対するアセット位置を計算して返す
 
-    :param: position 一連のムービーにおける位置
+    :param: position 再生位置(0.0-1.0)
 
-    :returns: アセット列におけるインデックスとシーク位置のタプル
+    :returns: 指定した再生位置に相当するアセット位置
     */
     private func getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
-        // 1) 1.0の位置を算出する
+        // 1) 1.0のアセット位置を算出する
         if let one = _getWindowEnd() {
 
-            // 指定したポジションを1.0位置からのオフセット時間に変換する
+            // 再生位置を1.0位置からのオフセット時間に変換する
             let offset = ( window * (1.0 - position) ) * -1.0
 
-            // 2) 算出した1.0位置からのオフセットを引いた場所を調べて返す
+            // 2) 算出した1.0位置からのオフセットを引いたアセット位置を探す
             if let result = _findAsset(_assets, from: one, offset: offset) {
 
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
@@ -301,7 +301,7 @@ extension StreamFrameProducer {
     }
 
     /**
-    現在の位置を元に、指定したインデックス、プレゼンテーション時間が表すポジションを返す
+    現在の再生位置を元に、指定したアセット位置が示す再生位置を返す
 
     :param: index アセットのインデックス。_assets内のインデックス番号のこと。
     :param: time  アセット上の時間
@@ -332,9 +332,9 @@ extension StreamFrameProducer {
     
     // MARK: Privates
     /**
-    Window末尾(=positionが1.0)のときのアセットと、その位置(PTS)を計算して返す
+    Window末尾(=再生位置が1.0)のときのアセットと、そのアセット位置を計算して返す
 
-    :returns: _assets内の、position=0となるアセットのindexとPresentation Timestamp
+    :returns: _assets内の、position=1.0となるアセット位置
     */
     private func _getWindowEnd() -> AssetPosition? {
 
@@ -357,14 +357,14 @@ extension StreamFrameProducer {
     }
 
     /**
-    アセット列の指定インデックスから指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
-    無い場合はnilを返す
+    アセット位置から指定時間ぶんオフセットした位置がどこにあるかを調べる。
+    該当するアセットが無い場合はnilを返す
 
     :param: assets 探索対象のアセット列
-    :param: index  探索開始となるアセットの位置(インデックス, 時刻)
-    :param: offset 探索開始となるアセット先頭からのオフセット時間
+    :param: index  探索基点となるアセット位置(インデックス, 時刻)
+    :param: offset オフセット時間
 
-    :returns: 対象となるアセットの位置(インデックス, 時刻)
+    :returns: アセット位置(インデックス, 時刻)
     */
     private func _findAsset(assets:[AVAsset], from:AssetPosition, offset:CMTime)
         -> AssetPosition?
@@ -395,8 +395,8 @@ extension StreamFrameProducer {
     /**
     複数アセットを跨いだ、アセット間の時間を求める。from>toの場合は負値が返る。
 
-    :param: from lhs 起点
-    :param: to rhs 終点
+    :param: from lhs 起点となるアセット位置
+    :param: to rhs 終点となるアセット位置
 
     :returns: 指定期間内のduration.
     */
