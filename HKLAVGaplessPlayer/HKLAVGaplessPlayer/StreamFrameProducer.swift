@@ -350,6 +350,42 @@ extension StreamFrameProducer {
     }
 
     /**
+    アセット列の指定インデックスから指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
+    無い場合はnilを返す
+
+    :param: assets 探索対象のアセット列
+    :param: index  探索開始となるアセットの位置(インデックス, 時刻)
+    :param: offset 探索開始となるアセット先頭からのオフセット時間
+
+    :returns: 対象となるアセットの位置(インデックス, 時刻)
+    */
+    private func _findAsset(assets:[AVAsset], from:(index:Int, time:CMTime), offset:CMTime)
+        -> (index: Int, time: CMTime)?
+    {
+        if from.index < 0 || from.index >= assets.count { return nil }
+        if offset.isZero { return from }
+
+        // アセット列のうち、どの範囲を探すか
+        let targets = offset.isSignMinus ?
+            reverse(assets[0...from.index]) : Array(assets[from.index..<assets.count])
+
+        // 繰り返し処理を簡略化するためにゲタを履かせる
+        var offset = offset + (offset.isSignMinus ?
+            (assets[from.index].duration - from.time) : from.time)
+
+        for (i, asset) in enumerate(targets) {
+
+            if offset <= asset.duration {
+                return offset.isSignMinus ?
+                    (from.index - i, asset.duration - offset) :
+                    (from.index + i, offset)
+            }
+            offset -= asset.duration
+        }
+        return nil
+    }
+
+    /**
     アセット列から指定時間ぶんのオフセットがどこにあるかを調べる。該当するアセットが
     無い場合はnilを返す
 
