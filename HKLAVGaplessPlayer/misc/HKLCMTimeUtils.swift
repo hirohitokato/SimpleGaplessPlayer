@@ -22,6 +22,22 @@ public extension CMTime {
     }
 }
 
+// MARK: - FloatingPointType Protocol (subset)
+public extension CMTime /* : FloatingPointType */ {
+    /// true iff self is negative
+    var isSignMinus: Bool {
+        if self == kCMTimePositiveInfinity { return false }
+        if self == kCMTimeNegativeInfinity { return false }
+        if (self.flags & .Valid).rawValue > 0 { return false }
+        return (self.value < 0) ^ (self.timescale < 0)
+    }
+
+    /// true iff self is zero, subnormal, or normal (not infinity or NaN).
+    var isZero: Bool {
+        return self == kCMTimeZero
+    }
+}
+
 // MARK: - Arithmetic Protocol
 
 // MARK: Add
