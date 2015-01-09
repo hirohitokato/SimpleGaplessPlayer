@@ -262,6 +262,7 @@ public class StreamFrameProducer: NSObject {
 *  再生位置を決めるための処理
 */
 extension StreamFrameProducer {
+    // MARK: Internals
     /**
     指定した位置(0.0-1.0)に対するアセットのインデックス番号と、その時刻を計算して返す
 
@@ -321,6 +322,7 @@ extension StreamFrameProducer {
         return nil
     }
     
+    // MARK: Privates
     /**
     Window末尾(=positionが1.0)のときのアセットと、その位置(PTS)を計算して返す
 
@@ -339,7 +341,7 @@ extension StreamFrameProducer {
             if let windowEnd = _findAsset(_assets, from: t1, offset: offset) {
                 return windowEnd
             } else {
-                // 見つからなかった場合、全アセットの再後端を1.0として扱う
+                // 見つからなかった場合、全アセットの最後端を1.0として扱う
                 return (_assets.count-1, _assets.last!.duration)
             }
         }
