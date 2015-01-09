@@ -14,7 +14,7 @@ let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()してお
 /**
 *  アセット配列の中における位置を特定するためのデータ構造
 */
-struct AssetPosition {
+private struct AssetPosition {
     var index: Int
     var time: CMTime
 }
@@ -278,7 +278,7 @@ extension StreamFrameProducer {
 
     :returns: アセット列におけるインデックスとシーク位置のタプル
     */
-    func getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
+    private func getAssetInfoOf(position: Float) -> (index:Int, time:CMTime)? {
         let lock = ScopedLock(self)
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
@@ -308,7 +308,7 @@ extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    func getPositionOf(index:Int, time:CMTime) -> Float? {
+    private func getPositionOf(index:Int, time:CMTime) -> Float? {
         let target = AssetPosition(index:index, time:time)
 
         /*
@@ -400,7 +400,7 @@ extension StreamFrameProducer {
 
     :returns: 指定期間内のduration.
     */
-    func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
+    private func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
             var sumTime: CMTime = kCMTimeZero
 
         // lhsとrhsが同じアセットの場合は、単純に時間の差を返す
