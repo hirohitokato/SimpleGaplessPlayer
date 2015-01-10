@@ -411,27 +411,27 @@ private extension StreamFrameProducer {
     :returns: 指定期間内のduration.
     */
     func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
-            var sumTime: CMTime = kCMTimeZero
+        var sumTime: CMTime = kCMTimeZero
 
         // lhsとrhsが同じアセットの場合は、単純に時間の差を返す
-            if lhs.index == rhs.index {
-                return lhs.time - rhs.time
-            }
-
-            // 中間のアセットのduration合計を求める
-            let intermediates = (lhs.index < rhs.index) ?
-                _assets[lhs.index+1 ..< rhs.index] : _assets[rhs.index+1 ..< lhs.index]
-            sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
-
-            if lhs.index < rhs.index {
-                // (lhsの残り時間 + rhs)の符号反転
-                sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
-                return kCMTimeZero - sumTime
-            } else {
-                // lhs + rhsの残り時間
-                sumTime += lhs.time + (_assets[rhs.index].duration - rhs.time)
-                return sumTime
-            }
+        if lhs.index == rhs.index {
+            return lhs.time - rhs.time
         }
+
+        // 中間のアセットのduration合計を求める
+        let intermediates = (lhs.index < rhs.index) ?
+            _assets[lhs.index+1 ..< rhs.index] : _assets[rhs.index+1 ..< lhs.index]
+        sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
+
+        if lhs.index < rhs.index {
+            // (lhsの残り時間 + rhs)の符号反転
+            sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
+            return kCMTimeZero - sumTime
+        } else {
+            // lhs + rhsの残り時間
+            sumTime += lhs.time + (_assets[rhs.index].duration - rhs.time)
+            return sumTime
+        }
+    }
 
 }
