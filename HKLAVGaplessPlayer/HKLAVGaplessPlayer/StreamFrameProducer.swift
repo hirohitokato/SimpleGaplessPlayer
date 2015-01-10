@@ -14,9 +14,17 @@ let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()してお
 /**
 *  アセット配列の中における位置（アセット位置）を表現するデータ構造
 */
-private struct AssetPosition {
+private struct AssetPosition: Printable, DebugPrintable {
     var index: Int
     var time: CMTime
+    init(_ index: Int, _ time: CMTime) {
+        self.index=index
+        self.time=time
+    }
+    var description: String {
+        return "{i:\(self.index) t:\(self.time)}"
+    }
+    var debugDescription: String { return self.description }
 }
 
 /**
@@ -294,7 +302,7 @@ private extension StreamFrameProducer {
 
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
                 let time = CMTimeConvertScale(result.time, 600, .RoundHalfAwayFromZero)
-                return AssetPosition(index: result.index, time: time)
+                return AssetPosition(result.index, time)
             }
         }
         return nil
@@ -309,7 +317,7 @@ private extension StreamFrameProducer {
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
     func _getRelativePositionOf(index:Int, time:CMTime) -> Float? {
-        let target = AssetPosition(index:index, time:time)
+        let target = AssetPosition(index, time)
 
         /*
         「offset = window * position」であることを利用して位置を求める
@@ -343,14 +351,14 @@ private extension StreamFrameProducer {
         // 現在の再生場所を起点にしてposition=1.0地点を探索する
         if let i_t1 = find(self._assets, _readers.first!.asset) {
 
-            let t1 = AssetPosition(index: i_t1, time: _currentPresentationTimestamp)
+            let t1 = AssetPosition(i_t1, _currentPresentationTimestamp)
             let offset = window * (1.0 - position)
 
             if let windowEnd = _findAsset(_assets, from: t1, offset: offset) {
                 return windowEnd
             } else {
                 // 見つからなかった場合、全アセットの最後端を1.0として扱う
-                return AssetPosition(index:_assets.count-1, time:_assets.last!.duration)
+                return AssetPosition(_assets.count-1, _assets.last!.duration)
             }
         }
         return nil
@@ -384,8 +392,8 @@ private extension StreamFrameProducer {
 
             if offset <= asset.duration {
                 return offset.isSignMinus ?
-                    AssetPosition(index: from.index - i, time: asset.duration - offset) :
-                    AssetPosition(index: from.index + i, time: offset)
+                    AssetPosition(from.index - i, asset.duration - offset) :
+                    AssetPosition(from.index + i, offset)
             }
             offset -= asset.duration
         }
