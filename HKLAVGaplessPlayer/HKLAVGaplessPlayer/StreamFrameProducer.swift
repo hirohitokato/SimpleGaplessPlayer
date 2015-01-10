@@ -193,7 +193,7 @@ public class StreamFrameProducer: NSObject {
                     // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
                     // 表示用としてサンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                    let pos = _getRelativePositionOf(find(_assets, target.asset)!, time: pts)
+                    let pos = _getPositionOf(find(_assets, target.asset)!, time: pts)
                     if pos <= 1.0 + 0.02/*tolerance*/ {
                         return ( sbuf, pts, target.frameInterval )
                     }
@@ -316,7 +316,7 @@ private extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    func _getRelativePositionOf(index:Int, time:CMTime) -> Float? {
+    func _getPositionOf(index:Int, time:CMTime) -> Float? {
         let target = AssetPosition(index, time)
 
         /*
