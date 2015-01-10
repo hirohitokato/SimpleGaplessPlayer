@@ -85,8 +85,13 @@ public class StreamFrameProducer: NSObject {
     func advanceToNextAsset() {
         if !_readers.isEmpty {
             _readers.removeAtIndex(0)
-            if !_readers.isEmpty {
-                _prepareNextAssetReaders()
+            _currentPresentationTimestamp = kCMTimeZero
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                [unowned self] in
+                let lock = ScopedLock(self)
+
+                println("move to next")
+                self._prepareNextAssetReaders()
             }
         }
     }
@@ -198,15 +203,9 @@ public class StreamFrameProducer: NSObject {
                         }
                     }
                 } else {
-                    println("move to next")
                     // リーダーのサンプルバッファが枯渇した場合、または取得した
                     // サンプルバッファの位置が1.0を超えていた場合は、次のムービーへ移動する
-                    _readers.removeAtIndex(0)
-                    _currentPresentationTimestamp = kCMTimeZero
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                        [unowned self] in
-                        self._prepareNextAssetReaders()
-                    }
+                    advanceToNextAsset()
                 }
             case .Completed:
                 // AVAssetReaderは.Reading状態でcopyNextSampleBufferを返した
