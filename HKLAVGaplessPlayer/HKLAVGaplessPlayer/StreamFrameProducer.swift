@@ -380,18 +380,21 @@ private extension StreamFrameProducer {
         if from.index < 0 || from.index >= assets.count { return nil }
         if offset.isZero { return from }
 
+        let isSignMinus = offset.isSignMinus
+
         // アセット列のうち、どの範囲を探すか
-        let targets = offset.isSignMinus ?
+        let targets = isSignMinus ?
             reverse(assets[0...from.index]) : Array(assets[from.index..<assets.count])
 
         // 繰り返し処理を簡略化するためにゲタを履かせる
-        var offset = offset + (offset.isSignMinus ?
-            (assets[from.index].duration - from.time) : from.time)
+        var offset = isSignMinus ?
+            (offset * -1.0 + assets[from.index].duration - from.time) :
+            (offset + from.time)
 
         for (i, asset) in enumerate(targets) {
 
             if offset <= asset.duration {
-                return offset.isSignMinus ?
+                return isSignMinus ?
                     AssetPosition(from.index - i, asset.duration - offset) :
                     AssetPosition(from.index + i, offset)
             }
