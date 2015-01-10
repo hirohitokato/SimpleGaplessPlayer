@@ -42,7 +42,7 @@ public class StreamFrameProducer: NSObject {
     }
 
     /// アセット全体のうち再生対象となる時間。いわゆる時間窓に相当
-    var window = CMTime(value: 30, 1)
+    var window = CMTime(value: 10, 1)
 
     /// 再生のスピード。1.0が通常再生、2.0だと倍速再生。負数は非対応
     var playbackRate: Float {
