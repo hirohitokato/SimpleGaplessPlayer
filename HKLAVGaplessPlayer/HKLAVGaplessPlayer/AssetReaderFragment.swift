@@ -112,7 +112,7 @@ internal class AssetReaderFragment: NSObject {
         */
         let composition = AVMutableComposition()
         if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
-            NSLog("Failed to insert a video track to composition:\(error)")
+            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(error)")
             return nil
         }
 
