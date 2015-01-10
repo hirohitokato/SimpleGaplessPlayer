@@ -301,7 +301,7 @@ private extension StreamFrameProducer {
             if let result = _findAsset(_assets, from: one, offset: offset) {
 
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
-                let time = CMTimeConvertScale(result.time, 600, .RoundHalfAwayFromZero)
+                let time = CMTimeConvertScale(result.time, 600, .RoundTowardZero)
                 return AssetPosition(result.index, time)
             }
         }
