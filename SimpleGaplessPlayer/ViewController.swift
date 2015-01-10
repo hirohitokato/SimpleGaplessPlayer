@@ -74,7 +74,7 @@ class ViewController: UIViewController {
 
     @objc func updateUI(timer: NSTimer) {
         msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)"
-        }
+    }
 
     override func observeValueForKeyPath(keyPath: String,
         ofObject object: AnyObject, change: [NSObject: AnyObject],

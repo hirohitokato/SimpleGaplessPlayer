@@ -136,7 +136,6 @@ public class StreamFrameProducer: NSObject {
         // レートが異なる場合、再生位置の指定があった場合は
         // リーダーを組み立て直してから再生準備を整える
         if rate != _playbackRate || pos != nil {
-            println("cancelReading()")
             cancelReading()
         }
         _playbackRate = rate
@@ -191,11 +190,12 @@ public class StreamFrameProducer: NSObject {
                 let out = target.output
                 if let sbuf = out.copyNextSampleBuffer() {
                     // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
-                    // 表示用としてサンプルバッファを返す
+                    // サンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                    let pos = _getPositionOf(find(_assets, target.asset)!, time: pts)
-                    if pos <= 1.0 + 0.02/*tolerance*/ {
-                        return ( sbuf, pts, target.frameInterval )
+                    if let pos = _getPositionOf(find(_assets, target.asset)!, time: pts) {
+                        if pos <= 1.0 + 0.02/*tolerance*/ {
+                            return ( sbuf, pts, target.frameInterval )
+                        }
                     }
                 } else {
                     println("move to next")
