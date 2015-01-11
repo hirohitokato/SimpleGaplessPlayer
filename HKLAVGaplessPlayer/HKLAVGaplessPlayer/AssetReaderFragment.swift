@@ -78,6 +78,7 @@ internal class AssetReaderFragment: NSObject {
     {
         var error: NSError? = nil
 
+        assert(rate>0.0, "Unable to set rate to 0.0!!")
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
         if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {

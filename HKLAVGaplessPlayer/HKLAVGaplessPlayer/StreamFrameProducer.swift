@@ -188,7 +188,7 @@ class StreamFrameProducer: NSObject {
     private var _amountDuration = kCMTimeZero
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
-    private var _playbackRate: Float = 0.0
+    private var _playbackRate: Float = 1.0
 
     /**
     サンプルバッファの生成
@@ -209,9 +209,7 @@ class StreamFrameProducer: NSObject {
                     // サンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
                     if let pos = _getPositionOf(find(_assets, target.asset)!, time: pts) {
-                        if pos <= 1.0 + 0.02/*tolerance*/ {
-                            return ( sbuf, pts, target.frameInterval )
-                        }
+                        return ( sbuf, pts, target.frameInterval )
                     }
                 } else {
                     // リーダーのサンプルバッファが枯渇した場合、または取得した
