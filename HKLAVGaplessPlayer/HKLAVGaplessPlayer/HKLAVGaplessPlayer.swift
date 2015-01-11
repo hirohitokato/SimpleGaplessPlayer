@@ -131,7 +131,7 @@ public class HKLAVGaplessPlayer: NSObject {
             displayLink.paused = true
             _lastTimestamp = CACurrentMediaTime()
             _remainingPresentationTime = 0.0
-
+            _playbackRate = CFTimeInterval(rate)
         } else {
 
             // 指定レートで再生開始

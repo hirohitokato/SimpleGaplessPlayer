@@ -91,7 +91,6 @@ class StreamFrameProducer: NSObject {
             // autoRemoveOutdatedAssetsが有効ならばwindow外の古いアセットを削除
             if self.autoRemoveOutdatedAssets {
                 if let assetPos = self._getAssetPositionOf(0.0) {
-                    println("\(0..<assetPos.index) is outdated.")
                     self._assets.removeRange(0..<assetPos.index)
                 }
             }
@@ -242,6 +241,11 @@ class StreamFrameProducer: NSObject {
         // startTimeの設定は初回のみ有効
         var startTime = time
 
+        // 再生速度が0.0のままであれば、デフォルトの再生速度に設定する
+        if _playbackRate == 0.0 {
+            _playbackRate = 1.0
+        }
+        
         // リーダーが空の場合、まず先頭のアセットを読み込む
         if _readers.isEmpty && startIndex < _assets.count {
             if let assetreader = AssetReaderFragment(asset:_assets[startIndex],
