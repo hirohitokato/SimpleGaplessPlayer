@@ -76,7 +76,7 @@ class StreamFrameProducer: NSObject {
                 if let assetreader = AssetReaderFragment(asset:asset) {
                     self._readers.append(assetreader)
                 } else {
-                    NSLog("Failed to instantiate a AssetReaderFragment.")
+                    NSLog("0) Failed to instantiate a reader of [\((asset as AVURLAsset).URL.lastPathComponent!)]")
                 }
             }
         }
@@ -87,7 +87,7 @@ class StreamFrameProducer: NSObject {
     */
     func advanceToNextAsset() {
         if !_readers.isEmpty {
-            // window外の古いアセットを削除
+            // autoRemoveOutdatedAssetsが有効ならばwindow外の古いアセットを削除
             if self.autoRemoveOutdatedAssets {
                 if let assetPos = self._getAssetPositionOf(0.0) {
                     println("\(0..<assetPos.index) is outdated.")
@@ -101,7 +101,6 @@ class StreamFrameProducer: NSObject {
                 [unowned self] in
                 let lock = ScopedLock(self)
 
-                println("move to next")
                 self._prepareNextAssetReaders()
 
             }
@@ -252,7 +251,7 @@ class StreamFrameProducer: NSObject {
                 startTime = kCMTimeZero
                 _readers.append(assetreader)
             } else {
-                NSLog("Failed to instantiate a AssetReaderFragment.")
+                NSLog("1) Failed to instantiate a reader of [\((_assets[startIndex] as AVURLAsset).URL.lastPathComponent!)]")
             }
         }
 
@@ -276,7 +275,7 @@ class StreamFrameProducer: NSObject {
                         startTime = kCMTimeZero
                         _readers.append(assetreader)
                     } else {
-                        NSLog("Failed to instantiate a AssetReaderFragment.")
+                        NSLog("2) Failed to instantiate a reader of [\((target_asset as AVURLAsset).URL.lastPathComponent!)]")
                         break outer
                     }
                 }
