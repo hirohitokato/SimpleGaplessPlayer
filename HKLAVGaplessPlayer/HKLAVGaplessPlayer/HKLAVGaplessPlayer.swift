@@ -99,7 +99,7 @@ public class HKLAVGaplessPlayer: NSObject {
     private var displayLink: CADisplayLink!
 
      /// フレームの保持と生成を担当するクラス
-    public let _producer: StreamFrameProducer = StreamFrameProducer()
+    let _producer: StreamFrameProducer = StreamFrameProducer()
 
     /// 最後にピクセルバッファを取得した時刻
     private var _lastTimestamp: CFTimeInterval = 0

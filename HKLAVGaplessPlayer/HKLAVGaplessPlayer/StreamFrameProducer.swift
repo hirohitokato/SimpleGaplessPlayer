@@ -33,7 +33,7 @@ private struct AssetPosition: Printable, DebugPrintable {
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
 非同期でサンプルバッファを生成する
 */
-public class StreamFrameProducer: NSObject {
+class StreamFrameProducer: NSObject {
 
     /// 格納しているアセットの合計再生時間を返す
     var amountDuration: CMTime {
