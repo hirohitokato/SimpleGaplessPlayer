@@ -80,6 +80,10 @@ internal class AssetReaderFragment: NSObject {
 
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
+        if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
+            NSLog("Somehow the number of video track is zero. the asset:\((asset as AVURLAsset).URL.lastPathComponent) contains \(asset.tracks)")
+            return nil
+        }
         let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
