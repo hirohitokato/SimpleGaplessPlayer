@@ -64,7 +64,7 @@ class StreamFrameProducer: NSObject {
     */
     func appendAsset(asset: AVAsset) {
         // TODO: durationが判明した順でappendすると、アセットによる差でappendAssetを呼んだ順から狂う
-        asset.loadValuesAsynchronouslyForKeys(["duration"]) {
+        asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
             [unowned self] in
             let lock = ScopedLock(self)
 
