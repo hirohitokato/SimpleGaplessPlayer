@@ -49,6 +49,9 @@ public class StreamFrameProducer: NSObject {
         return _playbackRate
     }
 
+    /// windowの範囲外(== position < 0.0)になったアセットを自動的に取り除くかどうか
+    var autoRemoveOutdatedAssets: Bool = true
+
     /// AVAssetReaderで事前にstartReading()しておくムービーの数。
     /// 注意：多くても5個程度にしておくこと。さもないとアプリが落ちるため
     var maxNumOfReaders: Int = kMaximumNumOfReaders
@@ -84,6 +87,14 @@ public class StreamFrameProducer: NSObject {
     */
     func advanceToNextAsset() {
         if !_readers.isEmpty {
+            // window外の古いアセットを削除
+            if self.autoRemoveOutdatedAssets {
+                if let assetPos = self._getAssetPositionOf(0.0) {
+                    println("\(0..<assetPos.index) is outdated.")
+                    self._assets.removeRange(0..<assetPos.index)
+                }
+            }
+
             _readers.removeAtIndex(0)
             _currentPresentationTimestamp = kCMTimeZero
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
@@ -92,6 +103,7 @@ public class StreamFrameProducer: NSObject {
 
                 println("move to next")
                 self._prepareNextAssetReaders()
+
             }
         }
     }
