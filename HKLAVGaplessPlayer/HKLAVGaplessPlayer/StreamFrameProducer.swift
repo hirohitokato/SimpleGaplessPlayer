@@ -71,14 +71,6 @@ class StreamFrameProducer: NSObject {
             self._assets.append(asset)
             self._amountDuration += asset.duration
 
-            // 読み込んだリーダーの数に応じて、追加でリーダーを作成する
-            if self._readers.count < self.maxNumOfReaders {
-                if let assetreader = AssetReaderFragment(asset:asset) {
-                    self._readers.append(assetreader)
-                } else {
-                    NSLog("0) Failed to instantiate a reader of [\((asset as AVURLAsset).URL.lastPathComponent!)]")
-                }
-            }
         }
     }
 
