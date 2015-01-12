@@ -226,3 +226,12 @@ extension CMTimeRange: Printable,DebugPrintable {
         return "{start:\(self.start), duration:\(self.duration)}"
     }
 }
+
+extension CMTimeMapping: Printable, DebugPrintable {
+    public var description: String {
+        return "{ source:\(source.description), target:\(target.description) }"
+    }
+    public var debugDescription: String {
+        return description
+    }
+}
