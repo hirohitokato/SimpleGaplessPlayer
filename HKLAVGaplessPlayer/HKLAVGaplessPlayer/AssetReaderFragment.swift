@@ -129,7 +129,7 @@ internal class AssetReaderFragment: NSObject {
 
         // 再生時間とフレーム数から、正確なフレーム時間を計算する
         let displayDuration = CMTime( seconds:duration.f64 /
-            ceil(duration.f64 / videoComposition.frameDuration.f64))
+            ceil(duration.f64 / videoComposition.frameDuration.f64)) * (1.0/rate)
 
         // 60fps以下の場合、60fpsで出力出来るようスケールしたいが、scaleTimeRange()は
         // frameDuration以下のfpsのときには、読み出そうとしてもエラーになってしまう模様。
