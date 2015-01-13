@@ -12,55 +12,6 @@ import AVFoundation
 let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
-* アセット配列に格納するデータ構造。AVAsset.durationなどのvalueにアクセスするのは
-* 高コストであるため(iOS8.1.2時点)、値をアセットと共にキャッシュするのが目的
-*/
-private struct AssetHolder {
-    /// 外部から渡されたアセット
-    let asset: AVAsset
-    /// アセットの再生時間。キャッシュした値があればそれを返す
-    var duration: CMTime? {
-        mutating get {
-            if _duration != nil {
-                return _duration
-            } else {
-                _duration = asset.duration
-                return _duration
-            }
-        }
-        set(newDuration) {
-            _duration = newDuration
-        }
-    }
-    init(_ asset: AVAsset) {
-        self.asset = asset
-        // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
-        // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
-        //   時間を短くできることを狙っている）
-        asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
-            self._duration = asset.duration
-        }
-    }
-    private var _duration: CMTime? = nil
-}
-
-/**
-*  アセット配列の中における位置（アセット位置）を表現するデータ構造
-*/
-private struct AssetPosition: Printable, DebugPrintable {
-    var index: Int
-    var time: CMTime
-    init(_ index: Int, _ time: CMTime) {
-        self.index=index
-        self.time=time
-    }
-    var description: String {
-        return "{i:\(self.index) t:\(self.time)}"
-    }
-    var debugDescription: String { return self.description }
-}
-
-/**
 :class: StreamFrameProducer
 :abstract:
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
@@ -469,4 +420,54 @@ private extension StreamFrameProducer {
         }
     }
 
+}
+
+// MARK: - Private data structures
+/**
+* アセット配列に格納するデータ構造。AVAsset.durationなどのvalueにアクセスするのは
+* 高コストであるため(iOS8.1.2時点)、値をアセットと共にキャッシュするのが目的
+*/
+private struct AssetHolder {
+    /// 外部から渡されたアセット
+    let asset: AVAsset
+    /// アセットの再生時間。キャッシュした値があればそれを返す
+    var duration: CMTime? {
+        mutating get {
+            if _duration != nil {
+                return _duration
+            } else {
+                _duration = asset.duration
+                return _duration
+            }
+        }
+        set(newDuration) {
+            _duration = newDuration
+        }
+    }
+    init(_ asset: AVAsset) {
+        self.asset = asset
+        // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
+        // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
+        //   時間を短くできることを狙っている）
+        asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
+            self._duration = asset.duration
+        }
+    }
+    private var _duration: CMTime? = nil
+}
+
+/**
+*  アセット配列の中における位置（アセット位置）を表現するデータ構造
+*/
+private struct AssetPosition: Printable, DebugPrintable {
+    var index: Int
+    var time: CMTime
+    init(_ index: Int, _ time: CMTime) {
+        self.index=index
+        self.time=time
+    }
+    var description: String {
+        return "{i:\(self.index) t:\(self.time)}"
+    }
+    var debugDescription: String { return self.description }
 }
