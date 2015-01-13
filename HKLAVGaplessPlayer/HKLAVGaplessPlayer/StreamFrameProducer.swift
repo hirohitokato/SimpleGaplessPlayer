@@ -195,8 +195,7 @@ class StreamFrameProducer: NSObject {
             switch target.status {
             case .Reading:
                 // サンプルバッファの読み込み
-                let out = target.output
-                if let sbuf = out.copyNextSampleBuffer() {
+                if let sbuf = target.copyNextSampleBuffer() {
                     // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
                     // サンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
