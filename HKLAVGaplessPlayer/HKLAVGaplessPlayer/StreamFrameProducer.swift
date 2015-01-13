@@ -12,6 +12,39 @@ import AVFoundation
 let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
+* アセット配列に格納するデータ構造。AVAsset.durationなどのvalueにアクセスするのは
+* 高コストであるため(iOS8.1.2時点)、値をアセットと共にキャッシュするのが目的
+*/
+private struct AssetHolder {
+    /// 外部から渡されたアセット
+    let asset: AVAsset
+    /// アセットの再生時間。キャッシュした値があればそれを返す
+    var duration: CMTime? {
+        mutating get {
+            if _duration != nil {
+                return _duration
+            } else {
+                _duration = asset.duration
+                return _duration
+            }
+        }
+        set(newDuration) {
+            _duration = newDuration
+        }
+    }
+    init(_ asset: AVAsset) {
+        self.asset = asset
+        // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
+        // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
+        //   時間を短くできることを狙っている）
+        asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
+            self._duration = asset.duration
+        }
+    }
+    private var _duration: CMTime? = nil
+}
+
+/**
 *  アセット配列の中における位置（アセット位置）を表現するデータ構造
 */
 private struct AssetPosition: Printable, DebugPrintable {
@@ -57,24 +90,14 @@ class StreamFrameProducer: NSObject {
     var maxNumOfReaders: Int = kMaximumNumOfReaders
 
     /**
-    アセットを内部キューの末尾に保存する。余裕がある場合はアセットリーダーも
-    同時に生成する
+    アセットを内部キューの末尾に保存する。
 
     :param: asset フレームの取り出し対象となるアセット
     */
     func appendAsset(asset: AVAsset) {
 
-        self._assets.append(asset)
-
-        // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
-        // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
-        //   時間を短くできることを狙っている）
-        asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
-            [unowned self] in
-            let lock = ScopedLock(self)
-
-            self._amountDuration += asset.duration
-        }
+        let holder = AssetHolder(asset)
+        self._assets.append(holder)
     }
 
     /**
@@ -87,7 +110,7 @@ class StreamFrameProducer: NSObject {
             if self.autoRemoveOutdatedAssets {
                 if let assetPos = self._getAssetPositionOf(0.0) {
                     // 合計時間も減じておく
-                    let duration = self._assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.duration }
+                    let duration = self._assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.asset.duration }
                     self._assets.removeRange(0..<assetPos.index)
                     self._amountDuration -= duration
                 }
@@ -139,7 +162,7 @@ class StreamFrameProducer: NSObject {
         var currentAsset: AVAsset? = nil
         if let pos = pos {
             if let playerInfo = _getAssetPositionOf(pos) {
-                currentAsset = _assets[playerInfo.index]
+                currentAsset = _assets[playerInfo.index].asset
                 position = pos
                 _currentPresentationTimestamp = playerInfo.time
             }
@@ -177,7 +200,7 @@ class StreamFrameProducer: NSObject {
 
     // MARK: Privates
 
-    private var _assets = [AVAsset]() // アセット
+    private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
@@ -205,7 +228,7 @@ class StreamFrameProducer: NSObject {
                     // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
                     // サンプルバッファを返す
                     let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                    if let pos = _getPositionOf(find(_assets, target.asset)!, time: pts) {
+                    if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
                         return ( sbuf, pts, target.frameInterval )
                     }
                 } else {
@@ -234,7 +257,7 @@ class StreamFrameProducer: NSObject {
         if (_readers.count >= maxNumOfReaders) { return }
 
         // アセットをどこから読み込むかを決定する
-        let startIndex = (initial == nil) ? 0 : find(_assets, initial!) ?? 0
+        let startIndex = (initial == nil) ? 0 : _assets.indexOf({$0.asset == initial!}) ?? 0
         // startTimeの設定は初回のみ有効
         var startTime = time
 
@@ -245,37 +268,38 @@ class StreamFrameProducer: NSObject {
         
         // リーダーが空の場合、まず先頭のアセットを読み込む
         if _readers.isEmpty && startIndex < _assets.count {
-            if let assetreader = AssetReaderFragment(asset:_assets[startIndex],
+            if let assetreader = AssetReaderFragment(asset:_assets[startIndex].asset,
                 rate:_playbackRate, startTime:startTime)
             {
                 startTime = kCMTimeZero
                 _readers.append(assetreader)
             } else {
-                NSLog("1) Failed to instantiate a reader of [\((_assets[startIndex] as AVURLAsset).URL.lastPathComponent!)]")
+                NSLog("1) Failed to instantiate a reader of [\((_assets[startIndex].asset as AVURLAsset).URL.lastPathComponent!)]")
             }
         }
 
         // 読み込みしていないアセットがあれば読み込む
-        outer: for (i, asset) in enumerate(_assets[startIndex..<_assets.count]) {
-
+        outer: for (i, holder) in enumerate(_assets[startIndex..<_assets.count]) {
+            let asset = holder.asset
             let actualIndex = i + startIndex
+
             // 登録済みの最後のアセットを見つけて、それ以降のアセットを
             // 追加対象として読み込む
             if _readers.last?.asset === asset && actualIndex+1 < _assets.count {
-                for target_asset in _assets[actualIndex+1..<_assets.count] {
+                for target in _assets[actualIndex+1..<_assets.count] {
 
                     // 読み込み済みリーダーの数が上限になれば処理終了
                     if (_readers.count >= maxNumOfReaders) {
                         break outer
                     }
 
-                    if let assetreader = AssetReaderFragment(asset:target_asset,
+                    if let assetreader = AssetReaderFragment(asset:target.asset,
                         rate:_playbackRate, startTime:startTime)
                     {
                         startTime = kCMTimeZero
                         _readers.append(assetreader)
                     } else {
-                        NSLog("2) Failed to instantiate a reader of [\((target_asset as AVURLAsset).URL.lastPathComponent!)]")
+                        NSLog("2) Failed to instantiate a reader of [\((target.asset as AVURLAsset).URL.lastPathComponent!)]")
                         break outer
                     }
                 }
@@ -359,7 +383,7 @@ private extension StreamFrameProducer {
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
         // 現在の再生場所を起点にしてposition=1.0地点を探索する
-        if let i_t1 = find(self._assets, _readers.first!.asset) {
+        if let i_t1 = self._assets.indexOf({$0.asset == self._readers.first!.asset}) {
 
             let t1 = AssetPosition(i_t1, _currentPresentationTimestamp)
             let offset = window * (1.0 - position)
@@ -368,7 +392,7 @@ private extension StreamFrameProducer {
                 return windowEnd
             } else {
                 // 見つからなかった場合、全アセットの最後端を1.0として扱う
-                return AssetPosition(_assets.count-1, _assets.last!.duration)
+                return AssetPosition(_assets.count-1, _assets.last!.asset.duration)
             }
         }
         return nil
@@ -384,7 +408,7 @@ private extension StreamFrameProducer {
 
     :returns: アセット位置(インデックス, 時刻)
     */
-    func _findAsset(assets:[AVAsset], from:AssetPosition, offset:CMTime)
+    func _findAsset(assets:[AssetHolder], from:AssetPosition, offset:CMTime)
         -> AssetPosition?
     {
         if from.index < 0 || from.index >= assets.count { return nil }
@@ -398,17 +422,17 @@ private extension StreamFrameProducer {
 
         // 繰り返し処理を簡略化するためにゲタを履かせる
         var offset = isSignMinus ?
-            (offset * -1.0 + assets[from.index].duration - from.time) :
+            (offset * -1.0 + assets[from.index].asset.duration - from.time) :
             (offset + from.time)
 
-        for (i, asset) in enumerate(targets) {
+        for (i, holder) in enumerate(targets) {
 
-            if offset <= asset.duration {
+            if offset <= holder.asset.duration {
                 return isSignMinus ?
-                    AssetPosition(from.index - i, asset.duration - offset) :
+                    AssetPosition(from.index - i, holder.asset.duration - offset) :
                     AssetPosition(from.index + i, offset)
             }
-            offset -= asset.duration
+            offset -= holder.asset.duration
         }
         return nil
     }
@@ -432,15 +456,15 @@ private extension StreamFrameProducer {
         // 中間のアセットのduration合計を求める
         let intermediates = (lhs.index < rhs.index) ?
             _assets[lhs.index+1 ..< rhs.index] : _assets[rhs.index+1 ..< lhs.index]
-        sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
+        sumTime = intermediates.reduce(sumTime) { $0 + $1.asset.duration }
 
         if lhs.index < rhs.index {
             // (lhsの残り時間 + rhs)の符号反転
-            sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
+            sumTime += (_assets[lhs.index].asset.duration - lhs.time) + rhs.time
             return kCMTimeZero - sumTime
         } else {
             // lhs + rhsの残り時間
-            sumTime += lhs.time + (_assets[rhs.index].duration - rhs.time)
+            sumTime += lhs.time + (_assets[rhs.index].asset.duration - rhs.time)
             return sumTime
         }
     }
