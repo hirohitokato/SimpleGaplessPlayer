@@ -15,8 +15,6 @@ import AVFoundation
 */
 internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
-    let reader: AVAssetReader!
-    let output: AVAssetReaderOutput!
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
@@ -37,18 +35,18 @@ internal class AssetReaderFragment: NSObject {
             "Cannot express tuple conversion '(AVAssetReader, CMTime)' to '(AVAssetReader!, CMTime)'"
             が出てしまうため、分解して代入するようにした
             */
-            (reader, frameInterval) = (result.0, result.1)
-            output = reader.outputs.first as? AVAssetReaderOutput
+            (_reader, frameInterval) = (result.0, result.1)
+            _output = _reader.outputs.first as? AVAssetReaderOutput
         }
 
-        if reader == nil || output == nil || frameInterval == kCMTimeIndefinite {
+        if _reader == nil || _output == nil || frameInterval == kCMTimeIndefinite {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
 
         // 読み込み開始
-        if self.reader.startReading() == false {
-            NSLog("Failed to start a reader:\(self.reader)\n error:\(self.reader.error)")
+        if self._reader.startReading() == false {
+            NSLog("Failed to start a reader:\(self._reader)\n error:\(self._reader.error)")
             return nil
         }
     }
@@ -57,10 +55,23 @@ internal class AssetReaderFragment: NSObject {
     内包しているAVAssetReaderのstatusプロパティの値(AVAssetReaderStatus)を返す。
     */
     var status: AVAssetReaderStatus {
-        return reader.status
+        return _reader.status
+    }
+
+    /**
+    作成したリーダーから次のサンプルバッファ(コピー)を同期取得して返す
+
+    :returns: A CMSampleBuffer object referencing the output sample buffer.
+    */
+    func copyNextSampleBuffer() -> CMSampleBuffer! {
+        return _output.copyNextSampleBuffer()
     }
 
     // MARK: Private variables & methods
+
+    private let _reader: AVAssetReader!
+    private let _output: AVAssetReaderOutput!
+
     /**
     アセットの指定範囲をフレーム単位で取り出すためのリーダーを作成する。
     具体的には再生時間帯を限定したコンポジションを作成し、そのフレームを取り出すための
