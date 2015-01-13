@@ -55,13 +55,6 @@
 			remoteGlobalIDString = 1A25A0A41A5BE41800106B11;
 			remoteInfo = HKLAVGaplessPlayer;
 		};
-		1A67A24E1A5C3F45003FCDDD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1AA61A671A41044B00F2B2F6 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1A4DC6081A5C24FA003C3DC2;
-			remoteInfo = UniversalLib;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -289,7 +282,6 @@
 			);
 			dependencies = (
 				1A67A24D1A5C3F45003FCDDD /* PBXTargetDependency */,
-				1A67A24F1A5C3F45003FCDDD /* PBXTargetDependency */,
 			);
 			name = SimpleGaplessPlayer;
 			productName = LearningVideoComposition;
@@ -409,11 +401,6 @@
 			isa = PBXTargetDependency;
 			target = 1A25A0A41A5BE41800106B11 /* HKLAVGaplessPlayer */;
 			targetProxy = 1A67A24C1A5C3F45003FCDDD /* PBXContainerItemProxy */;
-		};
-		1A67A24F1A5C3F45003FCDDD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1A4DC6081A5C24FA003C3DC2 /* UniversalLib */;
-			targetProxy = 1A67A24E1A5C3F45003FCDDD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
