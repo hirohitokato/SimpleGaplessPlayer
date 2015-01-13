@@ -443,7 +443,8 @@ private struct AssetHolder {
         // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
         // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
         //   時間を短くできることを狙っている）
-        asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
+        let keys = ["duration","tracks", "preferredTransform"]
+        asset.loadValuesAsynchronouslyForKeys(keys) {
             self._duration = asset.duration
         }
     }

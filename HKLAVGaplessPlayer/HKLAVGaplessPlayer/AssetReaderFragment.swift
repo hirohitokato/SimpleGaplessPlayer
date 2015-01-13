@@ -18,14 +18,17 @@ internal class AssetReaderFragment: NSObject {
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
-    var frameInterval: CMTime = kCMTimeIndefinite
+
+    private(set) var frameInterval: CMTime = kCMTimeIndefinite
+    let preferredTransform: CGAffineTransform
 
     init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
         self.asset = asset
         self.rate = rate
         self.startTime = startTime
         self.endTime = endTime
-
+        self.preferredTransform = asset.preferredTransform
+        
         super.init()
 
         // リーダーとなるコンポジションを作成する
