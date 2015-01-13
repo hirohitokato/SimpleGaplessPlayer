@@ -62,7 +62,7 @@ class StreamFrameProducer: NSObject {
 
     :param: asset フレームの取り出し対象となるアセット
     */
-    func appendAsset(asset: AVAsset) {
+    func asyncAppendAsset(asset: AVAsset) {
         // TODO: durationが判明した順でappendすると、アセットによる差でappendAssetを呼んだ順から狂う
         asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
             [unowned self] in
