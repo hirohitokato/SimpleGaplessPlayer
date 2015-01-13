@@ -172,30 +172,24 @@ class StreamFrameProducer: NSObject {
         // サンプルバッファを生成する
         while let target = _readers.first {
 
-            switch target.status {
-            case .Reading:
-                // サンプルバッファの読み込み
-                if let sbuf = target.copyNextSampleBuffer() {
-                    // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
-                    // サンプルバッファを返す
-                    let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                    if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
-                        return ( sbuf, pts, target.frameInterval )
-                    }
-                } else {
-                    // リーダーのサンプルバッファが枯渇した場合、または取得した
-                    // サンプルバッファの位置が1.0を超えていた場合は、次のムービーへ移動する
-                    advanceToNextAsset()
+            // サンプルバッファの読み込み
+            if let sbuf = target.copyNextSampleBuffer() {
+                // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
+                // サンプルバッファを返す
+                let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
+                if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
+                    return ( sbuf, pts, target.frameInterval )
                 }
-            case .Completed:
-                // AVAssetReaderは.Reading状態でcopyNextSampleBufferを返した
-                // 次のタイミングで.Completedに遷移するため、ここには来ないはず
-                _readers.removeAtIndex(0)
-                _currentPresentationTimestamp = kCMTimeZero
-            default:
-                NSLog("Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
-                _readers.removeAtIndex(0)
-                _currentPresentationTimestamp = kCMTimeZero
+            } else {
+                if target.status == .Completed {
+                    // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する
+                    // TODO: 取得したサンプルバッファの位置が1.0を超えていた場合も移動する
+                    advanceToNextAsset()
+                } else {
+                    NSLog("Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
+                    _readers.removeAtIndex(0)
+                    _currentPresentationTimestamp = kCMTimeZero
+                }
             }
         }
         return nil
