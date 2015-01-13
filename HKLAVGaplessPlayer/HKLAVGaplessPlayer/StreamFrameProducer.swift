@@ -62,15 +62,18 @@ class StreamFrameProducer: NSObject {
 
     :param: asset フレームの取り出し対象となるアセット
     */
-    func asyncAppendAsset(asset: AVAsset) {
-        // TODO: durationが判明した順でappendすると、アセットによる差でappendAssetを呼んだ順から狂う
+    func appendAsset(asset: AVAsset) {
+
+        self._assets.append(asset)
+
+        // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
+        // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
+        //   時間を短くできることを狙っている）
         asset.loadValuesAsynchronouslyForKeys(["duration","tracks"]) {
             [unowned self] in
             let lock = ScopedLock(self)
 
-            self._assets.append(asset)
             self._amountDuration += asset.duration
-
         }
     }
 
@@ -83,7 +86,10 @@ class StreamFrameProducer: NSObject {
             // autoRemoveOutdatedAssetsが有効ならばwindow外の古いアセットを削除
             if self.autoRemoveOutdatedAssets {
                 if let assetPos = self._getAssetPositionOf(0.0) {
+                    // 合計時間も減じておく
+                    let duration = self._assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.duration }
                     self._assets.removeRange(0..<assetPos.index)
+                    self._amountDuration -= duration
                 }
             }
 

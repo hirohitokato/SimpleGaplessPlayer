@@ -45,7 +45,7 @@ public class HKLAVGaplessPlayer: NSObject {
     :param: asset 再生対象となるアセット
     */
     public func appendAsset(asset: AVAsset) {
-        _producer.asyncAppendAsset(asset)
+        _producer.appendAsset(asset)
     }
 
     /**
