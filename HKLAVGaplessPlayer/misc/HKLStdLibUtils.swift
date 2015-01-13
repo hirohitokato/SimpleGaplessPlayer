@@ -20,7 +20,7 @@ extension Array {
 
     :refer: http://stackoverflow.com/a/24105493
     */
-    func find_if(condition: T -> Bool) -> Int? {
+    func indexOf(condition: T -> Bool) -> Int? {
         for (idx, element) in enumerate(self) {
             if condition(element) {
                 return idx
