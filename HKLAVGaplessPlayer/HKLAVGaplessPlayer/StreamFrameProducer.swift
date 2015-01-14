@@ -88,13 +88,7 @@ class StreamFrameProducer: NSObject {
     func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)! {
         let lock = ScopedLock(self)
 
-        // 一度取得したらnilに変わる
-        if let nextBuffer = self._prepareNextBuffer() {
-            // 現在時刻を更新
-            _currentPresentationTimestamp = nextBuffer.presentationTimeStamp
-            return nextBuffer
-        }
-        return nil
+        return self._prepareNextBuffer()
     }
 
     /**
@@ -178,6 +172,8 @@ class StreamFrameProducer: NSObject {
                 // サンプルバッファを返す
                 let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
                 if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
+                    // 現在のプレゼンテーション時間を更新
+                    _currentPresentationTimestamp = pts
                     return ( sbuf, pts, target.frameInterval )
                 }
             } else {
