@@ -40,9 +40,8 @@ internal class AssetReaderFragment: NSObject {
             */
             (_reader, frameInterval) = (result.0, result.1)
             _output = _reader.outputs.first as? AVAssetReaderOutput
-        }
-
-        if _reader == nil || _output == nil || frameInterval == kCMTimeIndefinite {
+        } else {
+            // 作成失敗
             NSLog("Failed to build a composition for asset.")
             return nil
         }
