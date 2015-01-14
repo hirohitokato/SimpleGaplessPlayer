@@ -143,6 +143,27 @@ internal class AssetReaderFragment: NSObject {
         //        println("stretchRate:\(timeRange) (\(timeRange.duration)-> \(timeRange.duration*stretchRate))")
         //        composition.scaleTimeRange(timeRange, toDuration:timeRange.duration*0.5)
 
+        var displayDuration: CMTime = kCMTimeInvalid
+
+        // フレームレート指定のためにビデオコンポジションを作成
+        let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
+        if rate == HKLAVGaplessPlayerPlayRateAsIs {
+            // As Isで表示する場合、アセットのフレームをそのまま取り出せるよう
+            // videoTrackのminFrameDurationをそのまま利用する
+            videoComposition.frameDuration = videoTrack.minFrameDuration
+
+            displayDuration = FrameDurationIsAsIs
+        } else {
+            // As Isではない場合、アセットのfpsによらずrateの再生速度となるよう
+            // 計算した値を利用する
+            let referenceRate = Float(kPlaybackFrameRate) / rate
+            videoComposition.frameDuration =
+                CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
+
+            // 再生時間とフレーム数から、正確なフレーム時間を計算する
+            displayDuration = CMTime(seconds: duration.f / ceil(duration.f / videoComposition.frameDuration.f) / rate )
+        }
+
         // アセットリーダーに接続するアウトプット(出力口)として、
         // ビデオコンポジションを指定できるAVAssetReaderVideoCompositionOutputを作成
         // 注意点：
@@ -152,22 +173,7 @@ internal class AssetReaderFragment: NSObject {
         var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
             videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
                 kCVPixelBufferIOSurfacePropertiesKey : [:]])
-
-        var displayDuration: CMTime = kCMTimeInvalid
-
-        if rate == HKLAVGaplessPlayerPlayRateAsIs {
-            displayDuration = kCMTimeNegativeInfinity
-        } else {
-            // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
-            let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
-            let referenceRate = Float(kPlaybackFrameRate) / rate
-            videoComposition.frameDuration =
-                CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
-            output.videoComposition = videoComposition
-
-            // 再生時間とフレーム数から、正確なフレーム時間を計算する
-            displayDuration = CMTime(seconds: duration.f / ceil(duration.f / output.videoComposition.frameDuration.f) / rate )
-        }
+        output.videoComposition = videoComposition
 
         // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
         output.alwaysCopiesSampleData = false

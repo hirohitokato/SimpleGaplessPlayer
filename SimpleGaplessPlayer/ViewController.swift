@@ -69,7 +69,9 @@ class ViewController: UIViewController {
 
     @IBAction func rateChanged(sender: UISlider) {
         rateLabel.text = "rate: \(sender.value)"
-        _player.play(sender.value)
+        // rate==0.0のときはAsIsモードで再生
+        let newRate = sender.value>0.0 ? sender.value : HKLAVGaplessPlayerPlayRateAsIs
+        _player.play(newRate)
     }
 
     @objc func updateUI(timer: NSTimer) {

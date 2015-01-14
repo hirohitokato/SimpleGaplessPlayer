@@ -16,7 +16,7 @@ let kFrameInterval: Float = 1.0/Float(kPlaybackFrameRate)
 /// 再生時のrate指定に使う特殊値。この値を指定した場合、アセットの
 /// 持つ1フレームをそのまま1フレームとして扱う
 public let HKLAVGaplessPlayerPlayRateAsIs: Float = FLT_MIN
-
+internal let FrameDurationIsAsIs: CMTime = kCMTimeNegativeInfinity
 /**
 :class: HKLAVGaplessPlayer
 :abstract:
@@ -188,7 +188,7 @@ extension HKLAVGaplessPlayer {
                     // 得られた時間を表示可能時間として補充する
                     _lastTimestamp = displayLink.timestamp
 
-                    if duration == kCMTimeNegativeInfinity {
+                    if duration == FrameDurationIsAsIs {
                         // HKLAVGaplessPlayerPlayRateAsIsの場合は1VSYNC==1フレームとなる
                         _remainingPresentationTime = 0.0
                     } else {
