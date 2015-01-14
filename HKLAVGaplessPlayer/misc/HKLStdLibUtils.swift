@@ -30,3 +30,18 @@ extension Array {
     }
 }
 
+/**
+Returns the first index where condition matches in domain or nil if it does not matched.
+
+:refer: https://github.com/norio-nomura/SwiftBenchmark-indexOf
+
+:param: domain    CollectionType object
+:param: condition Condition closure which returns true if it find the target.
+
+:returns: The first found index matches the condition.
+*/
+func index_of<C : CollectionType where C.Generator.Element : Equatable>
+    (domain: C, condition: C.Generator.Element -> Bool) -> C.Index?
+{
+    return find(lazy(domain).map(condition), true)
+}
