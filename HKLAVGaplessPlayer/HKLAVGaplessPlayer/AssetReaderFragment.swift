@@ -135,16 +135,6 @@ internal class AssetReaderFragment: NSObject {
             return nil
         }
 
-        // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
-        let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
-        let referenceRate = Float(kFrameRate) / rate
-        videoComposition.frameDuration =
-            CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
-
-        // 再生時間とフレーム数から、正確なフレーム時間を計算する
-        let displayDuration = CMTime( seconds:duration.f64 /
-            ceil(duration.f64 / videoComposition.frameDuration.f64)) * (1.0/rate)
-
         // 60fps以下の場合、60fpsで出力出来るようスケールしたいが、scaleTimeRange()は
         // frameDuration以下のfpsのときには、読み出そうとしてもエラーになってしまう模様。
         // → DisplayLinkの複数回の呼び出しで同じ画像を返せるよう、ロジックを変更する
@@ -161,7 +151,22 @@ internal class AssetReaderFragment: NSObject {
         var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
             videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
                 kCVPixelBufferIOSurfacePropertiesKey : [:]])
-        output.videoComposition = videoComposition
+
+        var displayDuration: CMTime = kCMTimeInvalid
+
+        if rate == HKLAVGaplessPlayerPlayRateAsIs {
+            displayDuration = kCMTimeNegativeInfinity
+        } else {
+            // フレームレート指定のためにビデオコンポジションを作成・利用(Max.60fps)
+            let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
+            let referenceRate = Float(kPlaybackFrameRate) / rate
+            videoComposition.frameDuration =
+                CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
+            output.videoComposition = videoComposition
+
+            // 再生時間とフレーム数から、正確なフレーム時間を計算する
+            displayDuration = CMTime(seconds: duration.f / ceil(duration.f / output.videoComposition.frameDuration.f) / rate )
+        }
 
         // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
         output.alwaysCopiesSampleData = false

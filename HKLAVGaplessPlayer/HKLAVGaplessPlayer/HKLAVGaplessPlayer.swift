@@ -12,6 +12,10 @@ import AVFoundation
 let kFrameRate: Int = 60
 let kFrameInterval: Float = 1.0/Float(kFrameRate)
 
+/// 再生時のrate指定に使う特殊値。この値を指定した場合、アセットの
+/// 持つ1フレームをそのまま1フレームとして扱う
+public let HKLAVGaplessPlayerPlayRateAsIs: Float = FLT_MIN
+
 /**
 :class: HKLAVGaplessPlayer
 :abstract:
@@ -66,12 +70,21 @@ public class HKLAVGaplessPlayer: NSObject {
     /**
     プレーヤーを再生開始
 
-    :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
+    rateに「HKLAVGaplessPlayerPlayRateAsIs」を指定した場合、アセット
+    がもともと提供するフレームをそのまま再生に使う。つまり、60fpsで再生する
+    環境であれば、240fpsのムービーだと1/4倍速、30fpsだと2倍速の再生になる。
+
+    :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止。
     :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
     public func play(rate: Float, position:Float? = nil) {
         _setRate(rate, position:position)
     }
+    /**
+    プレーヤーを等倍速で再生開始する。
+    
+    :discussion: （play(rate:,position:)がデフォルト値を持つため、publicにしてもObjective-Cではアクセスできない。そのため、コンビニエンスメソッドとしてplay()を用意した）
+    */
     public func play() {
         _setRate(1.0, position:nil)
     }
@@ -172,7 +185,13 @@ extension HKLAVGaplessPlayer {
                     // ピクセルバッファの最新取得時刻を更新し、
                     // 得られた時間を表示可能時間として補充する
                     _lastTimestamp = displayLink.timestamp
-                    _remainingPresentationTime += duration.f64
+
+                    if duration == kCMTimeNegativeInfinity {
+                        // HKLAVGaplessPlayerPlayRateAsIsの場合は1VSYNC==1フレームとなる
+                        _remainingPresentationTime = 0.0
+                    } else {
+                        _remainingPresentationTime += duration.f64
+                    }
 
                     // 表示処理はループの最後で1回だけ実行
                     if _remainingPresentationTime >= 0.0 {
