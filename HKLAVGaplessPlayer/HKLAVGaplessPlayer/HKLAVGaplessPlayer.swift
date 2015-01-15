@@ -24,7 +24,7 @@ internal let FrameDurationIsAsIs: CMTime = kCMTimeNegativeInfinity
 非同期でサンプルバッファを生成する
 */
 public class HKLAVGaplessPlayer: NSObject {
-    public weak var playerView: HKLGLPixelBufferView! = nil
+    public weak var delegate: HKLAVGaplessPlayerDelegate! = nil
 
     override public init() {
         super.init()
@@ -182,23 +182,21 @@ extension HKLAVGaplessPlayer {
 
             // サンプルバッファの取得
             if let (sbuf, _, duration) = _producer.nextSampleBuffer() {
-                if let imgbuf = CMSampleBufferGetImageBuffer(sbuf) {
 
-                    // ピクセルバッファの最新取得時刻を更新し、
-                    // 得られた時間を表示可能時間として補充する
-                    _lastTimestamp = displayLink.timestamp
+                // ピクセルバッファの最新取得時刻を更新し、
+                // 得られた時間を表示可能時間として補充する
+                _lastTimestamp = displayLink.timestamp
 
-                    if duration == FrameDurationIsAsIs {
-                        // HKLAVGaplessPlayerPlayRateAsIsの場合は1VSYNC==1フレームとなる
-                        _remainingPresentationTime = 0.0
-                    } else {
-                        _remainingPresentationTime += duration.f64
-                    }
+                if duration == FrameDurationIsAsIs {
+                    // HKLAVGaplessPlayerPlayRateAsIsの場合は1VSYNC==1フレームとなる
+                    _remainingPresentationTime = 0.0
+                } else {
+                    _remainingPresentationTime += duration.f64
+                }
 
-                    // 表示処理はループの最後で1回だけ実行
-                    if _remainingPresentationTime >= 0.0 {
-                        playerView?.displayPixelBuffer(imgbuf)
-                    }
+                // 表示処理はループの最後で1回だけ実行
+                if _remainingPresentationTime >= 0.0 {
+                    delegate?.player(self, didOutputSampleBuffer: sbuf)
                 }
             } else {
                 // サンプルバッファが得られなかった場合、今回の処理では何もしない

@@ -46,10 +46,12 @@
 
  */
 
-#import "HKLGLPixelBufferView.h"
 @import OpenGLES.EAGL;
 @import QuartzCore.CAEAGLLayer;
 
+#import <HKLAVGaplessPlayer/HKLAVGaplessPlayer-Swift.h>
+
+#import "HKLGLPixelBufferView.h"
 #import "HKLOpenGLUtilities.h"
 
 #if !defined(_STRINGIFY)
@@ -575,6 +577,15 @@ bail:
     if ( _textureCache ) {
         CVOpenGLESTextureCacheFlush(_textureCache, 0);
     }
+}
+
+#pragma mark - HKLAVGaplessPlayerDelegate
+- (void)player:(HKLAVGaplessPlayer *)player didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+{
+    CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    if (!pixelBuffer) { return; }
+
+    [self displayPixelBuffer:pixelBuffer];
 }
 
 #pragma mark -

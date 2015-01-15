@@ -37,6 +37,7 @@
 		1A25A0EE1A5BEC7100106B11 /* HKLCMTimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0EA1A5BEC7100106B11 /* HKLCMTimeUtils.swift */; };
 		1A25A0EF1A5BEC7100106B11 /* HKLCoreGraphicsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0EB1A5BEC7100106B11 /* HKLCoreGraphicsUtils.swift */; };
 		1A25A0F01A5BEC7100106B11 /* HKLThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0EC1A5BEC7100106B11 /* HKLThreadUtils.swift */; };
+		1A490ABD1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */; };
 		1A90937B1A6408910048E4A8 /* HKLStdLibUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90937A1A6408910048E4A8 /* HKLStdLibUtils.swift */; };
 		1A90937C1A6408910048E4A8 /* HKLStdLibUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90937A1A6408910048E4A8 /* HKLStdLibUtils.swift */; };
 		1AA61A7A1A41044B00F2B2F6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A781A41044B00F2B2F6 /* Main.storyboard */; };
@@ -88,6 +89,7 @@
 		1A25A0EA1A5BEC7100106B11 /* HKLCMTimeUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCMTimeUtils.swift; sourceTree = "<group>"; };
 		1A25A0EB1A5BEC7100106B11 /* HKLCoreGraphicsUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCoreGraphicsUtils.swift; sourceTree = "<group>"; };
 		1A25A0EC1A5BEC7100106B11 /* HKLThreadUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLThreadUtils.swift; sourceTree = "<group>"; };
+		1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLAVGaplessPlayerDelegate.swift; sourceTree = "<group>"; };
 		1A90937A1A6408910048E4A8 /* HKLStdLibUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLStdLibUtils.swift; sourceTree = "<group>"; };
 		1AA61A6F1A41044B00F2B2F6 /* SimpleGaplessPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleGaplessPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA61A731A41044B00F2B2F6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				1A25A0DA1A5BEC1900106B11 /* HKLAVGaplessPlayer.swift */,
 				1A25A0DB1A5BEC1900106B11 /* StreamFrameProducer.swift */,
 				1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */,
+				1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */,
 			);
 			path = HKLAVGaplessPlayer;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A490ABD1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift in Sources */,
 				1A25A0F01A5BEC7100106B11 /* HKLThreadUtils.swift in Sources */,
 				1A25A0E11A5BEC1900106B11 /* AssetReaderFragment.swift in Sources */,
 				1A25A0E61A5BEC1900106B11 /* HKLOpenGLUtilities.c in Sources */,
