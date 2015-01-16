@@ -25,7 +25,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        _player.delegate = playerView
+        _player.delegate = playerView as? HKLAVGaplessPlayerDelegate
         loadVideoAssets()
     }
 

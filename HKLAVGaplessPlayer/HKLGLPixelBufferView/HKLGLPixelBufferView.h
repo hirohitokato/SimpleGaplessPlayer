@@ -53,7 +53,6 @@
 @protocol HKLAVGaplessPlayerDelegate;
 
 @interface HKLGLPixelBufferView : UIView
-<HKLAVGaplessPlayerDelegate>
 
 - (void)displayPixelBuffer:(CVPixelBufferRef)pixelBuffer;
 - (void)flushPixelBufferCache;

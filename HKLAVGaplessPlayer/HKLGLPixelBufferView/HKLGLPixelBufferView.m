@@ -133,6 +133,7 @@ enum {
 };
 
 @interface HKLGLPixelBufferView ()
+<HKLAVGaplessPlayerDelegate>
 {
     EAGLContext *_oglContext;
     CVOpenGLESTextureCacheRef _textureCache;
