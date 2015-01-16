@@ -6,20 +6,6 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		1A4DC6081A5C24FA003C3DC2 /* UniversalLib */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 1A4DC6091A5C24FA003C3DC2 /* Build configuration list for PBXAggregateTarget "UniversalLib" */;
-			buildPhases = (
-				1A4DC60C1A5C258C003C3DC2 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = UniversalLib;
-			productName = UniversalLib;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		1A25A0AA1A5BE41800106B11 /* HKLAVGaplessPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A25A0A91A5BE41800106B11 /* HKLAVGaplessPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1A25A0BC1A5BE41800106B11 /* HKLAVGaplessPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A25A0A51A5BE41800106B11 /* HKLAVGaplessPlayer.framework */; };
@@ -303,9 +289,6 @@
 					1A25A0A41A5BE41800106B11 = {
 						CreatedOnToolsVersion = 6.2;
 					};
-					1A4DC6081A5C24FA003C3DC2 = {
-						CreatedOnToolsVersion = 6.1.1;
-					};
 					1AA61A6E1A41044B00F2B2F6 = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = 6BJKM8W6RD;
@@ -327,7 +310,6 @@
 			targets = (
 				1AA61A6E1A41044B00F2B2F6 /* SimpleGaplessPlayer */,
 				1A25A0A41A5BE41800106B11 /* HKLAVGaplessPlayer */,
-				1A4DC6081A5C24FA003C3DC2 /* UniversalLib */,
 			);
 		};
 /* End PBXProject section */
@@ -351,22 +333,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1A4DC60C1A5C258C003C3DC2 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "UNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\nFRAMEWORK_NAME=HKLAVGaplessPlayer\n\n# 0. Build Device and Simulator versions\nxcodebuild -target ${FRAMEWORK_NAME} ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\nxcodebuild -target ${FRAMEWORK_NAME} -configuration ${CONFIGURATION} -sdk iphonesimulator -arch x86_64 BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\"\n\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n\n# 1. Copy the iphone device's framework structure to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n\n# 2. Copy the Modules content from simulator's framework to universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule/x86_64.swiftmodule\" \"${UNIVERSAL_OUTPUTFOLDER}/${FRAMEWORK_NAME}.framework/Modules/${FRAMEWORK_NAME}.swiftmodule/\"\n\n\n# 3. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\"";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1A25A0A01A5BE41800106B11 /* Sources */ = {
@@ -472,20 +438,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		1A4DC60A1A5C24FA003C3DC2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		1A4DC60B1A5C24FA003C3DC2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -608,15 +560,6 @@
 			buildConfigurations = (
 				1A25A0BF1A5BE41800106B11 /* Debug */,
 				1A25A0C01A5BE41800106B11 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		1A4DC6091A5C24FA003C3DC2 /* Build configuration list for PBXAggregateTarget "UniversalLib" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1A4DC60A1A5C24FA003C3DC2 /* Debug */,
-				1A4DC60B1A5C24FA003C3DC2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
