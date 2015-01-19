@@ -21,12 +21,35 @@ class StreamFrameProducer: NSObject {
 
     /// 格納しているアセットの合計再生時間を返す
     var amountDuration: CMTime {
-        let lock = ScopedLock(self)
-        return _amountDuration
+        get {
+            let lock = ScopedLock(self)
+            return _amountDuration
+        }
+        set(newDuration) {
+            let lock = ScopedLock(self)
+            _amountDuration = newDuration
+        }
     }
 
-    /// アセット全体のうち再生対象となる時間。いわゆる時間窓に相当
-    var window = CMTime(value: 5, 1)
+    /**
+    アセット全体のうち再生対象となる時間。いわゆる時間窓に相当。
+    playbackModeがStreamingの場合は指定した時間を表し、Playbackの場合は
+    アセット全体の時間を表す
+    */
+    var window: CMTime {
+        get {
+            switch playbackMode {
+            case .Streaming:
+                return _window
+            case .Playback:
+                return _amountDuration
+            }
+        }
+        set(newWindow) {
+            _window = newWindow
+        }
+    }
+    private var _window = CMTime(value: 5, 1)
 
     /// 再生のスピード。1.0が通常再生、2.0だと倍速再生。負数は非対応
     var playbackRate: Float {
@@ -62,7 +85,7 @@ class StreamFrameProducer: NSObject {
     */
     func appendAsset(asset: AVAsset) {
 
-        let holder = AssetHolder(asset)
+        let holder = AssetHolder(asset, producer: self)
         self._assets.append(holder)
     }
 
@@ -189,6 +212,7 @@ class StreamFrameProducer: NSObject {
                 if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
                     // 現在のプレゼンテーション時間を更新
                     _currentPresentationTimestamp = pts
+                    position = pos // FIXME: Streamingだと、この設定は問題があった記憶が
                     return ( sbuf, pts, target.frameInterval )
                 }
             } else {
@@ -292,6 +316,7 @@ private extension StreamFrameProducer {
 
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
                 let time = CMTimeConvertScale(result.time, 600, .RoundTowardZero)
+                println("position:\(position)->\(AssetPosition(result.index, time))")
                 return AssetPosition(result.index, time)
             }
         }
@@ -338,18 +363,24 @@ private extension StreamFrameProducer {
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
-        // 現在の再生場所を起点にしてposition=1.0地点を探索する
-        if let i_t1 = self._assets.indexOf({$0.asset == self._readers.first!.asset}) {
+        switch playbackMode {
+        case .Streaming:
+            // 現在の再生場所を起点にしてposition=1.0地点を探索する
+            if let i_t1 = self._assets.indexOf({$0.asset == self._readers.first!.asset}) {
 
-            let t1 = AssetPosition(i_t1, _currentPresentationTimestamp)
-            let offset = window * (1.0 - position)
+                let t1 = AssetPosition(i_t1, _currentPresentationTimestamp)
+                let offset = window * (1.0 - position)
 
-            if let windowEnd = _findAsset(_assets, from: t1, offset: offset) {
-                return windowEnd
-            } else {
-                // 見つからなかった場合、全アセットの最後端を1.0として扱う
-                return AssetPosition(_assets.count-1, _assets.last!.asset.duration)
+                if let windowEnd = _findAsset(_assets, from: t1, offset: offset) {
+                    return windowEnd
+                } else {
+                    // 見つからなかった場合、全アセットの最後端を1.0として扱う
+                    return AssetPosition(_assets.count-1, _assets.last!.asset.duration)
+                }
             }
+        case .Playback:
+            // 全アセットの最後端を1.0として扱う
+            return AssetPosition(_assets.count-1, _assets.last!.asset.duration)
         }
         return nil
     }
@@ -449,7 +480,7 @@ private struct AssetHolder {
             _duration = newDuration
         }
     }
-    init(_ asset: AVAsset) {
+    init(_ asset: AVAsset, producer: StreamFrameProducer) {
         self.asset = asset
         // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
         // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
@@ -457,6 +488,8 @@ private struct AssetHolder {
         let keys = ["duration","tracks", "preferredTransform"]
         asset.loadValuesAsynchronouslyForKeys(keys) {
             self._duration = asset.duration
+
+            producer.amountDuration += self._duration!
         }
     }
     private var _duration: CMTime? = nil
