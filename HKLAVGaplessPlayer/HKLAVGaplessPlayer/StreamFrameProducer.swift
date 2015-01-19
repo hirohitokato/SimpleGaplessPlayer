@@ -33,6 +33,21 @@ class StreamFrameProducer: NSObject {
         return _playbackRate
     }
 
+    /**
+    登録したアセットをどのように再生するか。
+
+    Streaming/Playbackの指定により、アセットの再生状況と時間窓の扱いが変わる。
+
+    - Streaming: ストリーミング(次々とアセットが登録されることを想定)。現在の再生位置で時間窓が変化する
+    - Playback:  再生(固定のアセットを再生することを想定)。全アセットの先頭/末尾が常に時間窓の先頭/末尾となる
+    */
+    enum PlaybackMode {
+        case Streaming
+        case Playback
+    }
+    /// アセットの再生方法。詳細はPlaybackModeを参照のこと。
+    var playbackMode: PlaybackMode = .Playback
+
     /// windowの範囲外(== position < 0.0)になったアセットを自動的に取り除くかどうか
     var autoRemoveOutdatedAssets: Bool = true
 
