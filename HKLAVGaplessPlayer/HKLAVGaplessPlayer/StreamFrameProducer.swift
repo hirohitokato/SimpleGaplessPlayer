@@ -12,6 +12,19 @@ import AVFoundation
 let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
+登録したアセットをどのように再生するか。
+
+Streaming/Playbackの指定により、アセットの再生状況と時間窓の扱いが変わる。
+
+- Streaming: ストリーミング(次々とアセットが登録されることを想定)。現在の再生位置で時間窓が変化する
+- Playback:  再生(固定のアセットを再生することを想定)。全アセットの先頭/末尾が常に時間窓の先頭/末尾となる
+*/
+public enum PlaybackMode {
+    case Streaming
+    case Playback
+}
+
+/**
 :class: StreamFrameProducer
 :abstract:
 アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
@@ -38,11 +51,9 @@ class StreamFrameProducer: NSObject {
     */
     var window: CMTime {
         get {
-            switch playbackMode {
-            case .Streaming:
-                return _window
-            case .Playback:
-                return _amountDuration
+            switch _playbackMode {
+            case .Streaming: return _window
+            case .Playback:  return _amountDuration
             }
         }
         set(newWindow) {
@@ -55,20 +66,14 @@ class StreamFrameProducer: NSObject {
         return _playbackRate
     }
 
-    /**
-    登録したアセットをどのように再生するか。
-
-    Streaming/Playbackの指定により、アセットの再生状況と時間窓の扱いが変わる。
-
-    - Streaming: ストリーミング(次々とアセットが登録されることを想定)。現在の再生位置で時間窓が変化する
-    - Playback:  再生(固定のアセットを再生することを想定)。全アセットの先頭/末尾が常に時間窓の先頭/末尾となる
-    */
-    enum PlaybackMode {
-        case Streaming
-        case Playback
-    }
     /// アセットの再生方法。詳細はPlaybackModeを参照のこと。
-    var playbackMode: PlaybackMode = .Playback
+    var playbackMode: PlaybackMode {
+        get { return _playbackMode }
+        set {
+            if newValue != _playbackMode { cancelReading() }
+            _playbackMode = newValue
+        }
+    }
 
     /// Auto-RepeatモードのON/OFF。ONの場合、アセット末尾にたどり着いたらwindow先頭に戻る
     var autoRepeat: Bool = true
@@ -231,6 +236,8 @@ class StreamFrameProducer: NSObject {
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
     private var _playbackRate: Float = 1.0
+
+    private var _playbackMode: PlaybackMode = .Playback
 
     /**
     サンプルバッファの生成
@@ -402,7 +409,7 @@ private extension StreamFrameProducer {
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
-        switch playbackMode {
+        switch _playbackMode {
         case .Streaming:
             // 現在の再生場所を起点にしてposition=1.0地点を探索する
             if let i_t1 = self._assets.indexOf({$0.asset == self._readers.first!.asset}) {

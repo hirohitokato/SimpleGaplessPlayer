@@ -146,6 +146,13 @@ public class HKLAVGaplessPlayer: NSObject {
         set { _producer.autoRepeat = newValue }
     }
 
+    /**
+    */
+    public var playbackMode: PlaybackMode {
+        get { return _producer.playbackMode }
+        set { _producer.playbackMode = newValue }
+    }
+
     // MARK: Private variables & methods
     private var displayLink: CADisplayLink!
 
