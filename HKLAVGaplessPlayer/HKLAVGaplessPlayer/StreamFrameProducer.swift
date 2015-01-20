@@ -251,8 +251,7 @@ class StreamFrameProducer: NSObject {
 
             // サンプルバッファの読み込み
             if let sbuf = target.copyNextSampleBuffer() {
-                // 取得したサンプルバッファの指す時間位置が1.0を超えていなければ、
-                // サンプルバッファを返す
+
                 let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
                 if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
                     // 現在のプレゼンテーション時間を更新
