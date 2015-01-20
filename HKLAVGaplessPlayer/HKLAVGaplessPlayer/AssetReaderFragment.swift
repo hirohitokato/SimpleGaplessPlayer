@@ -109,6 +109,12 @@ internal class AssetReaderFragment: NSObject {
         let duration = endTime - startTime
         let timeRange = CMTimeRangeMake(startTime, duration)
 
+        // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 0.1) {
+            NSLog("duration(\(duration)) is less than or equal to 0")
+            return nil
+        }
+
         /* 作成するコンポジションとリーダーの構造
         *
         * [AVAssetReaderVideoCompositionOutput]: ビデオフレーム取り出し口
