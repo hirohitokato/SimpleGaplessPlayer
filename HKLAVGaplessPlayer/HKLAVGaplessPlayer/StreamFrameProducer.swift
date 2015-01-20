@@ -141,7 +141,7 @@ class StreamFrameProducer: NSObject {
             _currentPresentationTimestamp = kCMTimeZero
             let removed = _readers.removeAtIndex(0)
 
-            // 最後のアセットでないか、またはautorepeat==trueなら次のリーダーを読み込む
+            // アセットが残っているか、またはautorepeat==trueなら次を読み込む
             if removed.asset != _assets.last?.asset || autoRepeat {
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
                     [unowned self] in
