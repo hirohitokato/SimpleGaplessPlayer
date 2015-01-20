@@ -83,9 +83,40 @@ class StreamFrameProducer: NSObject {
     :param: asset フレームの取り出し対象となるアセット
     */
     func appendAsset(asset: AVAsset) {
+        let lock = ScopedLock(self)
 
         let holder = AssetHolder(asset, producer: self)
         self._assets.append(holder)
+    }
+
+    func removeAsset(asset: AVAsset) -> Bool {
+        let lock = ScopedLock(self)
+
+        if let index = _assets.indexOf({ $0.asset == asset }) {
+
+            _assets.removeAtIndex(index)
+
+            // リーダーとしてスケジュール済みの場合、リーダーからも削除する
+            // さらに、再生中のムービーの場合、advanceToNextAsset()を呼ぶ
+            if let readerIndex = _readers.indexOf({ $0.asset == asset }) {
+
+                _readers.removeAtIndex(readerIndex)
+                if readerIndex == 0 {
+                    advanceToNextAsset()
+                }
+            }
+            return true
+
+        } else {
+            return false
+        }
+    }
+
+    func removeAllAssets() {
+        let lock = ScopedLock(self)
+
+        cancelReading()
+        _assets.removeAll(keepCapacity: false)
     }
 
     /**

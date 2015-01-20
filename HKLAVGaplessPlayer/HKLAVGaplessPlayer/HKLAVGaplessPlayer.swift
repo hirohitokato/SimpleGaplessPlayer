@@ -54,6 +54,27 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
+    Removes a given asset from the queue.
+    
+    If asset is currently playing, this also has the effect as advanceToNextAsset.
+
+    :param: asset The asset to be removed.
+    :returns: true if the asset is removed from the queue or false if it did not.
+    */
+    public func removeAsset(asset: AVAsset) -> Bool {
+        return _producer.removeAsset(asset)
+    }
+
+    /**
+    Removes all the assets from the queue.
+
+    This has the side-effect of stopping playback by the player.
+    */
+    public func removeAllAssets() {
+        return _producer.removeAllAssets()
+    }
+
+    /**
     次のアセットへ再生位置を進める
     */
     public func advanceToNextAsset() {
