@@ -50,8 +50,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreVideo/CoreVideo.h>
 
-@protocol HKLAVGaplessPlayerDelegate;
-
 @interface HKLGLPixelBufferView : UIView
 
 - (void)displayPixelBuffer:(CVPixelBufferRef)pixelBuffer;

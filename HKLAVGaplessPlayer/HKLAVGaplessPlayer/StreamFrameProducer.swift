@@ -240,7 +240,7 @@ class StreamFrameProducer: NSObject {
     // MARK: Internals
 
     /// 再生位置。window内における先頭(古)〜末尾(新)を、0.0-1.0の数値で表す
-    dynamic var position: Float = 1.0
+    dynamic private(set) var position: Float = 1.0
 
     // MARK: Privates
 
