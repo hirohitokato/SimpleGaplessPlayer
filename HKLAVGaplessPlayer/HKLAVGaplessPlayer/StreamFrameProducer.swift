@@ -515,9 +515,7 @@ private class AssetHolder {
                 return _duration
             }
         }
-        set(newDuration) {
-            _duration = newDuration
-        }
+        set { _duration = newValue }
     }
     init(_ asset: AVAsset, producer: StreamFrameProducer) {
         self.asset = asset
