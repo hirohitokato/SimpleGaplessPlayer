@@ -16,12 +16,10 @@ let kFrameInterval: Float = 1.0/Float(kPlaybackFrameRate)
 /// 再生時のrate指定に使う特殊値。この値を指定した場合、アセットの
 /// 持つ1フレームをそのまま1フレームとして扱う
 public let HKLAVGaplessPlayerPlayRateAsIs: Float = FLT_MIN
-internal let FrameDurationIsAsIs: CMTime = kCMTimeNegativeInfinity
+
 /**
 :class: HKLAVGaplessPlayer
-:abstract:
-アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより
-非同期でサンプルバッファを生成する
+:abstract: アセットおよびそのアセットリーダーを保持していて、外部からのリクエストにより非同期でサンプルバッファを生成する
 */
 public class HKLAVGaplessPlayer: NSObject {
     public weak var delegate: HKLAVGaplessPlayerDelegate! = nil
@@ -101,8 +99,8 @@ public class HKLAVGaplessPlayer: NSObject {
     がもともと提供するフレームをそのまま再生に使う。つまり、60fpsで再生する
     環境であれば、240fpsのムービーだと1/4倍速、30fpsだと2倍速の再生になる。
 
-    :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止。
-    :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
+    :param: rate     The current rate of playback. Default value is 1.0(the natural rate)。0.0 means pause.
+    :param: position The position where player starts playback. It is that in time window(0.0-1.0). Default value is nil(play from current position)
     */
     public func play(rate: Float, position:Float? = nil) {
         _setRate(rate, position:position)
@@ -118,7 +116,7 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
-    再生の一時停止。再開可能
+    Pauses playback. This is the same as setting rate to 0.0.
     */
     public func pause() {
         _setRate(0.0)
@@ -132,7 +130,7 @@ public class HKLAVGaplessPlayer: NSObject {
         _producer.cancelReading()
     }
     /**
-    現在再生中かどうか
+    true if the player is in playing.
     */
     public var isPlaying: Bool {
         return !displayLink.paused
@@ -264,3 +262,5 @@ extension HKLAVGaplessPlayer {
         }
     }
 }
+
+internal let FrameDurationIsAsIs: CMTime = kCMTimeNegativeInfinity
