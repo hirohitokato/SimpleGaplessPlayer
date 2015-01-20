@@ -143,16 +143,36 @@ class StreamFrameProducer: NSObject {
                 }
             }
 
-            _currentPresentationTimestamp = kCMTimeZero
+            // 時間がリセットされる前に0.0位置の値を保持しておく(必要なときだけ)
+            let zeroPos = (_readers[0].asset == _assets.last?.asset && autoRepeat) ?
+                _getAssetPositionOf(0.0) : nil
+
+            // 現在再生中のリーダーを削除
             let removed = _readers.removeAtIndex(0)
+            _currentPresentationTimestamp = kCMTimeZero
 
             // アセットが残っているか、またはautorepeat==trueなら次を読み込む
-            if removed.asset != _assets.last?.asset || autoRepeat {
+            if removed.asset != _assets.last?.asset {
+
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
                     [unowned self] in
                     let lock = ScopedLock(self)
 
                     self._prepareNextAssetReaders()
+                }
+            } else if autoRepeat {
+
+                // autorepeatで先頭に戻る場合、時間窓の0.0位置から読み込む
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                    [unowned self] in
+                    let lock = ScopedLock(self)
+
+                    self.position = 0.0
+                    if let zeroPos = zeroPos {
+                        self._prepareNextAssetReaders(initial: self._assets[zeroPos.index].asset, atTime: zeroPos.time)
+                    } else {
+                        self._prepareNextAssetReaders()
+                    }
                 }
             }
         }
@@ -253,15 +273,25 @@ class StreamFrameProducer: NSObject {
             if let sbuf = target.copyNextSampleBuffer() {
 
                 let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
-                if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
-                    // 現在のプレゼンテーション時間を更新
-                    _currentPresentationTimestamp = pts
-                    if _playbackMode == .Playback {
-                        // FIXME: Streamingでも、アセット全体の末尾ではposを移動させたい
+                // 現在のプレゼンテーション時間を更新
+                _currentPresentationTimestamp = pts
+
+                switch _playbackMode {
+                case .Streaming:
+                    // 1.0位置が最終アセット末尾に到達している場合はpositionを移動
+                    if _readers.first!.asset == _assets.last!.asset &&
+                        _assets.last!.asset.duration == _getWindowEnd()?.time
+                    {
+                        if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
+                            position = pos
+                        }
+                    }
+                case .Playback:
+                    if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
                         position = pos
                     }
-                    return ( sbuf, pts, target.frameInterval )
                 }
+                return ( sbuf, pts, target.frameInterval )
             } else {
                 if target.status == .Completed {
                     // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する
@@ -350,7 +380,7 @@ private extension StreamFrameProducer {
     func _getAssetPositionOf(position: Float) -> AssetPosition? {
         let lock = ScopedLock(self)
 
-        if _assets.isEmpty || _readers.isEmpty { return nil }
+        if _assets.isEmpty { return nil }
 
         // 1) 1.0のアセット位置を算出する
         if let one = _getWindowEnd() {
