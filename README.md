@@ -1,14 +1,34 @@
-# SimpleGaplessPlayer
+# HKLAVGaplessPlayer
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/katokichisoft/SimpleGaplessPlayer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A simple player sample that can play multiple assets without gap.
+HKLAVGaplessPlayer is similar Movie player class to AVQueuePlayer. But it can play multiple assets without gap.
 
 ## What is this?
 
-AVQueuePlayer is used to play a number of items in sequence. But the short gap that we can easily notice them is laid between movies. This project shows how to play multiple assets without gap between assets.
+As you know, AVQueuePlayer is used to play a number of items in sequence. But the short gap that we can easily notice them is laid between movies. HKLAVGaplessPlayer plays them with no gap between assets.
 
-The app loads 10 video assets from camera-roll (via Phots.framework) when it is launched. Double tap the screen, it plays them with no gap.
+The sample app loads video assets from camera-roll (via Photos.framework) when it is launched. Double tap the screen, it plays them with no gap.
+
+This project includes HKLGLPixelBufferView class. It is a subclass of UIView so that you can display video frames.
+
+## Usage
+
+```swift
+// Most simple case.
+
+let player = HKLAVGaplessPlayer()
+// append assets.
+for asset in assets {
+  player.appendAsset(asset)
+}
+
+// connect playerView(=HKLGLPixelBufferView) to player.
+player.delegate = playerView as? HKLAVGaplessPlayerDelegate
+
+// start playing.
+player.play()
+```
 
 ## How to remove gaps?
 
@@ -23,6 +43,10 @@ However, only generating frames is not good for the gapless player. Because the 
 ![](figure/howto-02.png)
 
 This is the way how to remove gaps.
+
+## Current Limitation
+
+HKLAVGaplessPlayer currently supports only video tracks. Audio is not supported yet.(TODO)
 
 ## License
 SimpleGaplessPlayer is published under New BSD License
