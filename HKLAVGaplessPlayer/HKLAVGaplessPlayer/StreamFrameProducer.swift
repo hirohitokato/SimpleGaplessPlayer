@@ -301,7 +301,6 @@ class StreamFrameProducer: NSObject {
                 startTime = kCMTimeZero
                 _readers.append(assetreader)
             } else {
-                println("_assets[\(startIndex)]=\(_assets[startIndex].asset)")
                 NSLog("1) Failed to instantiate a reader of [\((_assets[startIndex].asset as? AVURLAsset)?.URL.lastPathComponent?)]")
             }
         }
@@ -364,7 +363,6 @@ private extension StreamFrameProducer {
 
                 // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
                 let time = CMTimeConvertScale(result.time, 600, .RoundTowardZero)
-                println("position:\(position)->\(AssetPosition(result.index, time))")
                 return AssetPosition(result.index, time)
             }
         }
