@@ -143,9 +143,9 @@
 			isa = PBXGroup;
 			children = (
 				1A25A0DA1A5BEC1900106B11 /* HKLAVGaplessPlayer.swift */,
+				1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */,
 				1A25A0DB1A5BEC1900106B11 /* StreamFrameProducer.swift */,
 				1A25A0D91A5BEC1900106B11 /* AssetReaderFragment.swift */,
-				1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */,
 			);
 			path = HKLAVGaplessPlayer;
 			sourceTree = "<group>";

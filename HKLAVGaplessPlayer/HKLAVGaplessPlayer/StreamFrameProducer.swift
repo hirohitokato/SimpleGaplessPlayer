@@ -49,7 +49,6 @@ class StreamFrameProducer: NSObject {
             _window = newWindow
         }
     }
-    private var _window = CMTime(value: 5, 1)
 
     /// 再生のスピード。1.0が通常再生、2.0だと倍速再生。負数は非対応
     var playbackRate: Float {
@@ -188,8 +187,10 @@ class StreamFrameProducer: NSObject {
 
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
+
     /// アセット全体の総再生時間（内部管理用）
     private var _amountDuration = kCMTimeZero
+    private var _window = CMTime(value: 5, 1)
 
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
     private var _playbackRate: Float = 1.0

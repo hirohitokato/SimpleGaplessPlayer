@@ -9,7 +9,9 @@ import Foundation
 import CoreMedia
 
 /**
-*  HKLAVGaplessPlayerで逐次得られるフレームを受け取るためのプロトコル
+HKLAVGaplessPlayerで逐次得られるフレームを受け取るための外部公開プロトコル。
+フレームデータがほしいクラスは、本プロトコルに従うことで定期的にデリゲート
+メソッドが呼ばれるようになる。
 */
 @objc public protocol HKLAVGaplessPlayerDelegate {
 
