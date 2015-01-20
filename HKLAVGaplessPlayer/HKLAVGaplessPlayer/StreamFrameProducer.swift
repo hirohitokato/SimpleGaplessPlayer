@@ -70,6 +70,9 @@ class StreamFrameProducer: NSObject {
     /// アセットの再生方法。詳細はPlaybackModeを参照のこと。
     var playbackMode: PlaybackMode = .Playback
 
+    /// Auto-RepeatモードのON/OFF。ONの場合、アセット末尾にたどり着いたらwindow先頭に戻る
+    var autoRepeat: Bool = true
+
     /// windowの範囲外(== position < 0.0)になったアセットを自動的に取り除くかどうか
     var autoRemoveOutdatedAssets: Bool = true
 
@@ -135,14 +138,17 @@ class StreamFrameProducer: NSObject {
                 }
             }
 
-            _readers.removeAtIndex(0)
             _currentPresentationTimestamp = kCMTimeZero
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                [unowned self] in
-                let lock = ScopedLock(self)
+            let removed = _readers.removeAtIndex(0)
 
-                self._prepareNextAssetReaders()
+            // 最後のアセットでないか、またはautorepeat==trueなら次のリーダーを読み込む
+            if removed.asset != _assets.last?.asset || autoRepeat {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                    [unowned self] in
+                    let lock = ScopedLock(self)
 
+                    self._prepareNextAssetReaders()
+                }
             }
         }
     }

@@ -130,6 +130,16 @@ public class HKLAVGaplessPlayer: NSObject {
         return !displayLink.paused
     }
 
+    /** The automatic vs. nonautomatic repeat state of the player.
+
+    If true, the player plays assets repeatedly in the time window.
+    The default value for this property is false.
+    */
+    public var autoRepeat: Bool {
+        get { return _producer.autoRepeat }
+        set { _producer.autoRepeat = newValue }
+    }
+
     // MARK: Private variables & methods
     private var displayLink: CADisplayLink!
 
