@@ -257,7 +257,10 @@ class StreamFrameProducer: NSObject {
                 if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
                     // 現在のプレゼンテーション時間を更新
                     _currentPresentationTimestamp = pts
-                    position = pos // FIXME: Streamingだと、この設定は問題があった記憶が
+                    if _playbackMode == .Playback {
+                        // FIXME: Streamingでも、アセット全体の末尾ではposを移動させたい
+                        position = pos
+                    }
                     return ( sbuf, pts, target.frameInterval )
                 }
             } else {
