@@ -99,9 +99,9 @@ class StreamFrameProducer: NSObject {
             if self.autoRemoveOutdatedAssets {
                 if let assetPos = self._getAssetPositionOf(0.0) {
                     // 合計時間も減じておく
-                    let duration = self._assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.asset.duration }
-                    self._assets.removeRange(0..<assetPos.index)
-                    self._amountDuration -= duration
+                    let duration = _assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.duration }
+                    _assets.removeRange(0..<assetPos.index)
+                    _amountDuration -= duration
                 }
             }
 
@@ -375,12 +375,12 @@ private extension StreamFrameProducer {
                     return windowEnd
                 } else {
                     // 見つからなかった場合、全アセットの最後端を1.0として扱う
-                    return AssetPosition(_assets.count-1, _assets.last!.asset.duration)
+                    return AssetPosition(_assets.count-1, _assets.last!.duration)
                 }
             }
         case .Playback:
             // 全アセットの最後端を1.0として扱う
-            return AssetPosition(_assets.count-1, _assets.last!.asset.duration)
+            return AssetPosition(_assets.count-1, _assets.last!.duration)
         }
         return nil
     }
@@ -409,17 +409,17 @@ private extension StreamFrameProducer {
 
         // 繰り返し処理を簡略化するためにゲタを履かせる
         var offset = isSignMinus ?
-            (offset * -1.0 + assets[from.index].asset.duration - from.time) :
+            (offset * -1.0 + assets[from.index].duration - from.time) :
             (offset + from.time)
 
         for (i, holder) in enumerate(targets) {
 
-            if offset <= holder.asset.duration {
+            if offset <= holder.duration {
                 return isSignMinus ?
-                    AssetPosition(from.index - i, holder.asset.duration - offset) :
+                    AssetPosition(from.index - i, holder.duration - offset) :
                     AssetPosition(from.index + i, offset)
             }
-            offset -= holder.asset.duration
+            offset -= holder.duration
         }
         return nil
     }
@@ -443,15 +443,15 @@ private extension StreamFrameProducer {
         // 中間のアセットのduration合計を求める
         let intermediates = (lhs.index < rhs.index) ?
             _assets[lhs.index+1 ..< rhs.index] : _assets[rhs.index+1 ..< lhs.index]
-        sumTime = intermediates.reduce(sumTime) { $0 + $1.asset.duration }
+        sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
 
         if lhs.index < rhs.index {
             // (lhsの残り時間 + rhs)の符号反転
-            sumTime += (_assets[lhs.index].asset.duration - lhs.time) + rhs.time
+            sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
             return kCMTimeZero - sumTime
         } else {
             // lhs + rhsの残り時間
-            sumTime += lhs.time + (_assets[rhs.index].asset.duration - rhs.time)
+            sumTime += lhs.time + (_assets[rhs.index].duration - rhs.time)
             return sumTime
         }
     }
@@ -463,12 +463,12 @@ private extension StreamFrameProducer {
 * アセット配列に格納するデータ構造。AVAsset.durationなどのvalueにアクセスするのは
 * 高コストであるため(iOS8.1.2時点)、値をアセットと共にキャッシュするのが目的
 */
-private struct AssetHolder {
+private class AssetHolder {
     /// 外部から渡されたアセット
     let asset: AVAsset
     /// アセットの再生時間。キャッシュした値があればそれを返す
-    var duration: CMTime? {
-        mutating get {
+    var duration: CMTime {
+        get {
             if _duration != nil {
                 return _duration
             } else {
@@ -488,11 +488,10 @@ private struct AssetHolder {
         let keys = ["duration","tracks", "preferredTransform"]
         asset.loadValuesAsynchronouslyForKeys(keys) {
             self._duration = asset.duration
-
             producer.amountDuration += self._duration!
         }
     }
-    private var _duration: CMTime? = nil
+    private var _duration: CMTime! = nil
 }
 
 /**
