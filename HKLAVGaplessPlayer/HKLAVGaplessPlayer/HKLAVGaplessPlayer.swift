@@ -45,9 +45,9 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
-    アセットを内部キューの末尾に追加する
+    Appends given asset to the end of queue.
 
-    :param: asset 再生対象となるアセット
+    :param: asset The asset to be appended.
     */
     public func appendAsset(asset: AVAsset) {
         _producer.appendAsset(asset)
@@ -75,18 +75,23 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
-    次のアセットへ再生位置を進める
+    Ends playback of the current asset and initiates playback of the next asset in the player's queue.
     */
     public func advanceToNextAsset() {
         _producer.advanceToNextAsset()
     }
 
-    /// 現在の再生レートを返す
+    /**
+    The current rate of playback.
+
+    A value of 0.0 means pauses the video, while a value of 1.0 play at the natural rate of the current item.
+    Negative rate value ranges are not  supported.
+    */
     public var rate: Float {
         return _producer.playbackRate
     }
 
-    /// 現在の再生位置を返す
+    /// The current position(0.0-1.0) of playback.
     dynamic public private(set) var position: Float = 1.0
 
     /**
@@ -102,6 +107,7 @@ public class HKLAVGaplessPlayer: NSObject {
     public func play(rate: Float, position:Float? = nil) {
         _setRate(rate, position:position)
     }
+
     /**
     プレーヤーを等倍速で再生開始する。
     
@@ -110,12 +116,14 @@ public class HKLAVGaplessPlayer: NSObject {
     public func play() {
         _setRate(1.0, position:nil)
     }
+
     /**
     再生の一時停止。再開可能
     */
     public func pause() {
         _setRate(0.0)
     }
+
     /**
     再生停止。再開は最初から
     */
