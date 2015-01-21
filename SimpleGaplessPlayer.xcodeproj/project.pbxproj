@@ -23,6 +23,7 @@
 		1A25A0EE1A5BEC7100106B11 /* HKLCMTimeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0EA1A5BEC7100106B11 /* HKLCMTimeUtils.swift */; };
 		1A25A0EF1A5BEC7100106B11 /* HKLCoreGraphicsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0EB1A5BEC7100106B11 /* HKLCoreGraphicsUtils.swift */; };
 		1A25A0F01A5BEC7100106B11 /* HKLThreadUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A25A0EC1A5BEC7100106B11 /* HKLThreadUtils.swift */; };
+		1A31F9B91A6F6FE4006FCD4C /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A31F9B81A6F6FE4006FCD4C /* Photos.framework */; };
 		1A490ABD1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */; };
 		1A90937B1A6408910048E4A8 /* HKLStdLibUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90937A1A6408910048E4A8 /* HKLStdLibUtils.swift */; };
 		1A90937C1A6408910048E4A8 /* HKLStdLibUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A90937A1A6408910048E4A8 /* HKLStdLibUtils.swift */; };
@@ -77,6 +78,7 @@
 		1A25A0EA1A5BEC7100106B11 /* HKLCMTimeUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCMTimeUtils.swift; sourceTree = "<group>"; };
 		1A25A0EB1A5BEC7100106B11 /* HKLCoreGraphicsUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLCoreGraphicsUtils.swift; sourceTree = "<group>"; };
 		1A25A0EC1A5BEC7100106B11 /* HKLThreadUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLThreadUtils.swift; sourceTree = "<group>"; };
+		1A31F9B81A6F6FE4006FCD4C /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		1A490ABC1A6742E80027170A /* HKLAVGaplessPlayerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLAVGaplessPlayerDelegate.swift; sourceTree = "<group>"; };
 		1A90937A1A6408910048E4A8 /* HKLStdLibUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HKLStdLibUtils.swift; sourceTree = "<group>"; };
 		1AA0512F1A6E1B2600166A50 /* AssetHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetHolder.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A31F9B91A6F6FE4006FCD4C /* Photos.framework in Frameworks */,
 				1A25A0BC1A5BE41800106B11 /* HKLAVGaplessPlayer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,6 +140,7 @@
 		1A25A0C71A5BE4D500106B11 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1A31F9B81A6F6FE4006FCD4C /* Photos.framework */,
 				1A25A0C81A5BE50F00106B11 /* CoreMedia.framework */,
 				1A25A0C51A5BE4C100106B11 /* AVFoundation.framework */,
 			);

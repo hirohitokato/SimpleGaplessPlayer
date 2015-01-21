@@ -117,8 +117,12 @@ class ViewController: UIViewController {
                 phAsset, index, stop in
                 let phAsset = phAsset as PHAsset
 
+                // オリジナルのアセットを取得するよう指定
+                let options = PHVideoRequestOptions()
+                options.version = .Original
+
                 // この処理は非同期で行われるので注意
-                _ = PHImageManager.defaultManager().requestAVAssetForVideo(phAsset, options:nil) {
+                _ = PHImageManager.defaultManager().requestAVAssetForVideo(phAsset, options:options) {
                     avasset, audioMix, info in
 
                     if let avasset = avasset {
