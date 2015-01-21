@@ -301,7 +301,6 @@
 					};
 					1AA61A6E1A41044B00F2B2F6 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = 6BJKM8W6RD;
 					};
 				};
 			};
