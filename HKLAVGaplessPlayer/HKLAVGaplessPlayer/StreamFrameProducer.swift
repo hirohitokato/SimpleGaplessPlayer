@@ -196,9 +196,23 @@ class StreamFrameProducer: NSObject {
         var currentAsset: AVAsset? = nil
         if let pos = pos {
             if let playerInfo = _getAssetPositionOf(pos) {
-                currentAsset = _assets[playerInfo.index].asset
-                _position = pos
-                _currentPresentationTimestamp = playerInfo.time
+
+                if autoRepeat &&
+                    _assets[playerInfo.index].asset == _assets.last!.asset &&
+                    playerInfo.time.isNearlyEqualTo(_assets.last!.duration, 0.1)
+                {
+                    // 得られたアセット位置が全体の末尾かつautoRepeat=trueの場合、
+                    // 窓時間の先頭に戻る
+                    let zero = _getAssetPositionOf(0.0) ?? AssetPosition(0, kCMTimeZero)
+
+                    currentAsset = _assets[zero.index].asset
+                    _currentPresentationTimestamp = zero.time
+                    _position = _getPositionOf(0, time: kCMTimeZero)!
+                } else {
+                    currentAsset = _assets[playerInfo.index].asset
+                    _position = pos
+                    _currentPresentationTimestamp = playerInfo.time
+                }
             }
         } else {
             currentAsset = _readers.first?.asset
