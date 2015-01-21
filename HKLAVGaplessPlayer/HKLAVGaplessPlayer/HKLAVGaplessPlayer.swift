@@ -11,7 +11,6 @@ import AVFoundation
 
 
 let kPlaybackFrameRate: Int = 60
-let kFrameInterval: Float = 1.0/Float(kPlaybackFrameRate)
 
 /// 再生時のrate指定に使う特殊値。この値を指定した場合、アセットの
 /// 持つ1フレームをそのまま1フレームとして扱う
