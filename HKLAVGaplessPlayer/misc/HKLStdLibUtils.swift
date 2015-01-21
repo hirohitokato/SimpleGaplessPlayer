@@ -20,9 +20,9 @@ extension Array {
 
     :refer: http://stackoverflow.com/a/24105493
     */
-    func indexOf(condition: T -> Bool) -> Int? {
-        for (idx, element) in enumerate(self) {
-            if condition(element) {
+    func indexOf(condition: Array.Element -> Bool) -> Array.Index? {
+        for idx in indices(self) {
+            if condition(self[idx]) {
                 return idx
             }
         }
