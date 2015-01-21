@@ -33,12 +33,6 @@ public class HKLAVGaplessPlayer: NSObject {
         dispatch_async(dispatch_get_main_queue()) {
             self._displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         }
-
-        _producer.addObserver(self, forKeyPath: "position", options: .New, context: &_positionContext)
-    }
-
-    deinit {
-        _producer.removeObserver(self, forKeyPath: "position", context: &position)
     }
 
     /**
@@ -86,7 +80,7 @@ public class HKLAVGaplessPlayer: NSObject {
     public var rate: Float { return _producer.playbackRate }
 
     /// The current position(0.0-1.0) of playback.
-    dynamic public private(set) var position: Float = 1.0
+    public var position: Float { return _producer.position }
 
     /**
     プレーヤーを再生開始
@@ -248,20 +242,6 @@ extension HKLAVGaplessPlayer {
         if displayLink.timestamp - _lastTimestamp > 0.5 {
             displayLink.paused = true
             println("Paused display link in order to save energy.")
-        }
-    }
-}
-
-// MARK: … KVO
-extension HKLAVGaplessPlayer {
-    public override func observeValueForKeyPath(keyPath: String,
-        ofObject object: AnyObject, change: [NSObject : AnyObject],
-        context: UnsafeMutablePointer<Void>)
-    {
-        if context == &_positionContext {
-            position = _producer.position
-        } else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
 }

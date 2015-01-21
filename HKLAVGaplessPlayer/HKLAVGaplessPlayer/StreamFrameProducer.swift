@@ -165,7 +165,7 @@ class StreamFrameProducer: NSObject {
                     [unowned self] in
                     let lock = ScopedLock(self)
 
-                    self.position = 0.0
+                    self._position = 0.0
                     if let zeroPos = zeroPos {
                         self._prepareNextAssetReaders(initial: self._assets[zeroPos.index].asset, atTime: zeroPos.time)
                     } else {
@@ -205,7 +205,7 @@ class StreamFrameProducer: NSObject {
         if let pos = pos {
             if let playerInfo = _getAssetPositionOf(pos) {
                 currentAsset = _assets[playerInfo.index].asset
-                position = pos
+                _position = pos
                 _currentPresentationTimestamp = playerInfo.time
             }
         } else {
@@ -235,10 +235,9 @@ class StreamFrameProducer: NSObject {
         _readers.removeAll(keepCapacity: false)
     }
 
-    // MARK: Internals
-
     /// 再生位置。window内における先頭(古)〜末尾(新)を、0.0-1.0の数値で表す
-    dynamic private(set) var position: Float = 1.0
+    var position: Float { return _position }
+    private var _position: Float = 1.0
 
     // MARK: Privates
 
@@ -281,12 +280,12 @@ class StreamFrameProducer: NSObject {
                         _assets.last!.asset.duration == _getWindowEnd()?.time
                     {
                         if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
-                            position = pos
+                            _position = pos
                         }
                     }
                 case .Playback:
                     if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
-                        position = pos
+                        _position = pos
                     }
                 }
                 return ( sbuf, pts, target.frameInterval )

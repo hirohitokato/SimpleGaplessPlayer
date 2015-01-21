@@ -41,14 +41,12 @@ class ViewController: UIViewController {
         _timer = NSTimer.scheduledTimerWithTimeInterval(
             0.2, target: self, selector: "updateUI:",
             userInfo: nil, repeats: true)
-        _player.addObserver(self, forKeyPath: "position", options: .New, context: &positionContext)
     }
 
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
 
         _timer.invalidate()
-        _player.removeObserver(self, forKeyPath: "position", context: &positionContext)
     }
 
     @IBAction func tapped(sender: AnyObject) {
@@ -76,17 +74,7 @@ class ViewController: UIViewController {
 
     @objc func updateUI(timer: NSTimer) {
         msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)"
-    }
-
-    override func observeValueForKeyPath(keyPath: String,
-        ofObject object: AnyObject, change: [NSObject: AnyObject],
-        context: UnsafeMutablePointer<Void>)
-    {
-        if context == &positionContext {
-            positionSlider.value = _player.position
-        } else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
-        }
+        positionSlider.value = _player.position
     }
 
     /**
