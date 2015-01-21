@@ -416,10 +416,10 @@ private extension StreamFrameProducer {
         → position = (t(target) - t0)/window
         (※ t0 = t1 - window なので)
         → position = (t(target) - t1 + window)/window
-        ∴ position = (window + target - t1) / window
+        ∴ position = (window - t(target〜t1) / window
         */
         if let t1 = _getWindowEnd() {
-            let numer = window + _getDurationBetweenAssets(from:target, to:t1)
+            let numer = window - _getDurationBetweenAssets(from:target, to:t1)
             let position = numer.f / window.f
             return position
         }
@@ -510,7 +510,7 @@ private extension StreamFrameProducer {
 
         // lhsとrhsが同じアセットの場合は、単純に時間の差を返す
         if lhs.index == rhs.index {
-            return lhs.time - rhs.time
+            return rhs.time - lhs.time
         }
 
         // 中間のアセットのduration合計を求める
@@ -518,14 +518,15 @@ private extension StreamFrameProducer {
             _assets[lhs.index+1 ..< rhs.index] : _assets[rhs.index+1 ..< lhs.index]
         sumTime = intermediates.reduce(sumTime) { $0 + $1.duration }
 
+        // 両端のアセットを加算して、符号を付けて返す
         if lhs.index < rhs.index {
             // (lhsの残り時間 + rhs)の符号反転
             sumTime += (_assets[lhs.index].duration - lhs.time) + rhs.time
-            return kCMTimeZero - sumTime
+            return sumTime
         } else {
             // lhs + rhsの残り時間
             sumTime += lhs.time + (_assets[rhs.index].duration - rhs.time)
-            return sumTime
+            return kCMTimeZero - sumTime
         }
     }
 

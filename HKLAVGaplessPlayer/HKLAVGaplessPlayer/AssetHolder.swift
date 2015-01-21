@@ -35,8 +35,10 @@ class AssetHolder {
         //   時間を短くできることを狙っている）
         let keys = ["duration","tracks", "preferredTransform"]
         asset.loadValuesAsynchronouslyForKeys(keys) {
-            self._duration = asset.duration
-            producer.amountDuration += self._duration!
+            let lock = ScopedLock(producer)
+
+            self.duration = asset.duration
+            producer.amountDuration += self.duration
         }
     }
     private var _duration: CMTime! = nil
