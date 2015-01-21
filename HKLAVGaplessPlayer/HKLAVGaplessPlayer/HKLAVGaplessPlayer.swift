@@ -81,12 +81,9 @@ public class HKLAVGaplessPlayer: NSObject {
     /**
     The current rate of playback.
 
-    A value of 0.0 means pauses the video, while a value of 1.0 play at the natural rate of the current item.
-    Negative rate value ranges are not  supported.
+    A value of 0.0 means pauses the video, while a value of 1.0 play at the natural rate of the current item. Negative rate value ranges are not  supported.
     */
-    public var rate: Float {
-        return _producer.playbackRate
-    }
+    public var rate: Float { return _producer.playbackRate }
 
     /// The current position(0.0-1.0) of playback.
     dynamic public private(set) var position: Float = 1.0
