@@ -27,11 +27,11 @@ public class HKLAVGaplessPlayer: NSObject {
         super.init()
 
         // DisplayLinkを作成
-        displayLink = CADisplayLink(target: self, selector: "_displayLinkCallback:")
-        displayLink.frameInterval = 60 / kPlaybackFrameRate
-        displayLink.paused = true
+        _displayLink = CADisplayLink(target: self, selector: "_displayLinkCallback:")
+        _displayLink.frameInterval = 60 / kPlaybackFrameRate
+        _displayLink.paused = true
         dispatch_async(dispatch_get_main_queue()) {
-            self.displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+            self._displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
         }
 
         _producer.addObserver(self, forKeyPath: "position", options: .New, context: &_positionContext)
@@ -129,7 +129,7 @@ public class HKLAVGaplessPlayer: NSObject {
     true if the player is in playing.
     */
     public var isPlaying: Bool {
-        return !displayLink.paused
+        return !_displayLink.paused
     }
 
     /** The automatic vs. nonautomatic repeat state of the player.
@@ -150,7 +150,7 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     // MARK: Private variables & methods
-    private var displayLink: CADisplayLink!
+    private var _displayLink: CADisplayLink!
 
      /// フレームの保持と生成を担当するクラス
     let _producer: StreamFrameProducer = StreamFrameProducer()
@@ -182,7 +182,7 @@ public class HKLAVGaplessPlayer: NSObject {
         if rate == 0 {
 
             // 一時停止
-            displayLink.paused = true
+            _displayLink.paused = true
             _lastTimestamp = CACurrentMediaTime()
             _remainingPresentationTime = 0.0
             _playbackRate = CFTimeInterval(rate)
@@ -192,7 +192,7 @@ public class HKLAVGaplessPlayer: NSObject {
             if _producer.startReading(rate: rate, atPosition: position) {
                 _lastTimestamp = CACurrentMediaTime()
                 _remainingPresentationTime = 0.0
-                displayLink.paused = false
+                _displayLink.paused = false
                 _playbackRate = CFTimeInterval(rate)
             }
         }
