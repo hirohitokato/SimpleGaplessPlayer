@@ -51,27 +51,19 @@ class StreamFrameProducer: NSObject {
     */
     var window: CMTime {
         get {
-            switch _playbackMode {
+            switch playbackMode {
             case .Streaming: return _window
             case .Playback:  return _amountDuration
             }
         }
-        set(newWindow) {
-            _window = newWindow
-        }
+        set(newWindow) { _window = newWindow }
     }
 
     /// 再生のスピード。1.0が通常再生、2.0だと倍速再生。負数は非対応
     var playbackRate: Float { return _playbackRate }
 
     /// アセットの再生方法。詳細はPlaybackModeを参照のこと。
-    var playbackMode: PlaybackMode {
-        get { return _playbackMode }
-        set {
-            if newValue != _playbackMode { cancelReading() }
-            _playbackMode = newValue
-        }
-    }
+    var playbackMode: PlaybackMode = .Playback
 
     /// Auto-RepeatモードのON/OFF。ONの場合、アセット末尾にたどり着いたらwindow先頭に戻る
     var autoRepeat: Bool = true
@@ -254,8 +246,6 @@ class StreamFrameProducer: NSObject {
     /// 再生レート。1.0が通常再生、2.0だと倍速再生
     private var _playbackRate: Float = 1.0
 
-    private var _playbackMode: PlaybackMode = .Playback
-
     /**
     サンプルバッファの生成
     */
@@ -273,7 +263,7 @@ class StreamFrameProducer: NSObject {
                 // 現在のプレゼンテーション時間を更新
                 _currentPresentationTimestamp = pts
 
-                switch _playbackMode {
+                switch playbackMode {
                 case .Streaming:
                     // 1.0位置が最終アセット末尾に到達している場合はpositionを移動
                     if _readers.first!.asset == _assets.last!.asset &&
@@ -436,7 +426,7 @@ private extension StreamFrameProducer {
 
         if _assets.isEmpty || _readers.isEmpty { return nil }
 
-        switch _playbackMode {
+        switch playbackMode {
         case .Streaming:
             // 現在の再生場所を起点にしてposition=1.0地点を探索する
             if let i_t1 = self._assets.indexOf({$0.asset == self._readers.first!.asset}) {

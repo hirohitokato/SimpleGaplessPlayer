@@ -21,6 +21,12 @@ class ViewController: UIViewController {
     private var _timer: NSTimer!
 
     @IBOutlet weak var positionSlider: UISlider!
+    @IBOutlet weak var modeControl: UISegmentedControl!
+
+    enum PlayerMode: Int {
+        case Playback  = 0
+        case Streaming = 1
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,6 +76,17 @@ class ViewController: UIViewController {
         // rate==0.0のときはAsIsモードで再生
         let newRate = sender.value>0.0 ? sender.value : HKLAVGaplessPlayerPlayRateAsIs
         _player.play(newRate)
+    }
+
+    @IBAction func modeChanged(sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case PlayerMode.Playback.rawValue:
+            _player.playbackMode = .Playback
+        case PlayerMode.Streaming.rawValue:
+            _player.playbackMode = .Streaming
+        default:
+            println("do nothing for mode:\(sender.selectedSegmentIndex)")
+        }
     }
 
     @objc func updateUI(timer: NSTimer) {

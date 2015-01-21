@@ -140,7 +140,10 @@ public class HKLAVGaplessPlayer: NSObject {
     */
     public var playbackMode: PlaybackMode {
         get { return _producer.playbackMode }
-        set { _producer.playbackMode = newValue }
+        set {
+            if (_producer.playbackMode != newValue) { pause() }
+            _producer.playbackMode = newValue
+        }
     }
 
     // MARK: Private variables & methods
