@@ -91,6 +91,7 @@
                         <outlet property="playerView" destination="aDi-tX-l2h" id="cDS-pV-SBH"/>
                         <outlet property="positionSlider" destination="cRN-jc-sLx" id="b2p-de-zC0"/>
                         <outlet property="rateLabel" destination="m0K-h5-DhY" id="dK0-Iq-MSe"/>
+                        <outlet property="rateSlider" destination="66z-3M-JKt" id="Zkj-xP-w6R"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>

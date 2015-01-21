@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var playerView: HKLGLPixelBufferView!
     @IBOutlet weak var msgLabel: UILabel!
     @IBOutlet weak var rateLabel: UILabel!
+    @IBOutlet weak var rateSlider: UISlider!
     @IBOutlet weak var positionSlider: UISlider!
     @IBOutlet weak var modeControl: UISegmentedControl!
 
@@ -88,6 +89,8 @@ class ViewController: UIViewController {
     }
 
     @objc func updateUI(timer: NSTimer) {
+        rateLabel.text = "rate: \(_player.rate)"
+        rateSlider.value = _player.rate
         msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)"
         positionSlider.value = _player.position
     }
