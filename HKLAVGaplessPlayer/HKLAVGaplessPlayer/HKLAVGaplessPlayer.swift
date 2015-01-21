@@ -217,28 +217,28 @@ extension HKLAVGaplessPlayer {
         }
         _previousTimestamp = now
 
-        // 時間を消費
-        _remainingPresentationTime -= delta
+        // 時間を供給
+        _remainingPresentationTime += delta
 
-        // フレームの表示時間を、消費したぶんだけ補充する
-        while _remainingPresentationTime < 0.0 {
+        // フレームの表示可能時間を、供給されたぶんだけ消費する
+        while _remainingPresentationTime > 0.0 {
 
             // サンプルバッファの取得
             if let (sbuf, _, duration) = _producer.nextSampleBuffer() {
 
-                // ピクセルバッファの最新取得時刻を更新し、
-                // 得られた時間を表示可能時間として補充する
+                // サンプルバッファの最新取得時刻を更新した上で、
+                // 得られたプレゼンテーション時間を消費する
                 _lastTimestamp = displayLink.timestamp
 
                 if duration == FrameDurationIsAsIs {
                     // HKLAVGaplessPlayerPlayRateAsIsの場合は1VSYNC==1フレームとなる
                     _remainingPresentationTime = 0.0
                 } else {
-                    _remainingPresentationTime += duration.f64
+                    _remainingPresentationTime -= duration.f64
                 }
 
                 // 表示処理はループの最後で1回だけ実行
-                if _remainingPresentationTime >= 0.0 {
+                if _remainingPresentationTime <= 0.0 {
                     delegate?.player(self, didOutputSampleBuffer: sbuf)
                 }
             } else {
