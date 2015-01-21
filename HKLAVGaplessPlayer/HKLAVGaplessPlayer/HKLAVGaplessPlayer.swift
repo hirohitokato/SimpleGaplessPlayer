@@ -154,6 +154,7 @@ public class HKLAVGaplessPlayer: NSObject {
     private var _lastTimestamp: CFTimeInterval = 0
     /// 表示に使う時間の残り時間
     private var _remainingPresentationTime: CFTimeInterval = 0.0
+    private var _previousTimestamp: CFTimeInterval = 0.0
 
     /// 再生速度の係数。1.0が通常速度、2.0だと倍速になる
     private var _playbackRate : CFTimeInterval = 1.0
@@ -180,6 +181,7 @@ public class HKLAVGaplessPlayer: NSObject {
             _displayLink.paused = true
             _lastTimestamp = CACurrentMediaTime()
             _remainingPresentationTime = 0.0
+            _previousTimestamp = 0.0
             _playbackRate = CFTimeInterval(rate)
         } else {
 
@@ -187,6 +189,7 @@ public class HKLAVGaplessPlayer: NSObject {
             if _producer.startReading(rate: rate, atPosition: position) {
                 _lastTimestamp = CACurrentMediaTime()
                 _remainingPresentationTime = 0.0
+                _previousTimestamp = 0.0
                 _displayLink.paused = false
                 _playbackRate = CFTimeInterval(rate)
             }
@@ -204,13 +207,18 @@ extension HKLAVGaplessPlayer {
     */
     @objc func _displayLinkCallback(displayLink: CADisplayLink) {
 
-        // 表示対象の時刻を計算（再生レートも加味）
-        let callbackDuration =
-        displayLink.duration * CFTimeInterval(displayLink.frameInterval)
-        //let nextOutputHostTime = displayLink.timestamp + callbackDuration
+        // 表示時間を計算
+        let now = CACurrentMediaTime()
+        var delta: CFTimeInterval
+        if _previousTimestamp.isZero {
+            delta = displayLink.duration * CFTimeInterval(displayLink.frameInterval)
+        } else {
+            delta = now - _previousTimestamp
+        }
+        _previousTimestamp = now
 
         // 時間を消費
-        _remainingPresentationTime -= callbackDuration
+        _remainingPresentationTime -= delta
 
         // フレームの表示時間を、消費したぶんだけ補充する
         while _remainingPresentationTime < 0.0 {
