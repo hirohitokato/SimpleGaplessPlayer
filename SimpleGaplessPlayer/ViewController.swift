@@ -15,11 +15,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var playerView: HKLGLPixelBufferView!
     @IBOutlet weak var msgLabel: UILabel!
-    private let _player = HKLAVGaplessPlayer()
-
     @IBOutlet weak var rateLabel: UILabel!
-    private var _timer: NSTimer!
-
     @IBOutlet weak var positionSlider: UISlider!
     @IBOutlet weak var modeControl: UISegmentedControl!
 
@@ -27,6 +23,9 @@ class ViewController: UIViewController {
         case Playback  = 0
         case Streaming = 1
     }
+
+    private let _player = HKLAVGaplessPlayer()
+    private var _timer: NSTimer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +39,6 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    private var positionContext = 0
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
 

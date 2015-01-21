@@ -122,9 +122,7 @@ public class HKLAVGaplessPlayer: NSObject {
     /**
     true if the player is in playing.
     */
-    public var isPlaying: Bool {
-        return !_displayLink.paused
-    }
+    public var isPlaying: Bool { return !_displayLink.paused }
 
     /** The automatic vs. nonautomatic repeat state of the player.
 
