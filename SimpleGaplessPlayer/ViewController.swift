@@ -112,6 +112,8 @@ class ViewController: UIViewController {
             var options = PHFetchOptions()
             options.sortDescriptors = [ NSSortDescriptor(key: "creationDate", ascending: true) ]
 
+            var failed: Int = 0
+
             let assets = PHAsset.fetchAssetsInAssetCollection(collection, options: options)
             assets.enumerateObjectsUsingBlock {
                 phAsset, index, stop in
@@ -125,22 +127,22 @@ class ViewController: UIViewController {
                 _ = PHImageManager.defaultManager().requestAVAssetForVideo(phAsset, options:options) {
                     avasset, audioMix, info in
 
+                    // プレイヤーに日付順で追加できるよう試みる
                     if let avasset = avasset {
-                        // プレーヤー内部で読み込んでいるdurationを先読みして
-                        // おくことで、再生順序が日付順になるよう試みる
-                        avasset.loadValuesAsynchronouslyForKeys(["duration"]) {
-                            dispatch_async(queue) {
-                                avassets.append((index,avasset))
-                                if avassets.count == assets.count {
-                                    println("Finished gathering video assets.")
-                                    // プロデューサーにアセットを追加
-                                    sort(&avassets) { $0.0 < $1.0 }
-                                    for (_, a) in avassets {
-                                        self._player.appendAsset(a)
-                                    }
+                        dispatch_async(queue) { // シリアライズ(配列操作を排他)
+                            avassets.append((index,avasset))
+                            if avassets.count + failed == assets.count {
+                                println("Finished gathering video assets. (\(failed) failed)")
+                                // プロデューサーにアセットを追加
+                                sort(&avassets) { $0.0 < $1.0 }
+                                for (_, a) in avassets {
+                                    self._player.appendAsset(a)
                                 }
                             }
                         }
+                    } else {
+                        println("request asset failed:\(avasset)")
+                        dispatch_async(queue) { let dummy = ++failed }
                     }
                 }
             }
