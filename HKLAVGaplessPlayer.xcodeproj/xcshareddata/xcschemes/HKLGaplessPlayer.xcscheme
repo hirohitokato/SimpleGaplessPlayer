@@ -17,7 +17,7 @@
                BlueprintIdentifier = "1A25A0A41A5BE41800106B11"
                BuildableName = "HKLAVGaplessPlayer.framework"
                BlueprintName = "HKLAVGaplessPlayer"
-               ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+               ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,7 +45,7 @@
             BlueprintIdentifier = "1A25A0A41A5BE41800106B11"
             BuildableName = "HKLAVGaplessPlayer.framework"
             BlueprintName = "HKLAVGaplessPlayer"
-            ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+            ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,7 +63,7 @@
             BlueprintIdentifier = "1A25A0A41A5BE41800106B11"
             BuildableName = "HKLAVGaplessPlayer.framework"
             BlueprintName = "HKLAVGaplessPlayer"
-            ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+            ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

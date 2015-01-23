@@ -17,7 +17,7 @@
                BlueprintIdentifier = "1AA61A6E1A41044B00F2B2F6"
                BuildableName = "SimpleGaplessPlayer.app"
                BlueprintName = "SimpleGaplessPlayer"
-               ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+               ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -31,7 +31,7 @@
                BlueprintIdentifier = "1AA61A831A41044B00F2B2F6"
                BuildableName = "SimpleGaplessPlayerTests.xctest"
                BlueprintName = "SimpleGaplessPlayerTests"
-               ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+               ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -45,7 +45,7 @@
                BlueprintIdentifier = "1A25A0AE1A5BE41800106B11"
                BuildableName = "HKLGaplessPlayerTests.xctest"
                BlueprintName = "HKLGaplessPlayerTests"
-               ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+               ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -63,7 +63,7 @@
                BlueprintIdentifier = "1AA61A831A41044B00F2B2F6"
                BuildableName = "SimpleGaplessPlayerTests.xctest"
                BlueprintName = "SimpleGaplessPlayerTests"
-               ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+               ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -73,7 +73,7 @@
                BlueprintIdentifier = "1A25A0AE1A5BE41800106B11"
                BuildableName = "HKLGaplessPlayerTests.xctest"
                BlueprintName = "HKLGaplessPlayerTests"
-               ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+               ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -83,7 +83,7 @@
             BlueprintIdentifier = "1AA61A6E1A41044B00F2B2F6"
             BuildableName = "SimpleGaplessPlayer.app"
             BlueprintName = "SimpleGaplessPlayer"
-            ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+            ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -103,7 +103,7 @@
             BlueprintIdentifier = "1AA61A6E1A41044B00F2B2F6"
             BuildableName = "SimpleGaplessPlayer.app"
             BlueprintName = "SimpleGaplessPlayer"
-            ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+            ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -122,7 +122,7 @@
             BlueprintIdentifier = "1AA61A6E1A41044B00F2B2F6"
             BuildableName = "SimpleGaplessPlayer.app"
             BlueprintName = "SimpleGaplessPlayer"
-            ReferencedContainer = "container:SimpleGaplessPlayer.xcodeproj">
+            ReferencedContainer = "container:HKLAVGaplessPlayer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
