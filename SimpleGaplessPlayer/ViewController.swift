@@ -11,7 +11,7 @@ import Photos
 import AVFoundation
 import HKLAVGaplessPlayer
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
 
     @IBOutlet weak var playerView: HKLGLPixelBufferView!
     @IBOutlet weak var msgLabel: UILabel!
@@ -31,7 +31,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        _player.delegate = playerView as? HKLAVGaplessPlayerDelegate
+        _player.delegate = self
         loadVideoAssets()
     }
 
@@ -149,6 +149,17 @@ class ViewController: UIViewController {
                     }
                 }
             }
+        }
+    }
+
+    // MARK: - HKLAVGaplessPlayerDelegate
+    func numberOfInvocationsInSec(player: HKLAVGaplessPlayer) -> Int {
+        return 30
+    }
+
+    func player(player: HKLAVGaplessPlayer, didOutputSampleBuffer sampleBuffer: CMSampleBufferRef) {
+        if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+            playerView.displayPixelBuffer(pixelBuffer)
         }
     }
 }

@@ -16,6 +16,15 @@ HKLAVGaplessPlayerで逐次得られるフレームを受け取るための外�
 @objc public protocol HKLAVGaplessPlayerDelegate {
 
     /**
+    1秒間のうち、何回player(_:didOutputSampleBuffer:)が呼ばれるかを返す。
+    必ず60を割り切れる値(60,30,20,15など)を返すこと。
+
+    :param: player HKLAVGaplessPlayerオブジェクト
+    :returns: フレームレート。60fpsであれば60、30fpsの場合は30を渡す
+    */
+    func numberOfInvocationsInSec(player:HKLAVGaplessPlayer) -> Int
+
+    /**
     フレームが生成されるたびに呼ばれるデリゲートメソッド。
     
     メソッドが呼ばれるタイミングは、HKLAVGaplessPlayerのフレームレートに

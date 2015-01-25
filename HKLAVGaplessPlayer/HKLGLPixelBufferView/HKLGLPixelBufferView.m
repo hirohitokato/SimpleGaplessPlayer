@@ -133,7 +133,6 @@ enum {
 };
 
 @interface HKLGLPixelBufferView ()
-<HKLAVGaplessPlayerDelegate>
 {
     EAGLContext *_oglContext;
     CVOpenGLESTextureCacheRef _textureCache;
@@ -578,15 +577,6 @@ bail:
     if ( _textureCache ) {
         CVOpenGLESTextureCacheFlush(_textureCache, 0);
     }
-}
-
-#pragma mark - HKLAVGaplessPlayerDelegate
-- (void)player:(HKLAVGaplessPlayer *)player didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-{
-    CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    if (!pixelBuffer) { return; }
-
-    [self displayPixelBuffer:pixelBuffer];
 }
 
 #pragma mark -
