@@ -210,6 +210,9 @@ public class HKLAVGaplessPlayer: NSObject {
         } else {
 
             // 指定レートで再生開始
+            let framerate = delegate?.numberOfInvocationsInSec(self) ?? kPlaybackFrameRate
+            _displayLink.frameInterval = 60 / framerate
+
             if _producer.startReading(rate: rate, atPosition: position) {
                 _lastTimestamp = CACurrentMediaTime()
                 _remainingPresentationTime = 0.0
