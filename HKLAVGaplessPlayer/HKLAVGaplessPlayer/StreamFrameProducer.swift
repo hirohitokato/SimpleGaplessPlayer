@@ -343,6 +343,7 @@ class StreamFrameProducer: NSObject {
         }
 
         // 読み込みしていないアセットがあれば読み込む
+        var failedIndex: Int? = nil
         outer: for (i, holder) in enumerate(_assets[startIndex..<_assets.count]) {
             let asset = holder.asset
             let actualIndex = i + startIndex
@@ -350,7 +351,7 @@ class StreamFrameProducer: NSObject {
             // 登録済みの最後のアセットを見つけて、それ以降のアセットを
             // 追加対象として読み込む
             if _readers.last?.asset === asset && actualIndex+1 < _assets.count {
-                for target in _assets[actualIndex+1..<_assets.count] {
+                for (j, target) in enumerate(_assets[actualIndex+1..<_assets.count]) {
 
                     // 読み込み済みリーダーの数が上限になれば処理終了
                     if (_readers.count >= maxNumOfReaders) {
@@ -364,10 +365,15 @@ class StreamFrameProducer: NSObject {
                         _readers.append(assetreader)
                     } else {
                         NSLog("2) Failed to instantiate a reader of [\((target.asset as? AVURLAsset)?.URL.lastPathComponent?)]")
+                        // 再度作成しようとしても使えないので、取り除く
+                        failedIndex = actualIndex+1+j
                         break outer
                     }
                 }
             }
+        }
+        if failedIndex != nil {
+            _assets.removeAtIndex(failedIndex!)
         }
     }
 }
