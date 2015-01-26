@@ -75,6 +75,12 @@ class StreamFrameProducer: NSObject {
     /// 注意：多くても5個程度にしておくこと。さもないとアプリが落ちるため
     var maxNumOfReaders: Int = kMaximumNumOfReaders
 
+    func assets() -> [AVAsset] {
+        var assets = [AVAsset]()
+        _assets.map { assets.append($0.asset) }
+        return assets
+    }
+
     /**
     アセットを内部キューの末尾に保存する。
 

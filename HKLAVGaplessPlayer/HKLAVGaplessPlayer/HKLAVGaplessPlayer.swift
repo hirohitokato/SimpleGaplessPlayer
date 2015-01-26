@@ -35,6 +35,11 @@ public class HKLAVGaplessPlayer: NSObject {
         }
     }
 
+    /// Returns the array of appended assets.
+    public var assets: [AVAsset] {
+        return _producer.assets()
+    }
+
     /**
     Appends given asset to the end of queue.
 
@@ -141,6 +146,25 @@ public class HKLAVGaplessPlayer: NSObject {
         set {
             if (_producer.playbackMode != newValue) { pause() }
             _producer.playbackMode = newValue
+        }
+    }
+
+    public var timeWindow: CMTime {
+        get {
+            switch _producer.playbackMode {
+            case .Playback:
+                return kCMTimeInvalid
+            case .Streaming:
+                return _producer.window
+            }
+        }
+        set {
+            switch _producer.playbackMode {
+            case .Playback:
+                return
+            case .Streaming:
+                _producer.window = newValue
+            }
         }
     }
 
