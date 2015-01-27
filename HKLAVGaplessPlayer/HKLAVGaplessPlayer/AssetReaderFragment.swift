@@ -110,7 +110,7 @@ internal class AssetReaderFragment: NSObject {
         let timeRange = CMTimeRangeMake(startTime, duration)
 
         // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
-        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 0.1) {
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 1.0/60.0) {
             NSLog("duration(\(duration)) is less than or equal to 0")
             return nil
         }

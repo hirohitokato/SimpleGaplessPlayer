@@ -33,7 +33,7 @@ class AssetHolder {
         // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
         // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
         //   時間を短くできることを狙っている）
-        let keys = ["duration","tracks", "preferredTransform"]
+        let keys = ["duration","tracks", "preferredTransform", "readable"]
         asset.loadValuesAsynchronouslyForKeys(keys) {
             let lock = ScopedLock(producer)
 
