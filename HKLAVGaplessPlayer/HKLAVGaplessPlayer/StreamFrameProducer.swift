@@ -35,12 +35,11 @@ class StreamFrameProducer: NSObject {
     /// 格納しているアセットの合計再生時間を返す
     var amountDuration: CMTime {
         get {
-            let lock = ScopedLock(self)
-            return _amountDuration
-        }
-        set(newDuration) {
-            let lock = ScopedLock(self)
-            _amountDuration = newDuration
+            var duration: CMTime = kCMTimeZero
+            sync { me in
+                duration = me._amountDuration
+            }
+            return duration
         }
     }
 
@@ -87,81 +86,82 @@ class StreamFrameProducer: NSObject {
     :param: asset フレームの取り出し対象となるアセット
     */
     func appendAsset(asset: AVAsset) {
-        let lock = ScopedLock(self)
-
-        let holder = AssetHolder(asset, producer: self)
-        self._assets.append(holder)
-    }
-
-    func removeAsset(asset: AVAsset) -> Bool {
-        let lock = ScopedLock(self)
-
-        if let index = _assets.indexOf({ $0.asset == asset }) {
-
-            _assets.removeAtIndex(index)
-
-            // リーダーとしてスケジュール済みの場合、リーダーからも削除する
-            // さらに、再生中のムービーの場合、advanceToNextAsset()を呼ぶ
-            if let readerIndex = _readers.indexOf({ $0.asset == asset }) {
-
-                _readers.removeAtIndex(readerIndex)
-                if readerIndex == 0 {
-                    advanceToNextAsset()
-                }
+        async { me in
+            let holder = AssetHolder(asset) { duration in
+                me._amountDuration += duration
+                return
             }
-            return true
-
-        } else {
-            return false
+            me._assets.append(holder)
         }
     }
 
-    func removeAllAssets() {
-        let lock = ScopedLock(self)
+    func removeAsset(asset: AVAsset) {
+        var shouldAdvance = false
+        sync { me in
 
-        cancelReading()
-        _assets.removeAll(keepCapacity: false)
+            if let index = me._assets.indexOf({ $0.asset == asset }) {
+
+                me._assets.removeAtIndex(index)
+
+                // リーダーとしてスケジュール済みの場合、リーダーからも削除する
+                if let readerIndex = me._readers.indexOf({ $0.asset == asset }) {
+
+                    me._readers.removeAtIndex(readerIndex)
+
+                    // 再生中のムービーを削除する場合、advanceToNextAsset()を呼ぶ
+                    if readerIndex == 0 {
+                        shouldAdvance = true
+                    }
+                }
+            }
+        }
+        if shouldAdvance {
+            advanceToNextAsset()
+        }
+    }
+
+    /**
+    アセットをすべて削除する
+    */
+    func removeAllAssets() {
+        async { me in
+            me.cancelReading(async: false)
+            me._assets.removeAll(keepCapacity: false)
+            me._resetPosition()
+        }
+
     }
 
     /**
     再生対象のアセットを１つ進める。存在しない場合は何もしない
     */
-    func advanceToNextAsset() {
-        let lock = ScopedLock(self)
-        if !_readers.isEmpty {
-            // autoRemoveOutdatedAssetsが有効ならばwindow外の古いアセットを削除
-            if self.autoRemoveOutdatedAssets {
-                if let assetPos = self._getAssetPositionOf(0.0) {
-                    // 合計時間も減じておく
-                    let duration = _assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.duration }
-                    _assets.removeRange(0..<assetPos.index)
-                    _amountDuration -= duration
+    func advanceToNextAsset(shouldLock: Bool = true) {
+        let operation = { [unowned self] () -> Void in
+            if !self._readers.isEmpty {
+                // autoRemoveOutdatedAssetsが有効ならばwindow外の古いアセットを削除
+                if self.autoRemoveOutdatedAssets {
+                    if let assetPos = self._getAssetPositionOf(0.0) {
+                        // 合計時間も減じておく
+                        let duration = self._assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.duration }
+                        self._assets.removeRange(0..<assetPos.index)
+                        self._amountDuration -= duration
+                    }
                 }
-            }
 
-            // 時間がリセットされる前に0.0位置の値を保持しておく(必要なときだけ)
-            let zeroPos = (_readers[0].asset == _assets.last?.asset && autoRepeat) ?
-                _getAssetPositionOf(0.0) : nil
+                // 時間がリセットされる前に0.0位置の値を保持しておく(必要なときだけ)
+                let zeroPos = (self._readers[0].asset == self._assets.last?.asset && self.autoRepeat) ?
+                    self._getAssetPositionOf(0.0) : nil
 
-            // 現在再生中のリーダーを削除
-            let removed = _readers.removeAtIndex(0)
-            _currentPresentationTimestamp = kCMTimeZero
+                // 現在再生中のリーダーを削除
+                let removed = self._readers.removeAtIndex(0)
+                self._currentPresentationTimestamp = kCMTimeZero
 
-            // アセットが残っているか、またはautorepeat==trueなら次を読み込む
-            if removed.asset != _assets.last?.asset {
-
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                    [unowned self] in
-                    let lock = ScopedLock(self)
-
+                // アセットが残っているか、またはautorepeat==trueなら次を読み込む
+                if removed.asset != self._assets.last?.asset {
                     self._prepareNextAssetReaders()
-                }
-            } else if autoRepeat {
+                } else if self.autoRepeat {
 
-                // autorepeatで先頭に戻る場合、時間窓の0.0位置から読み込む
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
-                    [unowned self] in
-                    let lock = ScopedLock(self)
+                    // autorepeatで先頭に戻る場合、時間窓の0.0位置から読み込む
 
                     self._position = 0.0
                     if let zeroPos = zeroPos {
@@ -172,6 +172,12 @@ class StreamFrameProducer: NSObject {
                 }
             }
         }
+        
+        if shouldLock {
+            async { me in operation() }
+        } else {
+            operation()
+        }
     }
 
     /**
@@ -181,9 +187,11 @@ class StreamFrameProducer: NSObject {
     :returns: リーダーから読み込まれたサンプルバッファ
     */
     func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)! {
-        let lock = ScopedLock(self)
-
-        return self._prepareNextBuffer()
+        var result: (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)! = nil
+        sync { me in
+            result = me._prepareNextBuffer()
+        }
+        return result
     }
 
     /**
@@ -195,44 +203,47 @@ class StreamFrameProducer: NSObject {
     :returns: 読み込み開始に成功したかどうか
     */
     func startReading(rate:Float = 1.0, atPosition pos:Float? = nil) -> Bool {
-        let lock = ScopedLock(self)
-        if _assets.isEmpty {
-            return false
-        }
-        var currentAsset: AVAsset? = nil
-        if let pos = pos {
-            if let playerInfo = _getAssetPositionOf(pos) {
-
-                if autoRepeat &&
-                    _assets[playerInfo.index].asset == _assets.last!.asset &&
-                    playerInfo.time.isNearlyEqualTo(_assets.last!.duration, 0.1)
-                {
-                    // 得られたアセット位置が全体の末尾かつautoRepeat=trueの場合、
-                    // 窓時間の先頭に戻る
-                    let zero = _getAssetPositionOf(0.0) ?? AssetPosition(0, kCMTimeZero)
-
-                    currentAsset = _assets[zero.index].asset
-                    _currentPresentationTimestamp = zero.time
-                    _position = _getPositionOf(0, time: kCMTimeZero)!
-                } else {
-                    currentAsset = _assets[playerInfo.index].asset
-                    _position = pos
-                    _currentPresentationTimestamp = playerInfo.time
-                }
+        var result = false
+        sync { me in
+            if me._assets.isEmpty {
+                return
             }
-        } else {
-            currentAsset = _readers.first?.asset
-        }
+            var currentAsset: AVAsset? = nil
+            if let pos = pos {
+                if let playerInfo = me._getAssetPositionOf(pos) {
 
-        // レートが異なる場合、再生位置の指定があった場合は
-        // リーダーを組み立て直してから再生準備を整える
-        if rate != _playbackRate || pos != nil {
-            cancelReading()
-        }
-        _playbackRate = rate
+                    if me.autoRepeat &&
+                        me._assets[playerInfo.index].asset == me._assets.last!.asset &&
+                        playerInfo.time.isNearlyEqualTo(me._assets.last!.duration, 0.1)
+                    {
+                        // 得られたアセット位置が全体の末尾かつautoRepeat=trueの場合、
+                        // 窓時間の先頭に戻る
+                        let zero = me._getAssetPositionOf(0.0) ?? AssetPosition(0, kCMTimeZero)
 
-        _prepareNextAssetReaders(initial: currentAsset, atTime:_currentPresentationTimestamp)
-        return true
+                        currentAsset = me._assets[zero.index].asset
+                        me._currentPresentationTimestamp = zero.time
+                        me._position = me._getPositionOf(0, time: kCMTimeZero)!
+                    } else {
+                        currentAsset = me._assets[playerInfo.index].asset
+                        me._position = pos
+                        me._currentPresentationTimestamp = playerInfo.time
+                    }
+                }
+            } else {
+                currentAsset = me._readers.first?.asset
+            }
+
+            // レートが異なる場合、再生位置の指定があった場合は
+            // リーダーを組み立て直してから再生準備を整える
+            if rate != me._playbackRate || pos != nil {
+                me.cancelReading(async: false)
+            }
+            me._playbackRate = rate
+            me._prepareNextAssetReaders(initial: currentAsset, atTime:me._currentPresentationTimestamp)
+
+            result = true
+        }
+        return result
     }
 
     /**
@@ -242,9 +253,15 @@ class StreamFrameProducer: NSObject {
     停止する。再び読み込めるようにする場合、startReading()を呼ぶか、別のアセットを
     appendAsset()して、リーダーの準備をしておくこと
     */
-    func cancelReading() {
-        let lock = ScopedLock(self)
-        _readers.removeAll(keepCapacity: false)
+    func cancelReading(async asyncFlag: Bool=true) {
+        let operation = { [unowned self] ()->Void in
+            self._readers.removeAll(keepCapacity: false)
+        }
+        if asyncFlag {
+            async { me in operation() }
+        } else {
+            operation()
+        }
     }
 
     /// 再生位置。window内における先頭(古)〜末尾(新)を、0.0-1.0の数値で表す
@@ -253,6 +270,7 @@ class StreamFrameProducer: NSObject {
 
     // MARK: Privates
 
+    private let _queue = dispatch_queue_create("com.KatokichiSoft.HKLAVGaplessPlayer.producer", DISPATCH_QUEUE_SERIAL)
     private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
@@ -267,12 +285,23 @@ class StreamFrameProducer: NSObject {
     private var _playbackRate: Float = 1.0
 
     /**
+    現在位置をリセットする
+    */
+    private func _resetPosition() {
+        switch playbackMode {
+        case .Streaming:
+            _position = 1.0
+        case .Playback:
+            _position = 0.0
+        }
+    }
+
+    /**
     サンプルバッファの生成
     */
     private func _prepareNextBuffer()
         -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)?
     {
-
         // サンプルバッファを生成する
         while let target = _readers.first {
 
@@ -303,9 +332,9 @@ class StreamFrameProducer: NSObject {
                 if target.status == .Completed {
                     // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する
                     // TODO: 取得したサンプルバッファの位置が1.0を超えていた場合も移動する
-                    advanceToNextAsset()
+                    advanceToNextAsset(shouldLock: false)
                 } else {
-                    NSLog("Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
+                    NSLog("[\(target.URL?.lastPathComponent!)] Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
                     _readers.removeAtIndex(0)
                     _currentPresentationTimestamp = kCMTimeZero
                 }
@@ -315,7 +344,6 @@ class StreamFrameProducer: NSObject {
     }
 
     private func _prepareNextAssetReaders(initial: AVAsset? = nil, atTime time: CMTime = kCMTimeZero) {
-        let lock = ScopedLock(self)
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
         if (_readers.count >= maxNumOfReaders) { return }
@@ -342,42 +370,51 @@ class StreamFrameProducer: NSObject {
             }
         }
 
-        // 読み込みしていないアセットがあれば読み込む
-        var failedIndex: Int? = nil
-        outer: for (i, holder) in enumerate(_assets[startIndex..<_assets.count]) {
-            let asset = holder.asset
-            let actualIndex = i + startIndex
+        // 読み込みしていないアセットがあれば読み込む(バックグラウンドで)
+        async { me in
+            var failedIndex: Int? = nil
+            outer: for (i, holder) in enumerate(me._assets[startIndex..<me._assets.count]) {
+                let asset = holder.asset
+                let actualIndex = i + startIndex
 
-            // 登録済みの最後のアセットを見つけて、それ以降のアセットを
-            // 追加対象として読み込む
-            if _readers.last?.asset === asset && actualIndex+1 < _assets.count {
-                for (j, target) in enumerate(_assets[actualIndex+1..<_assets.count]) {
+                // 登録済みの最後のアセットを見つけて、それ以降のアセットを
+                // 追加対象として読み込む
+                if me._readers.last?.asset === asset && actualIndex+1 < me._assets.count {
+                    for (j, target) in enumerate(me._assets[actualIndex+1..<me._assets.count]) {
 
-                    // 読み込み済みリーダーの数が上限になれば処理終了
-                    if (_readers.count >= maxNumOfReaders) {
-                        break outer
-                    }
+                        // 読み込み済みリーダーの数が上限になれば処理終了
+                        if (me._readers.count >= me.maxNumOfReaders) {
+                            break outer
+                        }
 
-                    if let assetreader = AssetReaderFragment(asset:target.asset,
-                        rate:_playbackRate, startTime:startTime)
-                    {
-                        startTime = kCMTimeZero
-                        _readers.append(assetreader)
-                    } else {
-                        NSLog("(2) Failed to instantiate a reader of [\((target.asset as? AVURLAsset)?.URL.lastPathComponent?)]")
-                        // 再度作成しようとしても使えないので、取り除く
-                        failedIndex = actualIndex+1+j
-                        break outer
+                        if let assetreader = AssetReaderFragment(asset:target.asset,
+                            rate:me._playbackRate, startTime:startTime)
+                        {
+                            startTime = kCMTimeZero
+                            me._readers.append(assetreader)
+                        } else {
+                            NSLog("(2) Failed to instantiate a reader of [\((target.asset as? AVURLAsset)?.URL.lastPathComponent?)]")
+                            // 再度作成しようとしても使えないので、取り除く
+                            failedIndex = actualIndex+1+j
+                            break outer
+                        }
                     }
                 }
             }
-        }
-        if failedIndex != nil {
-            _assets.removeAtIndex(failedIndex!)
+            // 作成に失敗した場合はアセット群から取り除く（次に読み込んでも失敗しているため）
+            if failedIndex != nil {
+                me._assets.removeAtIndex(failedIndex!)
+            }
         }
     }
 }
 
+public extension StreamFrameProducer {
+    public func getPositionOf(position:Float) -> (index:Int, time:CMTime)? {
+        let a = _getAssetPositionOf(position)
+        return a != nil ? (a!.index, a!.time) : nil
+    }
+}
 /**
 *  再生位置を決めるための処理
 */
@@ -391,8 +428,6 @@ private extension StreamFrameProducer {
     :returns: 指定した再生位置に相当するアセット位置
     */
     func _getAssetPositionOf(position: Float) -> AssetPosition? {
-        let lock = ScopedLock(self)
-
         if _assets.isEmpty { return nil }
 
         // 1) 1.0のアセット位置を算出する
@@ -546,4 +581,20 @@ private extension StreamFrameProducer {
         }
     }
 
+}
+
+private extension StreamFrameProducer {
+    func sync(handler: (StreamFrameProducer) -> Void) {
+        dispatch_sync(_queue) {
+            [unowned self] in
+            handler(self)
+        }
+    }
+
+    func async(handler: (StreamFrameProducer) -> Void) {
+        dispatch_async(_queue) {
+            [unowned self] in
+            handler(self)
+        }
+    }
 }

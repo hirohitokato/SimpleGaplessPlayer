@@ -57,7 +57,7 @@ public class HKLAVGaplessPlayer: NSObject {
     :param: asset The asset to be removed.
     :returns: true if the asset is removed from the queue or false if it did not.
     */
-    public func removeAsset(asset: AVAsset) -> Bool {
+    public func removeAsset(asset: AVAsset) {
         return _producer.removeAsset(asset)
     }
 
