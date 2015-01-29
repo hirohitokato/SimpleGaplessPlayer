@@ -15,6 +15,7 @@ import AVFoundation
 */
 internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
+    let URL: NSURL!
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
@@ -28,7 +29,11 @@ internal class AssetReaderFragment: NSObject {
         self.startTime = startTime
         self.endTime = endTime
         self.preferredTransform = asset.preferredTransform
-        
+        if asset as? AVURLAsset != nil {
+            self.URL = (asset as AVURLAsset).URL
+        } else {
+            self.URL = nil
+        }
         super.init()
 
         // リーダーとなるコンポジションを作成する
@@ -38,7 +43,7 @@ internal class AssetReaderFragment: NSObject {
             "Cannot express tuple conversion '(AVAssetReader, CMTime)' to '(AVAssetReader!, CMTime)'"
             が出てしまうため、分解して代入するようにした
             */
-            (_reader, frameInterval) = (result.0, result.1)
+            (_reader, _duration, frameInterval) = result
             _output = _reader.outputs.first as? AVAssetReaderOutput
         } else {
             // 作成失敗
@@ -56,9 +61,12 @@ internal class AssetReaderFragment: NSObject {
     /**
     内包しているAVAssetReaderのstatusプロパティの値(AVAssetReaderStatus)を返す。
     */
-    var status: AVAssetReaderStatus {
-        return _reader.status
-    }
+    var status: AVAssetReaderStatus { return _reader.status }
+
+    /**
+    アセットの再生時間を返す
+    */
+    var duration: CMTime { return _duration }
 
     /**
     作成したリーダーから次のサンプルバッファ(コピー)を同期取得して返す
@@ -73,6 +81,7 @@ internal class AssetReaderFragment: NSObject {
 
     private let _reader: AVAssetReader!
     private let _output: AVAssetReaderOutput!
+    private let _duration: CMTime!
 
     /**
     アセットの指定範囲をフレーム単位で取り出すためのリーダーを作成する。
@@ -89,7 +98,7 @@ internal class AssetReaderFragment: NSObject {
     private func _buildComposition(asset:AVAsset,
         startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
         rate:Float=1.0)
-        -> (AVAssetReader, CMTime)!
+        -> (reader:AVAssetReader!, duration:CMTime!, frameInterval:CMTime)!
     {
         var error: NSError? = nil
 
@@ -189,7 +198,7 @@ internal class AssetReaderFragment: NSObject {
             if reader.canAddOutput(output) {
                 reader.addOutput(output)
             }
-            return (reader, displayDuration)
+            return (reader, duration, displayDuration)
         } else {
             NSLog("Failed to instantiate a reader for a composition:\(error)")
         }
