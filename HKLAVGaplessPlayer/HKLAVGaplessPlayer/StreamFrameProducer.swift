@@ -409,12 +409,6 @@ class StreamFrameProducer: NSObject {
     }
 }
 
-public extension StreamFrameProducer {
-    public func getPositionOf(position:Float) -> (index:Int, time:CMTime)? {
-        let a = _getAssetPositionOf(position)
-        return a != nil ? (a!.index, a!.time) : nil
-    }
-}
 /**
 *  再生位置を決めるための処理
 */
