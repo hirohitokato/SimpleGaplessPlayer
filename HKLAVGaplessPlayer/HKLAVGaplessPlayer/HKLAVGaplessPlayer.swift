@@ -270,14 +270,14 @@ extension HKLAVGaplessPlayer {
                 }
             } else {
                 // サンプルバッファが得られなかった場合、今回の処理では何もしない
-                println("nil")
+                NSLog("nil")
                 break
             }
         }
 
         if displayLink.timestamp - _lastTimestamp > 0.5 {
             displayLink.paused = true
-            println("Paused display link in order to save energy.")
+            NSLog("Paused display link in order to save energy.")
         }
     }
 }
