@@ -28,17 +28,15 @@ class AssetHolder {
         }
         set { _duration = newValue }
     }
-    init(_ asset: AVAsset, producer: StreamFrameProducer) {
+    init(_ asset: AVAsset, completionHandler: (CMTime) -> Void) {
         self.asset = asset
         // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
         // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
         //   時間を短くできることを狙っている）
         let keys = ["duration","tracks", "preferredTransform", "readable"]
         asset.loadValuesAsynchronouslyForKeys(keys) {
-            let lock = ScopedLock(producer)
-
             self.duration = asset.duration
-            producer.amountDuration += self.duration
+            completionHandler(self.duration)
         }
     }
     private var _duration: CMTime! = nil
