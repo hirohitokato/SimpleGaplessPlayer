@@ -62,10 +62,24 @@ class StreamFrameProducer: NSObject {
     var playbackRate: Float { return _playbackRate }
 
     /// アセットの再生方法。詳細はPlaybackModeを参照のこと。
-    var playbackMode: PlaybackMode = .Playback
+    var playbackMode: PlaybackMode = .Playback {
+        didSet(oldMode) {
+            // 異なる値がセットされたら、状態をリセットする
+            if (oldMode != playbackMode) {
+                cancelReading(async: false)
+                _resetPosition()
+            }
+        }
+    }
 
     /// Auto-RepeatモードのON/OFF。ONの場合、アセット末尾にたどり着いたらwindow先頭に戻る
-    var autoRepeat: Bool = true
+    var autoRepeat: Bool = false {
+        willSet {
+            if newValue == true && playbackMode == .Streaming {
+                NSLog("autoRepeat is available if the playback mode is Playback. Though the value is set, it's ignored.")
+            }
+        }
+    }
 
     /// windowの範囲外(== position < 0.0)になったアセットを自動的に取り除くかどうか
     var autoRemoveOutdatedAssets: Bool = true
@@ -152,12 +166,12 @@ class StreamFrameProducer: NSObject {
                 let removed = self._readers.removeAtIndex(0)
                 self._currentPresentationTimestamp = kCMTimeZero
 
-                // アセットが残っているか、またはautorepeat==trueなら次を読み込む
+                // アセットが残っているか、またはplaybackモードかつautorepeat==trueなら次を読み込む
                 if removed.asset != self._assets.last?.asset {
                     if let removedIndex = self._assets.indexOf({ $0.asset == removed.asset }) {
                         self._prepareNextAssetReaders(initial: self._assets[removedIndex+1].asset)
                     }
-                } else if self.autoRepeat {
+                } else if self.autoRepeat && self.playbackMode == .Playback {
 
                     // autorepeatで先頭に戻る場合、時間窓の0.0位置から読み込む
 
