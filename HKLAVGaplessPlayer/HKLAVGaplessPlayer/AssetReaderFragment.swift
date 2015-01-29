@@ -171,7 +171,7 @@ internal class AssetReaderFragment: NSObject {
         } else {
             // As Isではない場合、アセットのfpsによらずrateの再生速度となるよう
             // 計算した値を利用する
-            let referenceRate = Float(kPlaybackFrameRate) / rate
+            let referenceRate = Float(playbackFrameRate) / rate
             videoComposition.frameDuration =
                 CMTime(value: 1, Int(min(referenceRate, videoTrack.nominalFrameRate)))
 

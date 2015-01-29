@@ -10,7 +10,7 @@ import CoreMedia
 import AVFoundation
 
 
-let kPlaybackFrameRate: Int = 60
+var playbackFrameRate: Int = 60
 
 /// 再生時のrate指定に使う特殊値。この値を指定した場合、アセットの
 /// 持つ1フレームをそのまま1フレームとして扱う
@@ -28,7 +28,7 @@ public class HKLAVGaplessPlayer: NSObject {
 
         // DisplayLinkを作成
         _displayLink = CADisplayLink(target: self, selector: "_displayLinkCallback:")
-        _displayLink.frameInterval = 60 / kPlaybackFrameRate
+        _displayLink.frameInterval = 60 / playbackFrameRate
         _displayLink.paused = true
         dispatch_async(dispatch_get_main_queue()) {
             self._displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
@@ -214,8 +214,8 @@ public class HKLAVGaplessPlayer: NSObject {
         } else {
 
             // 指定レートで再生開始
-            let framerate = delegate?.numberOfInvocationsInSec(self) ?? kPlaybackFrameRate
-            _displayLink.frameInterval = 60 / framerate
+            playbackFrameRate = delegate?.numberOfInvocationsInSec(self) ?? playbackFrameRate
+            _displayLink.frameInterval = 60 / playbackFrameRate
 
             if _producer.startReading(rate: rate, atPosition: position) {
                 _lastTimestamp = CACurrentMediaTime()
