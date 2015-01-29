@@ -154,7 +154,9 @@ class StreamFrameProducer: NSObject {
 
                 // アセットが残っているか、またはautorepeat==trueなら次を読み込む
                 if removed.asset != self._assets.last?.asset {
-                    self._prepareNextAssetReaders()
+                    if let removedIndex = self._assets.indexOf({ $0.asset == removed.asset }) {
+                        self._prepareNextAssetReaders(initial: self._assets[removedIndex+1].asset)
+                    }
                 } else if self.autoRepeat {
 
                     // autorepeatで先頭に戻る場合、時間窓の0.0位置から読み込む
@@ -168,7 +170,7 @@ class StreamFrameProducer: NSObject {
                 }
             }
         }
-        
+
         if shouldLock {
             async { me in operation() }
         } else {
