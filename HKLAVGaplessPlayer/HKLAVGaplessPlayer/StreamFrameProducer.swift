@@ -338,7 +338,7 @@ class StreamFrameProducer: NSObject {
                 startTime = kCMTimeZero
                 _readers.append(assetreader)
             } else {
-                NSLog("1) Failed to instantiate a reader of [\((_assets[startIndex].asset as? AVURLAsset)?.URL.lastPathComponent?)]")
+                NSLog("(1) Failed to instantiate a reader of [\((_assets[startIndex].asset as? AVURLAsset)?.URL.lastPathComponent?)]")
             }
         }
 
@@ -364,7 +364,7 @@ class StreamFrameProducer: NSObject {
                         startTime = kCMTimeZero
                         _readers.append(assetreader)
                     } else {
-                        NSLog("2) Failed to instantiate a reader of [\((target.asset as? AVURLAsset)?.URL.lastPathComponent?)]")
+                        NSLog("(2) Failed to instantiate a reader of [\((target.asset as? AVURLAsset)?.URL.lastPathComponent?)]")
                         // 再度作成しようとしても使えないので、取り除く
                         failedIndex = actualIndex+1+j
                         break outer
