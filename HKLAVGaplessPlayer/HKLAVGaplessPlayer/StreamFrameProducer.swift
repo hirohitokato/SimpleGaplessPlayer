@@ -96,7 +96,6 @@ class StreamFrameProducer: NSObject {
     }
 
     func removeAsset(asset: AVAsset) {
-        var shouldAdvance = false
         sync { me in
 
             if let index = me._assets.indexOf({ $0.asset == asset }) {
@@ -110,13 +109,10 @@ class StreamFrameProducer: NSObject {
 
                     // 再生中のムービーを削除する場合、advanceToNextAsset()を呼ぶ
                     if readerIndex == 0 {
-                        shouldAdvance = true
+                        me.advanceToNextAsset(shouldLock: false)
                     }
                 }
             }
-        }
-        if shouldAdvance {
-            advanceToNextAsset()
         }
     }
 
@@ -334,7 +330,7 @@ class StreamFrameProducer: NSObject {
                     // TODO: 取得したサンプルバッファの位置が1.0を超えていた場合も移動する
                     advanceToNextAsset(shouldLock: false)
                 } else {
-                    NSLog("[\(target.URL?.lastPathComponent!)] Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
+                    NSLog("[\(target.URL!.lastPathComponent!)] Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
                     _readers.removeAtIndex(0)
                     _currentPresentationTimestamp = kCMTimeZero
                 }
