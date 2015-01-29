@@ -9,7 +9,7 @@ import Foundation
 import CoreMedia
 import AVFoundation
 
-let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
+let kMaximumNumOfReaders = 2 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
 登録したアセットをどのように再生するか。
@@ -342,7 +342,7 @@ class StreamFrameProducer: NSObject {
     private func _prepareNextAssetReaders(initial: AVAsset? = nil, atTime time: CMTime = kCMTimeZero) {
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
-        if (_readers.count >= maxNumOfReaders) { return }
+        if (_readers.count > maxNumOfReaders) { return }
 
         // アセットをどこから読み込むかを決定する
         let startIndex = (initial == nil) ? 0 : _assets.indexOf({$0.asset == initial!}) ?? 0
@@ -379,7 +379,7 @@ class StreamFrameProducer: NSObject {
                     for (j, target) in enumerate(me._assets[actualIndex+1..<me._assets.count]) {
 
                         // 読み込み済みリーダーの数が上限になれば処理終了
-                        if (me._readers.count >= me.maxNumOfReaders) {
+                        if (me._readers.count > me.maxNumOfReaders) {
                             break outer
                         }
 
