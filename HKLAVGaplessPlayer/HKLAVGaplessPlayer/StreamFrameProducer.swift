@@ -67,13 +67,13 @@ class StreamFrameProducer: NSObject {
             // 異なる値がセットされたら、状態をリセットする
             if (oldMode != playbackMode) {
                 cancelReading(async: false)
-                _resetPosition()
+                removeAllAssets()
             }
         }
     }
 
     /// Auto-RepeatモードのON/OFF。ONの場合、アセット末尾にたどり着いたらwindow先頭に戻る
-    var autoRepeat: Bool = false {
+    var autoRepeat: Bool = true {
         willSet {
             if newValue == true && playbackMode == .Streaming {
                 NSLog("autoRepeat is available if the playback mode is Playback. Though the value is set, it's ignored.")
@@ -134,7 +134,7 @@ class StreamFrameProducer: NSObject {
     アセットをすべて削除する
     */
     func removeAllAssets() {
-        async { me in
+        sync { me in
             me.cancelReading(async: false)
             me._assets.removeAll(keepCapacity: false)
             me._resetPosition()
@@ -358,7 +358,7 @@ class StreamFrameProducer: NSObject {
     private func _prepareNextAssetReaders(initial: AVAsset? = nil, atTime time: CMTime = kCMTimeZero) {
 
         // 読み込み済みリーダーの数が上限になっていれば何もしない
-        if (_readers.count > maxNumOfReaders) { return }
+        if (_readers.count >= maxNumOfReaders) { return }
 
         // アセットをどこから読み込むかを決定する
         let startIndex = (initial == nil) ? 0 : _assets.indexOf({$0.asset == initial!}) ?? 0
@@ -395,7 +395,7 @@ class StreamFrameProducer: NSObject {
                     for (j, target) in enumerate(me._assets[actualIndex+1..<me._assets.count]) {
 
                         // 読み込み済みリーダーの数が上限になれば処理終了
-                        if (me._readers.count > me.maxNumOfReaders) {
+                        if (me._readers.count >= me.maxNumOfReaders) {
                             break outer
                         }
 

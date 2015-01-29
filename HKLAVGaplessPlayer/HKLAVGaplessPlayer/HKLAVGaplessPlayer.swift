@@ -41,12 +41,16 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
-    Appends given asset to the end of queue.
+    Appends given asset to the end of queue. If current mode is streaming mode and
+    enough to play assets, then start playing.
 
     :param: asset The asset to be appended.
     */
     public func appendAsset(asset: AVAsset) {
         _producer.appendAsset(asset)
+        if _producer.playbackMode == .Streaming && !isPlaying && _producer.amountDuration > 2.0 {
+            play(1.0, position:1.0)
+        }
     }
 
     /**
