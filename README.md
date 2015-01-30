@@ -6,6 +6,21 @@
 
 HKLAVGaplessPlayer is similar Movie player class to AVQueuePlayer. But it can play multiple assets without gap.
 
+## Requirements
+
+iOS 8.0 or later.
+
+## Installation
+
+### Carthage
+
+HKLAVGaplessPlayer is available through [Carthage](https://github.com/Carthage/Carthage). To install
+it, simply add the following line to your Cartfile:
+
+```
+github "katokichisoft/SimpleGaplessPlayer" ~> 0.1.1
+```
+
 ## What is this?
 
 As you know, AVQueuePlayer is used to play a number of items in sequence. But the short gap that we can easily notice them is laid between movies. HKLAVGaplessPlayer plays them with no gap between assets.
