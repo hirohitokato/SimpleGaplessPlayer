@@ -109,6 +109,11 @@ class StreamFrameProducer: NSObject {
         }
     }
 
+    /**
+    assetで示すアセットをアセット群から取り除く
+
+    :param: asset 削除したいアセット
+    */
     func removeAsset(asset: AVAsset) {
         sync { me in
 
@@ -420,6 +425,7 @@ class StreamFrameProducer: NSObject {
         }
     }
 }
+
 
 /**
 *  再生位置を決めるための処理
