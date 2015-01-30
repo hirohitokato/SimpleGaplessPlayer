@@ -9,7 +9,7 @@ import Foundation
 import CoreMedia
 import AVFoundation
 
-let kMaximumNumOfReaders = 2 // AVAssetReaderで事前にstartReading()しておくムービーの数
+let kMaximumNumOfReaders = 3 // AVAssetReaderで事前にstartReading()しておくムービーの数
 
 /**
 登録したアセットをどのように再生するか。
