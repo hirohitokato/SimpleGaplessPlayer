@@ -377,13 +377,13 @@ class StreamFrameProducer: NSObject {
         
         // リーダーが空の場合、まず先頭のアセットを読み込む
         if _readers.isEmpty && startIndex < _assets.count {
-            if let assetreader = AssetReaderFragment(asset:_assets[startIndex].asset,
+            if let assetreader = _createFragment(_assets[startIndex].asset,
                 rate:_playbackRate, startTime:startTime)
             {
                 startTime = kCMTimeZero
                 _readers.append(assetreader)
             } else {
-                NSLog("(1) Failed to instantiate a reader of [\((_assets[startIndex].asset as? AVURLAsset)?.URL.lastPathComponent?)]")
+                _assets.removeAtIndex(startIndex)
             }
         }
 
@@ -404,13 +404,12 @@ class StreamFrameProducer: NSObject {
                             break outer
                         }
 
-                        if let assetreader = AssetReaderFragment(asset:target.asset,
+                        if let assetreader = me._createFragment(target.asset,
                             rate:me._playbackRate, startTime:startTime)
                         {
                             startTime = kCMTimeZero
                             me._readers.append(assetreader)
                         } else {
-                            NSLog("(2) Failed to instantiate a reader of [\((target.asset as? AVURLAsset)?.URL.lastPathComponent?)]")
                             // 再度作成しようとしても使えないので、取り除く
                             failedIndex = actualIndex+1+j
                             break outer
@@ -423,6 +422,42 @@ class StreamFrameProducer: NSObject {
                 me._assets.removeAtIndex(failedIndex!)
             }
         }
+    }
+
+    private func _createFragment(asset:AVAsset, rate:Float=1.0,
+        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
+        -> AssetReaderFragment?
+    {
+        // アセットを読むタイミングによっては、track情報が取得できないことがある。
+        // この問題はAVAssetを作り直すところからやり直せば解消できるため、
+        // 最大retry回数まで再作成を試みる
+        var retry = 3
+        var target = asset
+        do {
+            if let assetreader = AssetReaderFragment(asset:target,
+                rate:rate, startTime:startTime, endTime:endTime)
+            {
+                return assetreader
+            } else {
+                // URLから作成したアセットのみ再作成を試みる
+                if let oldAsset = target as? AVURLAsset {
+                    let index = _assets.indexOf{ $0.asset == oldAsset }!
+                    _assets.removeAtIndex(index)
+                    let newAsset = AVAsset.assetWithURL(oldAsset.URL) as AVAsset
+                    let holder = AssetHolder(newAsset) { duration in
+                        self._amountDuration += duration
+                        return
+                    }
+                    _assets.insert(holder, atIndex: index)
+                    target = newAsset
+                } else {
+                    // URL以外のアセット(コンポジションなど)は諦める
+                    break
+                }
+            }
+        } while --retry > 0
+        NSLog("Failed to create an asset reader fragment for \(asset)")
+        return nil
     }
 }
 
