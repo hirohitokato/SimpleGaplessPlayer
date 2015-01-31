@@ -203,10 +203,19 @@ class StreamFrameProducer: NSObject {
 
     :returns: リーダーから読み込まれたサンプルバッファ
     */
-    func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)! {
-        var result: (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)! = nil
+    func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)! {
+        var result: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
         sync { me in
-            result = me._prepareNextBuffer()
+            if me._currentSampleBuffer != nil {
+                result = me._currentSampleBuffer
+                me._currentSampleBuffer = nil
+            } else {
+                result = me._prepareNextBuffer()
+            }
+
+            me.async { me in
+                me._currentSampleBuffer = me._prepareNextBuffer()
+            }
         }
         return result
     }
@@ -291,6 +300,7 @@ class StreamFrameProducer: NSObject {
     private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
+    private var _currentSampleBuffer: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
 
@@ -317,7 +327,7 @@ class StreamFrameProducer: NSObject {
     サンプルバッファの生成
     */
     private func _prepareNextBuffer()
-        -> (sbuf:CMSampleBufferRef, presentationTimeStamp:CMTime, frameDuration:CMTime)?
+        -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)?
     {
         // サンプルバッファを生成する
         while let target = _readers.first {
@@ -344,7 +354,7 @@ class StreamFrameProducer: NSObject {
                         _position = pos
                     }
                 }
-                return ( sbuf, pts, target.frameInterval )
+                return ( sbuf, target.frameInterval )
             } else {
                 if target.status == .Completed {
                     // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する

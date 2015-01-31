@@ -255,7 +255,7 @@ extension HKLAVGaplessPlayer {
         while _remainingPresentationTime > 0.0 {
 
             // サンプルバッファの取得
-            if let (sbuf, _, duration) = _producer.nextSampleBuffer() {
+            if let (sbuf, duration) = _producer.nextSampleBuffer() {
 
                 // サンプルバッファの最新取得時刻を更新した上で、
                 // 得られたプレゼンテーション時間を消費する
