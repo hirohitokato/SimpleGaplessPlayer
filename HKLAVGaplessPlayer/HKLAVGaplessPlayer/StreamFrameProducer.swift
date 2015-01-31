@@ -32,6 +32,10 @@ public enum PlaybackMode {
 */
 class StreamFrameProducer: NSObject {
 
+    init(decodeQueue: dispatch_queue_t) {
+        _decodeQueue = decodeQueue
+        super.init()
+    }
     /// 格納しているアセットの合計再生時間を返す
     var amountDuration: CMTime {
         get {
@@ -296,7 +300,7 @@ class StreamFrameProducer: NSObject {
 
     // MARK: Privates
 
-    private let _queue = dispatch_queue_create("com.KatokichiSoft.HKLAVGaplessPlayer.producer", DISPATCH_QUEUE_SERIAL)
+    private let _decodeQueue: dispatch_queue_t
     private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
@@ -353,6 +357,13 @@ class StreamFrameProducer: NSObject {
                     if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
                         _position = pos
                     }
+                }
+                if pts == kCMTimeZero {
+                    var urls = ""
+                    for reader in _readers {
+                        urls += "[\(reader.URL!.lastPathComponent!)]"
+                    }
+                    NSLog("[\(target.URL!.lastPathComponent!)] start copying. ← \(urls)")
                 }
                 return ( sbuf, target.frameInterval )
             } else {
@@ -642,14 +653,14 @@ private extension StreamFrameProducer {
 
 private extension StreamFrameProducer {
     func sync(handler: (StreamFrameProducer) -> Void) {
-        dispatch_sync(_queue) {
+        dispatch_sync(_decodeQueue) {
             [unowned self] in
             handler(self)
         }
     }
 
     func async(handler: (StreamFrameProducer) -> Void) {
-        dispatch_async(_queue) {
+        dispatch_async(_decodeQueue) {
             [unowned self] in
             handler(self)
         }

@@ -23,7 +23,14 @@ public let HKLAVGaplessPlayerPlayRateAsIs: Float = FLT_MIN
 public class HKLAVGaplessPlayer: NSObject {
     public weak var delegate: HKLAVGaplessPlayerDelegate! = nil
 
-    override public init() {
+    public override init() {
+        let queue = dispatch_queue_create("com.KatokichiSoft.HKLAVGaplessPlayer.producer", DISPATCH_QUEUE_SERIAL)
+        _producer = StreamFrameProducer(decodeQueue: queue)
+        super.init()
+    }
+    public init(decodeQueue: dispatch_queue_t) {
+        _producer = StreamFrameProducer(decodeQueue: decodeQueue)
+
         super.init()
 
         // DisplayLinkを作成
@@ -176,7 +183,7 @@ public class HKLAVGaplessPlayer: NSObject {
     private var _displayLink: CADisplayLink!
 
      /// フレームの保持と生成を担当するクラス
-    let _producer: StreamFrameProducer = StreamFrameProducer()
+    let _producer: StreamFrameProducer
 
     /// 最後にピクセルバッファを取得した時刻
     private var _lastTimestamp: CFTimeInterval = 0
