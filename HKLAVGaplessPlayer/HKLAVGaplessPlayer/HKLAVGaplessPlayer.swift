@@ -98,11 +98,13 @@ public class HKLAVGaplessPlayer: NSObject {
     public var position: Float { return _producer.position }
 
     /**
-    プレーヤーを再生開始
+    Start playback with the specified rate and position.
 
-    rateに「HKLAVGaplessPlayerPlayRateAsIs」を指定した場合、アセット
-    がもともと提供するフレームをそのまま再生に使う。つまり、60fpsで再生する
-    環境であれば、240fpsのムービーだと1/4倍速、30fpsだと2倍速の再生になる。
+    If you set HKLAVGaplessPlayerPlayRateAsIs as its rate, player starts
+    preparing an original frame every time. It means that if the movie's
+    nominal framerate is 60 and the number of invocations is 30, the playback
+    rate is 0.5. If you play 240fps movie with 60 invocations per a sec,
+    the rate is 0.25.
 
     :param: rate     The current rate of playback. Default value is 1.0(the natural rate)。0.0 means pause.
     :param: position The position where player starts playback. It is that in time window(0.0-1.0). Default value is nil(play from current position)
@@ -112,7 +114,7 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
-    プレーヤーを等倍速で再生開始する。
+    This is convenience method that is equal to play(rate:1.0, position:nil)
     
     :discussion: （play(rate:,position:)がデフォルト値を持つため、publicにしてもObjective-Cではアクセスできない。そのため、コンビニエンスメソッドとしてplay()を用意した）
     */
@@ -128,7 +130,7 @@ public class HKLAVGaplessPlayer: NSObject {
     }
 
     /**
-    再生停止。再開は最初から
+    Stop the player. All pending readers cancel reading.
     */
     public func stop() {
         pause()
