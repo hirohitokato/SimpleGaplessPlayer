@@ -460,7 +460,7 @@ class StreamFrameProducer: NSObject {
             {
                 return assetreader
             } else {
-                // URLから作成したアセットのみ再作成を試みる
+                // URLから作成したアセットのみ、失敗したときに再作成を試みる
                 if let oldAsset = target as? AVURLAsset {
                     let index = _assets.indexOf{ $0.asset == oldAsset }!
                     _assets.removeAtIndex(index)

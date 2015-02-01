@@ -58,6 +58,13 @@ internal class AssetReaderFragment: NSObject {
         }
     }
 
+    deinit {
+        if _reader != nil {
+            _reader.cancelReading()
+        }
+        asset.cancelLoading()
+    }
+
     /**
     内包しているAVAssetReaderのstatusプロパティの値(AVAssetReaderStatus)を返す。
     */
