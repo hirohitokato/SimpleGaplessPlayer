@@ -23,10 +23,9 @@ public let HKLAVGaplessPlayerPlayRateAsIs: Float = FLT_MIN
 public class HKLAVGaplessPlayer: NSObject {
     public weak var delegate: HKLAVGaplessPlayerDelegate! = nil
 
-    public override init() {
+    public override convenience init() {
         let queue = dispatch_queue_create("com.KatokichiSoft.HKLAVGaplessPlayer.producer", DISPATCH_QUEUE_SERIAL)
-        _producer = StreamFrameProducer(decodeQueue: queue)
-        super.init()
+        self.init(decodeQueue:queue)
     }
     public init(decodeQueue: dispatch_queue_t) {
         _producer = StreamFrameProducer(decodeQueue: decodeQueue)
