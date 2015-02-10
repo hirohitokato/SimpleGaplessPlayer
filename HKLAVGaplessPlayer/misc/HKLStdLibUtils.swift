@@ -20,7 +20,7 @@ extension Array {
 
     :refer: http://stackoverflow.com/a/24105493
     */
-    func indexOf(condition: Array.Element -> Bool) -> Array.Index? {
+    func indexOf(@noescape condition: Array.Element -> Bool) -> Array.Index? {
         for idx in indices(self) {
             if condition(self[idx]) {
                 return idx

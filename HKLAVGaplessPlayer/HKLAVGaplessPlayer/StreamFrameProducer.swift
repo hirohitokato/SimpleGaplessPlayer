@@ -558,7 +558,7 @@ private extension StreamFrameProducer {
         switch playbackMode {
         case .Streaming:
             // 現在の再生場所を起点にしてposition=1.0地点を探索する
-            if let i_t1 = self._assets.indexOf({$0.asset == self._readers.first!.asset}) {
+            if let i_t1 = self._assets.indexOf({$0.asset == _readers.first!.asset}) {
 
                 let t1 = AssetPosition(i_t1, _currentPresentationTimestamp)
                 let offset = window * (1.0 - position)
