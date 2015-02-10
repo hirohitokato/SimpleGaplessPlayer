@@ -153,7 +153,7 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
     }
 
     // MARK: - HKLAVGaplessPlayerDelegate
-    func numberOfInvocationsInSec(player: HKLAVGaplessPlayer) -> Int {
+    func expectedPlaybackFramerate(player: HKLAVGaplessPlayer) -> Int {
         return 30
     }
 

@@ -22,7 +22,7 @@ HKLAVGaplessPlayerで逐次得られるフレームを受け取るための外�
     :param: player HKLAVGaplessPlayerオブジェクト
     :returns: フレームレート。60fpsであれば60、30fpsの場合は30を渡す
     */
-    func numberOfInvocationsInSec(player:HKLAVGaplessPlayer) -> Int
+    func expectedPlaybackFramerate(player:HKLAVGaplessPlayer) -> Int
 
     /**
     フレームが生成されるたびに呼ばれるデリゲートメソッド。

@@ -222,7 +222,7 @@ public class HKLAVGaplessPlayer: NSObject {
         } else {
 
             // 指定レートで再生開始
-            playbackFrameRate = delegate?.numberOfInvocationsInSec(self) ?? playbackFrameRate
+            playbackFrameRate = delegate?.expectedPlaybackFramerate(self) ?? playbackFrameRate
             _displayLink.frameInterval = 60 / playbackFrameRate
 
             if _producer.startReading(rate: rate, atPosition: position) {
