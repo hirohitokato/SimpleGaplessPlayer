@@ -464,7 +464,7 @@ class StreamFrameProducer: NSObject {
                 if let oldAsset = target as? AVURLAsset {
                     let index = _assets.indexOf{ $0.asset == oldAsset }!
                     _assets.removeAtIndex(index)
-                    let newAsset = AVAsset.assetWithURL(oldAsset.URL) as AVAsset
+                    let newAsset = AVAsset.assetWithURL(oldAsset.URL) as! AVAsset
                     let holder = AssetHolder(newAsset) { duration in
                         self._amountDuration += duration
                         return

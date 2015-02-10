@@ -29,8 +29,8 @@ internal class AssetReaderFragment: NSObject {
         self.startTime = startTime
         self.endTime = endTime
         self.preferredTransform = asset.preferredTransform
-        if asset as? AVURLAsset != nil {
-            self.URL = (asset as AVURLAsset).URL
+        if asset is AVURLAsset {
+            self.URL = (asset as! AVURLAsset).URL
         } else {
             self.URL = nil
         }
@@ -44,7 +44,7 @@ internal class AssetReaderFragment: NSObject {
             が出てしまうため、分解して代入するようにした
             */
             (_reader, _duration, frameInterval) = result
-            _output = _reader.outputs.first as? AVAssetReaderOutput
+            _output = _reader.outputs.first as! AVAssetReaderOutput
         } else {
             // 作成失敗
             NSLog("Failed to build a composition for asset.")
@@ -86,9 +86,9 @@ internal class AssetReaderFragment: NSObject {
 
     // MARK: Private variables & methods
 
-    private let _reader: AVAssetReader!
-    private let _output: AVAssetReaderOutput!
-    private let _duration: CMTime!
+    private var _reader: AVAssetReader!
+    private var _output: AVAssetReaderOutput!
+    private var _duration: CMTime!
 
     /**
     アセットの指定範囲をフレーム単位で取り出すためのリーダーを作成する。
@@ -116,7 +116,7 @@ internal class AssetReaderFragment: NSObject {
             NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as AVAssetTrack
+        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as! AVAssetTrack
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
