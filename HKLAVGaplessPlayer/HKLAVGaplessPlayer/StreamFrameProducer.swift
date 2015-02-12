@@ -123,6 +123,7 @@ class StreamFrameProducer: NSObject {
 
             if let index = me._assets.indexOf({ $0.asset == asset }) {
 
+                me._amountDuration -= asset.duration
                 me._assets.removeAtIndex(index)
 
                 // リーダーとしてスケジュール済みの場合、リーダーからも削除する
@@ -147,6 +148,7 @@ class StreamFrameProducer: NSObject {
             me.cancelReading(async: false)
             me._assets.removeAll(keepCapacity: false)
             me._resetPosition()
+            me._amountDuration = kCMTimeZero
         }
 
     }
