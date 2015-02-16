@@ -656,14 +656,14 @@ private extension StreamFrameProducer {
 private extension StreamFrameProducer {
     func sync(handler: (StreamFrameProducer) -> Void) {
         dispatch_sync(_decodeQueue) {
-            [unowned self] in
+//            [unowned self] in
             handler(self)
         }
     }
 
     func async(handler: (StreamFrameProducer) -> Void) {
         dispatch_async(_decodeQueue) {
-            [unowned self] in
+//            [unowned self] in
             handler(self)
         }
     }
