@@ -8,7 +8,7 @@ HKLAVGaplessPlayer is similar Movie player class to AVQueuePlayer. But it can pl
 
 ## Requirements
 
-iOS 8.0 or later.
+iOS 8.0 or later, and Swift 1.2 or later.
 
 ## Installation
 
