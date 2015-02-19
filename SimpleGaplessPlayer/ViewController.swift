@@ -109,7 +109,7 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
         let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
         collections.enumerateObjectsUsingBlock {
             [unowned self]  collection, index, stop  in
-            let collection = collection as PHAssetCollection
+            let collection = collection as! PHAssetCollection
 
             // 日付の古い順に取得
             var options = PHFetchOptions()
@@ -120,7 +120,7 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
             let assets = PHAsset.fetchAssetsInAssetCollection(collection, options: options)
             assets.enumerateObjectsUsingBlock {
                 phAsset, index, stop in
-                let phAsset = phAsset as PHAsset
+                let phAsset = phAsset as! PHAsset
 
                 // オリジナルのアセットを取得するよう指定
                 let options = PHVideoRequestOptions()
