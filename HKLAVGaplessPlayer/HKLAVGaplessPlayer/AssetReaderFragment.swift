@@ -72,9 +72,7 @@ internal class AssetReaderFragment: NSObject {
     }
 
     deinit {
-        if _reader != nil {
-            _reader.cancelReading()
-        }
+        _reader?.cancelReading()
         asset.cancelLoading()
     }
 
