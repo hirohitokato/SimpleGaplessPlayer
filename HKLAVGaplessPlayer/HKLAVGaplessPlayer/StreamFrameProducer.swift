@@ -219,6 +219,7 @@ class StreamFrameProducer: NSObject {
                 result = me._prepareNextBuffer()
             }
 
+            // 次のサンプルバッファを非同期で用意しておく
             me.async { me in
                 me._currentSampleBuffer = me._prepareNextBuffer()
             }
