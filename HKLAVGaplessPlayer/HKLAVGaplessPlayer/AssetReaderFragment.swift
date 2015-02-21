@@ -9,6 +9,19 @@
 import Foundation
 import AVFoundation
 
+struct FrameData : Printable, DebugPrintable {
+    let sampleBuffer: CMSampleBuffer
+    let duration: CMTime
+
+    var description: String {
+        let pts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        return "sbuf:{\(pts.value)/\(pts.timescale)} {duration:\(duration.value)/\(duration.timescale)}"
+    }
+    var debugDescription: String {
+        return "\(sampleBuffer)\nduration:{\(duration.value)/\(duration.timescale)}"
+    }
+}
+
 /**
 アセットリーダーと元アセットとを管理する型。時間も管理することで、60fps以下の
 ムービーでも滞りなく再生できるようにする
@@ -76,12 +89,15 @@ internal class AssetReaderFragment: NSObject {
     var duration: CMTime { return _duration }
 
     /**
-    作成したリーダーから次のサンプルバッファ(コピー)を同期取得して返す
+    作成したリーダーから次のフレームを同期取得して、再生時間と共に返す
 
-    :returns: A CMSampleBuffer object referencing the output sample buffer.
+    :returns: A FrameData struct referencing the output sample buffer.
     */
-    func copyNextSampleBuffer() -> CMSampleBuffer! {
-        return _output.copyNextSampleBuffer()
+    func copyNextFrame() -> FrameData! {
+        if let sbuf = _output.copyNextSampleBuffer() {
+            return FrameData(sampleBuffer: sbuf, duration: frameInterval)
+        }
+        return nil
     }
 
     // MARK: Private variables & methods

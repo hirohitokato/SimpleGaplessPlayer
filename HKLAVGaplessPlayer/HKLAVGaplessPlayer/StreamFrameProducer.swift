@@ -339,9 +339,9 @@ class StreamFrameProducer: NSObject {
         while let target = _readers.first {
 
             // サンプルバッファの読み込み
-            if let sbuf = target.copyNextSampleBuffer() {
+            if let frameData = target.copyNextFrame() {
 
-                let pts = CMSampleBufferGetPresentationTimeStamp(sbuf) + target.startTime
+                let pts = CMSampleBufferGetPresentationTimeStamp(frameData.sampleBuffer) + target.startTime
                 // 現在のプレゼンテーション時間を更新
                 _currentPresentationTimestamp = pts
 
@@ -367,7 +367,7 @@ class StreamFrameProducer: NSObject {
                     }
                     NSLog("[\(target.URL!.lastPathComponent!)] start copying. ← \(urls)")
                 }
-                return ( sbuf, target.frameInterval )
+                return ( frameData.sampleBuffer, frameData.duration )
             } else {
                 if target.status == .Completed {
                     // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する
