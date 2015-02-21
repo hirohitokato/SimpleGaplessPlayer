@@ -32,8 +32,6 @@ internal class AssetReaderFragment: NSObject {
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
-
-    private(set) var frameInterval: CMTime = kCMTimeIndefinite
     let preferredTransform: CGAffineTransform
 
     init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
@@ -42,11 +40,8 @@ internal class AssetReaderFragment: NSObject {
         self.startTime = startTime
         self.endTime = endTime
         self.preferredTransform = asset.preferredTransform
-        if asset is AVURLAsset {
-            self.URL = (asset as! AVURLAsset).URL
-        } else {
-            self.URL = nil
-        }
+        self.URL = (asset is AVURLAsset) ? (asset as! AVURLAsset).URL : nil
+
         super.init()
 
         // リーダーとなるコンポジションを作成する
@@ -56,7 +51,7 @@ internal class AssetReaderFragment: NSObject {
             "Cannot express tuple conversion '(AVAssetReader, CMTime)' to '(AVAssetReader!, CMTime)'"
             が出てしまうため、分解して代入するようにした
             */
-            (_reader, _duration, frameInterval) = result
+            (_reader, _fragmentDuration, _frameInterval) = result
             _output = _reader.outputs.first as! AVAssetReaderOutput
         } else {
             // 作成失敗
@@ -84,7 +79,7 @@ internal class AssetReaderFragment: NSObject {
     /**
     アセットの再生時間を返す
     */
-    var duration: CMTime { return _duration }
+    var duration: CMTime { return _fragmentDuration }
 
     /**
     再生開始位置を加味した、現在のPTSを返す
@@ -99,7 +94,7 @@ internal class AssetReaderFragment: NSObject {
     func copyNextFrame() -> FrameData! {
         if let sbuf = _output.copyNextSampleBuffer() {
             _lastPresentationTimestamp = CMSampleBufferGetPresentationTimeStamp(sbuf)
-            return FrameData(sampleBuffer: sbuf, duration: frameInterval)
+            return FrameData(sampleBuffer: sbuf, duration: _frameInterval)
         }
         return nil
     }
@@ -108,7 +103,8 @@ internal class AssetReaderFragment: NSObject {
 
     private var _reader: AVAssetReader!
     private var _output: AVAssetReaderOutput!
-    private var _duration: CMTime!
+    private var _fragmentDuration: CMTime!
+    private var _frameInterval: CMTime = kCMTimeIndefinite
     private var _lastPresentationTimestamp: CMTime = kCMTimeZero
 
     /**
@@ -195,6 +191,7 @@ internal class AssetReaderFragment: NSObject {
             // videoTrackのminFrameDurationをそのまま利用する
             videoComposition.frameDuration = videoTrack.minFrameDuration
 
+            // フレームの時間を1回/VSYNCにする
             displayDuration = FrameDurationIsAsIs
         } else {
             // As Isではない場合、アセットのfpsによらずrateの再生速度となるよう
