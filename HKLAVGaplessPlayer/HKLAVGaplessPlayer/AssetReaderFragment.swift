@@ -87,12 +87,18 @@ internal class AssetReaderFragment: NSObject {
     var duration: CMTime { return _duration }
 
     /**
+    再生開始位置を加味した、現在のPTSを返す
+    */
+    var currentPresentationTimestamp: CMTime { return startTime + _lastPresentationTimestamp }
+
+    /**
     作成したリーダーから次のフレームを同期取得して、再生時間と共に返す
 
     :returns: A FrameData struct referencing the output sample buffer.
     */
     func copyNextFrame() -> FrameData! {
         if let sbuf = _output.copyNextSampleBuffer() {
+            _lastPresentationTimestamp = CMSampleBufferGetPresentationTimeStamp(sbuf)
             return FrameData(sampleBuffer: sbuf, duration: frameInterval)
         }
         return nil
@@ -103,6 +109,7 @@ internal class AssetReaderFragment: NSObject {
     private var _reader: AVAssetReader!
     private var _output: AVAssetReaderOutput!
     private var _duration: CMTime!
+    private var _lastPresentationTimestamp: CMTime = kCMTimeZero
 
     /**
     アセットの指定範囲をフレーム単位で取り出すためのリーダーを作成する。

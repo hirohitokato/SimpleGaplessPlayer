@@ -342,8 +342,8 @@ class StreamFrameProducer: NSObject {
             // サンプルバッファの読み込み
             if let frameData = target.copyNextFrame() {
 
-                let pts = CMSampleBufferGetPresentationTimeStamp(frameData.sampleBuffer) + target.startTime
                 // 現在のプレゼンテーション時間を更新
+                let pts = target.currentPresentationTimestamp
                 _currentPresentationTimestamp = pts
 
                 switch playbackMode {
