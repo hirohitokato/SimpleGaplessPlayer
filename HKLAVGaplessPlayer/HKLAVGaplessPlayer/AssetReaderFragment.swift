@@ -45,19 +45,25 @@ internal class AssetReaderFragment: NSObject {
         super.init()
 
         // リーダーとなるコンポジションを作成する
-        if let result = _buildComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
-            /*
-            (reader, frameInterval) = result で記述すると、以下のコンパイルエラー：
-            "Cannot express tuple conversion '(AVAssetReader, CMTime)' to '(AVAssetReader!, CMTime)'"
-            が出てしまうため、分解して代入するようにした
-            */
-            (_reader, _fragmentDuration, _frameInterval) = result
-            _output = _reader.outputs.first as! AVAssetReaderOutput
+        if rate == HKLAVGaplessPlayerPlayRateAsIs {
+            if let result = _buildAsIsComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
+                _reader = result.reader
+                _fragmentDuration = result.duration
+                _frameInterval = result.frameInterval
+            }
         } else {
+            if let result = _buildComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
+                _reader = result.reader
+                _fragmentDuration = result.duration
+                _frameInterval = result.frameInterval
+            }
+        }
+        if _reader == nil {
             // 作成失敗
             NSLog("Failed to build a composition for asset.")
             return nil
         }
+        _output = _reader.outputs.first as! AVAssetReaderOutput
 
         // 読み込み開始
         if self._reader.startReading() == false {
@@ -122,11 +128,12 @@ internal class AssetReaderFragment: NSObject {
     private func _buildComposition(asset:AVAsset,
         startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
         rate:Float=1.0)
-        -> (reader:AVAssetReader!, duration:CMTime!, frameInterval:CMTime)!
+        -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
         var error: NSError? = nil
 
         assert(rate>0.0, "Unable to set rate less than or equal to 0.0!!")
+
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
         if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
@@ -224,6 +231,73 @@ internal class AssetReaderFragment: NSObject {
                 reader.addOutput(output)
             }
             return (reader, duration, displayDuration)
+        } else {
+            NSLog("Failed to instantiate a reader for a composition:\(error)")
+        }
+        
+        return nil
+    }
+
+    private func _buildAsIsComposition(asset:AVAsset,
+        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
+        rate:Float=HKLAVGaplessPlayerPlayRateAsIs)
+        -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
+    {
+        var error: NSError? = nil
+
+        // ビデオトラックを抽出
+        /* durationを調べるためだけに使う */
+        if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
+            NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
+            return nil
+        }
+        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as! AVAssetTrack
+
+        // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
+        if endTime > videoTrack.timeRange.duration {
+            endTime = videoTrack.timeRange.duration
+        }
+        let duration = endTime - startTime
+        let timeRange = CMTimeRangeMake(startTime, duration)
+
+        // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 1.0/60.0) {
+            NSLog("duration(\(duration)) is less than or equal to 0")
+            return nil
+        }
+
+        /* 作成するコンポジションとリーダーの構造
+        *
+        * [AVAssetReaderTrackOutput]         : ビデオフレーム取り出し口
+        * └ [AVAssetReader]                 : コンポジション上のvideoTrackを読み出し元に指定
+        *     └ [AVMutableComposition]      : 再生時間帯の指定
+        *         └ [videoTrack in AVAsset] : ソースに使うビデオトラック
+        */
+        let composition = AVMutableComposition()
+        if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
+            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(error)")
+            return nil
+        }
+
+        // フレームの時間を1回/VSYNCにする
+        var displayDuration = FrameDurationIsAsIs
+
+        // アセットリーダーに接続するアウトプット(出力口)として、
+        // copyNextSampleBuffer()でハングする可能性の低いAVAssetReaderTrackOutputを使う
+        let compoVideoTrack = composition.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
+        var output = AVAssetReaderTrackOutput(track: compoVideoTrack,
+            outputSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+                kCVPixelBufferIOSurfacePropertiesKey : [:]])
+
+        // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
+        output.alwaysCopiesSampleData = false
+
+        // コンポジションからアセットリーダーを作成し、アウトプットを接続
+        if let reader = AVAssetReader(asset: composition, error: &error) {
+            if reader.canAddOutput(output) {
+                reader.addOutput(output)
+                return (reader, duration, displayDuration)
+            }
         } else {
             NSLog("Failed to instantiate a reader for a composition:\(error)")
         }
