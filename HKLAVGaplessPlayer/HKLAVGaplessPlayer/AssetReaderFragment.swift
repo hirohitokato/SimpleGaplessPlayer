@@ -40,7 +40,7 @@ internal class AssetReaderFragment: NSObject {
         self.startTime = startTime
         self.endTime = endTime
         self.preferredTransform = asset.preferredTransform
-        self.URL = (asset is AVURLAsset) ? (asset as! AVURLAsset).URL : nil
+        self.URL = (asset as? AVURLAsset)?.URL
 
         super.init()
 
