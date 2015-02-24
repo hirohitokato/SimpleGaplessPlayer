@@ -510,8 +510,9 @@ private extension StreamFrameProducer {
             // 2) 算出した1.0位置からのオフセットを引いたアセット位置を探す
             if let result = _findAsset(_assets, from: one, offset: offset) {
 
-                // 算出した値なので、端数が出ないよう1/600スケールに丸めて返す
-                let time = CMTimeConvertScale(result.time, 600, .RoundTowardZero)
+                // 算出した値なので端数が出ないよう、なおかつアセット末尾近くも
+                // 余裕を持たせるよう、1/30秒で丸めて返す
+                let time = CMTimeConvertScale(result.time, 30, .RoundTowardZero)
                 return AssetPosition(result.index, time)
             }
         }
