@@ -28,7 +28,7 @@ public extension CMTime /* : FloatingPointType */ {
     var isSignMinus: Bool {
         if self == kCMTimePositiveInfinity { return false }
         if self == kCMTimeNegativeInfinity { return false }
-        if (self.flags & .Valid).rawValue == 0 { return false }
+        if (self.flags.intersect(.Valid)).rawValue == 0 { return false }
         return (self.value < 0)
     }
 
@@ -97,10 +97,6 @@ func / (time: CMTime, divisor: Int32) -> CMTime {
 func /= (inout time: CMTime, divisor: Int32) -> CMTime {
     time = time / divisor
     return time
-}
-
-// MARK: - Comparable protocol
-extension CMTime: Comparable {
 }
 
 public func == (time1: CMTime, time2: CMTime) -> Bool {
@@ -209,7 +205,7 @@ public func >= (seconds: Float, time: CMTime) -> Bool {
 }
 
 // MARK: - Debugging
-extension CMTime: Printable,DebugPrintable {
+extension CMTime: CustomStringConvertible,CustomDebugStringConvertible {
     public var description: String {
         return "\(CMTimeGetSeconds(self))"
     }
@@ -218,7 +214,7 @@ extension CMTime: Printable,DebugPrintable {
     }
 }
 
-extension CMTimeRange: Printable,DebugPrintable {
+extension CMTimeRange: CustomStringConvertible,CustomDebugStringConvertible {
     public var description: String {
         return "{\(self.start.value)/\(self.start.timescale),\(self.duration.value)/\(self.duration.timescale)}"
     }
@@ -227,7 +223,7 @@ extension CMTimeRange: Printable,DebugPrintable {
     }
 }
 
-extension CMTimeMapping: Printable, DebugPrintable {
+extension CMTimeMapping: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         return "{ source:\(source.description), target:\(target.description) }"
     }

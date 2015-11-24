@@ -101,7 +101,7 @@ class StreamFrameProducer: NSObject {
     /**
     アセットを内部キューの末尾に保存する。
 
-    :param: asset フレームの取り出し対象となるアセット
+    - parameter asset: フレームの取り出し対象となるアセット
     */
     func appendAsset(asset: AVAsset) {
         async { me in
@@ -116,7 +116,7 @@ class StreamFrameProducer: NSObject {
     /**
     assetで示すアセットをアセット群から取り除く
 
-    :param: asset 削除したいアセット
+    - parameter asset: 削除したいアセット
     */
     func removeAsset(asset: AVAsset) {
         sync { me in
@@ -133,7 +133,7 @@ class StreamFrameProducer: NSObject {
 
                     // 再生中のムービーを削除する場合、advanceToNextAsset()を呼ぶ
                     if readerIndex == 0 {
-                        me.advanceToNextAsset(shouldLock: false)
+                        me.advanceToNextAsset(false)
                     }
                 }
             }
@@ -180,7 +180,7 @@ class StreamFrameProducer: NSObject {
                 // アセットが残っているか、またはplaybackモードかつautorepeat==trueなら次を読み込む
                 if removed.asset != self._assets.last?.asset {
                     if let removedIndex = self._assets.indexOf({ $0.asset == removed.asset }) {
-                        self._prepareNextAssetReaders(initial: self._assets[removedIndex+1].asset)
+                        self._prepareNextAssetReaders(self._assets[removedIndex+1].asset)
                     }
                 } else if self.autoRepeat && self.playbackMode == .Playback {
 
@@ -188,7 +188,7 @@ class StreamFrameProducer: NSObject {
 
                     self._position = 0.0
                     if let zeroPos = zeroPos {
-                        self._prepareNextAssetReaders(initial: self._assets[zeroPos.index].asset, atTime: zeroPos.time)
+                        self._prepareNextAssetReaders(self._assets[zeroPos.index].asset, atTime: zeroPos.time)
                     } else {
                         self._prepareNextAssetReaders()
                     }
@@ -207,7 +207,7 @@ class StreamFrameProducer: NSObject {
     生成された最新のサンプルバッファを返す。読み込まれた後、サンプルバッファは
     次に読み込まれるまでnilに
 
-    :returns: リーダーから読み込まれたサンプルバッファ
+    - returns: リーダーから読み込まれたサンプルバッファ
     */
     func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)! {
         var result: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
@@ -230,10 +230,10 @@ class StreamFrameProducer: NSObject {
     /**
     アセットリーダーから読み込みを開始する
 
-    :param: rate 再生レート
-    :param: position 再生開始する位置(0.0-1.0)。Float.NaNの場合は現在位置を継続
+    - parameter rate: 再生レート
+    - parameter position: 再生開始する位置(0.0-1.0)。Float.NaNの場合は現在位置を継続
 
-    :returns: 読み込み開始に成功したかどうか
+    - returns: 読み込み開始に成功したかどうか
     */
     func startReading(rate:Float = 1.0, atPosition pos:Float? = nil) -> Bool {
         var result = false
@@ -272,7 +272,7 @@ class StreamFrameProducer: NSObject {
                 me.cancelReading(async: false)
             }
             me._playbackRate = rate
-            me._prepareNextAssetReaders(initial: currentAsset, atTime:me._currentPresentationTimestamp)
+            me._prepareNextAssetReaders(currentAsset, atTime:me._currentPresentationTimestamp)
 
             result = true
         }
@@ -373,7 +373,7 @@ class StreamFrameProducer: NSObject {
                 if target.status == .Completed {
                     // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する
                     // TODO: 取得したサンプルバッファの位置が1.0を超えていた場合も移動する
-                    advanceToNextAsset(shouldLock: false)
+                    advanceToNextAsset(false)
                 } else {
                     NSLog("[\(target.URL!.lastPathComponent!)] Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
                     _readers.removeAtIndex(0)
@@ -414,14 +414,14 @@ class StreamFrameProducer: NSObject {
         // 読み込みしていないアセットがあれば読み込む(バックグラウンドで)
         async { me in
             var failedIndex: Int? = nil
-            outer: for (i, holder) in enumerate(me._assets[startIndex..<me._assets.count]) {
+            outer: for (i, holder) in me._assets[startIndex..<me._assets.count].enumerate() {
                 let asset = holder.asset
                 let actualIndex = i + startIndex
 
                 // 登録済みの最後のアセットを見つけて、それ以降のアセットを
                 // 追加対象として読み込む
                 if me._readers.last?.asset === asset && actualIndex+1 < me._assets.count {
-                    for (j, target) in enumerate(me._assets[actualIndex+1..<me._assets.count]) {
+                    for (j, target) in me._assets[actualIndex+1..<me._assets.count].enumerate() {
 
                         // 読み込み済みリーダーの数が上限になれば処理終了
                         if (me._readers.count >= me.maxNumOfReaders) {
@@ -449,7 +449,7 @@ class StreamFrameProducer: NSObject {
     }
 
     private func _createFragment(asset:AVAsset, rate:Float=1.0,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity)
         -> AssetReaderFragment?
     {
         // アセットを読むタイミングによっては、track情報が取得できないことがある。
@@ -457,7 +457,7 @@ class StreamFrameProducer: NSObject {
         // 最大retry回数まで再作成を試みる
         var retry = 3
         var target = asset
-        do {
+        repeat {
             if let assetreader = AssetReaderFragment(asset:target,
                 rate:rate, startTime:startTime, endTime:endTime)
             {
@@ -467,7 +467,7 @@ class StreamFrameProducer: NSObject {
                 if let oldAsset = target as? AVURLAsset {
                     let index = _assets.indexOf{ $0.asset == oldAsset }!
                     _assets.removeAtIndex(index)
-                    let newAsset = AVAsset.assetWithURL(oldAsset.URL) as! AVAsset
+                    let newAsset = AVAsset(URL: oldAsset.URL) 
                     let holder = AssetHolder(newAsset) { duration in
                         self._amountDuration += duration
                         return
@@ -494,9 +494,9 @@ private extension StreamFrameProducer {
     /**
     指定した再生位置(0.0-1.0)に対するアセット位置を計算して返す
 
-    :param: position 再生位置(0.0-1.0)
+    - parameter position: 再生位置(0.0-1.0)
 
-    :returns: 指定した再生位置に相当するアセット位置
+    - returns: 指定した再生位置に相当するアセット位置
     */
     func _getAssetPositionOf(position: Float) -> AssetPosition? {
         if _assets.isEmpty { return nil }
@@ -522,10 +522,10 @@ private extension StreamFrameProducer {
     /**
     現在の再生位置を元に、指定したアセット位置が示す再生位置を返す
 
-    :param: index アセットのインデックス。_assets内のインデックス番号のこと。
-    :param: time  アセット上の時間
+    - parameter index: アセットのインデックス。_assets内のインデックス番号のこと。
+    - parameter time:  アセット上の時間
 
-    :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
+    - returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
     func _getPositionOf(index:Int, time:CMTime) -> Float? {
         let target = AssetPosition(index, time)
@@ -553,7 +553,7 @@ private extension StreamFrameProducer {
     /**
     Window末尾(=再生位置が1.0)のときのアセットと、そのアセット位置を計算して返す
 
-    :returns: _assets内の、position=1.0となるアセット位置
+    - returns: _assets内の、position=1.0となるアセット位置
     */
     func _getWindowEnd() -> AssetPosition? {
 
@@ -585,11 +585,11 @@ private extension StreamFrameProducer {
     アセット位置から指定時間ぶんオフセットした位置がどこにあるかを調べる。
     該当するアセットが無い場合はnilを返す
 
-    :param: assets 探索対象のアセット列
-    :param: index  探索基点となるアセット位置(インデックス, 時刻)
-    :param: offset オフセット時間
+    - parameter assets: 探索対象のアセット列
+    - parameter index:  探索基点となるアセット位置(インデックス, 時刻)
+    - parameter offset: オフセット時間
 
-    :returns: アセット位置(インデックス, 時刻)
+    - returns: アセット位置(インデックス, 時刻)
     */
     func _findAsset(assets:[AssetHolder], from:AssetPosition, offset:CMTime)
         -> AssetPosition?
@@ -601,14 +601,14 @@ private extension StreamFrameProducer {
 
         // アセット列のうち、どの範囲を探すか
         let targets = isSignMinus ?
-            reverse(assets[0...from.index]) : Array(assets[from.index..<assets.count])
+            Array(assets[0...from.index].reverse()) : Array(assets[from.index..<assets.count])
 
         // 繰り返し処理を簡略化するためにゲタを履かせる
         var offset = isSignMinus ?
             (offset * -1.0 + assets[from.index].duration - from.time) :
             (offset + from.time)
 
-        for (i, holder) in enumerate(targets) {
+        for (i, holder) in targets.enumerate() {
 
             if offset <= holder.duration {
                 return isSignMinus ?
@@ -623,10 +623,10 @@ private extension StreamFrameProducer {
     /**
     複数アセットを跨いだ、アセット間の時間を求める。from>toの場合は負値が返る。
 
-    :param: from lhs 起点となるアセット位置
-    :param: to rhs 終点となるアセット位置
+    - parameter from: lhs 起点となるアセット位置
+    - parameter to: rhs 終点となるアセット位置
 
-    :returns: 指定期間内のduration.
+    - returns: 指定期間内のduration.
     */
     func _getDurationBetweenAssets(from lhs: AssetPosition, to rhs: AssetPosition) -> CMTime {
         var sumTime: CMTime = kCMTimeZero

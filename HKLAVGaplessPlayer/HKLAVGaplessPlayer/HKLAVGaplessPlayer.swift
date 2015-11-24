@@ -50,7 +50,7 @@ public class HKLAVGaplessPlayer: NSObject {
     Appends given asset to the end of queue. If current mode is streaming mode and
     enough to play assets, then start playing.
 
-    :param: asset The asset to be appended.
+    - parameter asset: The asset to be appended.
     */
     public func appendAsset(asset: AVAsset) {
         _producer.appendAsset(asset)
@@ -64,8 +64,8 @@ public class HKLAVGaplessPlayer: NSObject {
     
     If asset is currently playing, this also has the effect as advanceToNextAsset.
 
-    :param: asset The asset to be removed.
-    :returns: true if the asset is removed from the queue or false if it did not.
+    - parameter asset: The asset to be removed.
+    - returns: true if the asset is removed from the queue or false if it did not.
     */
     public func removeAsset(asset: AVAsset) {
         return _producer.removeAsset(asset)
@@ -106,8 +106,8 @@ public class HKLAVGaplessPlayer: NSObject {
     rate is 0.5. If you play 240fps movie with 60 invocations per a sec,
     the rate is 0.25.
 
-    :param: rate     The current rate of playback. Default value is 1.0(the natural rate)。0.0 means pause.
-    :param: position The position where player starts playback. It is that in time window(0.0-1.0). Default value is nil(play from current position)
+    - parameter rate:     The current rate of playback. Default value is 1.0(the natural rate)。0.0 means pause.
+    - parameter position: The position where player starts playback. It is that in time window(0.0-1.0). Default value is nil(play from current position)
     */
     public func play(rate: Float, position:Float? = nil) {
         _setRate(rate, position:position)
@@ -200,8 +200,8 @@ public class HKLAVGaplessPlayer: NSObject {
     /**
     プレーヤーを再生開始
 
-    :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
-    :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
+    - parameter rate:     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
+    - parameter position: 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
     private func _setRate(rate:Float, position:Float? = nil) {
         if rate < 0.0 {
@@ -225,7 +225,7 @@ public class HKLAVGaplessPlayer: NSObject {
             playbackFrameRate = delegate?.expectedPlaybackFramerate(self) ?? playbackFrameRate
             _displayLink.frameInterval = 60 / playbackFrameRate
 
-            if _producer.startReading(rate: rate, atPosition: position) {
+            if _producer.startReading(rate, atPosition: position) {
                 _lastTimestamp = CACurrentMediaTime()
                 _remainingPresentationTime = 0.0
                 _previousTimestamp = 0.0
@@ -242,7 +242,7 @@ extension HKLAVGaplessPlayer {
     /**
     CADisplayLinkのコールバック関数。frameInterval間隔で、画面更新のタイミングで呼ばれる
 
-    :param: displayLink CADisplayLink。現在時刻や直近の処理時間を取得できる
+    - parameter displayLink: CADisplayLink。現在時刻や直近の処理時間を取得できる
     */
     @objc func _displayLinkCallback(displayLink: CADisplayLink) {
 

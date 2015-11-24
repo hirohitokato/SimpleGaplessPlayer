@@ -293,7 +293,7 @@
 		1AA61A671A41044B00F2B2F6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "Hirohito Kato";
 				TargetAttributes = {
 					1A25A0A41A5BE41800106B11 = {
@@ -421,6 +421,7 @@
 				INSTALL_PATH = "@rpath";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -443,6 +444,7 @@
 				INSTALL_PATH = "@rpath";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -472,6 +474,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -539,10 +542,12 @@
 				INFOPLIST_FILE = SimpleGaplessPlayer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = SimpleGaplessPlayer;
 				PROVISIONING_PROFILE = "";
+				SWIFT_DISABLE_SAFETY_CHECKS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "SimpleGaplessPlayer/SimpleGaplessPlayer-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Debug;
 		};
@@ -556,10 +561,12 @@
 				INFOPLIST_FILE = SimpleGaplessPlayer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = SimpleGaplessPlayer;
 				PROVISIONING_PROFILE = "";
+				SWIFT_DISABLE_SAFETY_CHECKS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "SimpleGaplessPlayer/SimpleGaplessPlayer-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 			};
 			name = Release;
 		};

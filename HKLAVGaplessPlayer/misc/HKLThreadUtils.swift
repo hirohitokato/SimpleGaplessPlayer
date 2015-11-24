@@ -17,7 +17,7 @@ class ScopedLock {
 
     /**
     イニシャライザ。
-    :param: obj ロック対象のオブジェクト
+    - parameter obj: ロック対象のオブジェクト
     */
     init(_ obj : AnyObject) { object = obj; objc_sync_enter(object) }
     deinit { objc_sync_exit(object) }
