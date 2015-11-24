@@ -84,7 +84,7 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
         case PlayerMode.Streaming.rawValue:
             _player.playbackMode = .Streaming
         default:
-            println("do nothing for mode:\(sender.selectedSegmentIndex)")
+            print("do nothing for mode:\(sender.selectedSegmentIndex)")
         }
     }
 
@@ -99,7 +99,6 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
     カメラロールから古い順で10個のビデオを取り出し、リーダーをセットアップする
     */
     private func loadVideoAssets() {
-
         let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
 
         // 収集したアセットをいったん格納する（最終的にindex順でソートして格納）
@@ -135,16 +134,16 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
                         dispatch_async(queue) { // シリアライズ(配列操作を排他)
                             avassets.append((index,avasset))
                             if avassets.count + failed == assets.count {
-                                println("Finished gathering video assets. (\(failed) failed)")
+                                print("Finished gathering video assets. (\(failed) failed)")
                                 // プロデューサーにアセットを追加
-                                sort(&avassets) { $0.0 < $1.0 }
+                                avassets.sortInPlace { $0.0 < $1.0 }
                                 for (_, a) in avassets {
                                     self._player.appendAsset(a)
                                 }
                             }
                         }
                     } else {
-                        println("request asset failed:\(avasset)")
+                        print("request asset failed:\(avasset)")
                         dispatch_async(queue) { let dummy = ++failed }
                     }
                 }

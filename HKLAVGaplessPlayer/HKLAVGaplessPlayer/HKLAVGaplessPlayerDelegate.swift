@@ -19,8 +19,8 @@ HKLAVGaplessPlayerで逐次得られるフレームを受け取るための外�
     1秒間のうち、何回player(_:didOutputSampleBuffer:)が呼ばれるかを返す。
     必ず60を割り切れる値(60,30,20,15など)を返すこと。
 
-    :param: player HKLAVGaplessPlayerオブジェクト
-    :returns: フレームレート。60fpsであれば60、30fpsの場合は30を渡す
+    - parameter player: HKLAVGaplessPlayerオブジェクト
+    - returns: フレームレート。60fpsであれば60、30fpsの場合は30を渡す
     */
     func expectedPlaybackFramerate(player:HKLAVGaplessPlayer) -> Int
 
@@ -30,8 +30,8 @@ HKLAVGaplessPlayerで逐次得られるフレームを受け取るための外�
     メソッドが呼ばれるタイミングは、HKLAVGaplessPlayerのフレームレートに
     依存する。
 
-    :param: player HKLAVGaplessPlayerオブジェクト
-    :param: sampleBuffer サンプルバッファ。映像のフレームデータを持つ
+    - parameter player: HKLAVGaplessPlayerオブジェクト
+    - parameter sampleBuffer: サンプルバッファ。映像のフレームデータを持つ
     */
     func player(player:HKLAVGaplessPlayer,
         didOutputSampleBuffer sampleBuffer:CMSampleBufferRef)

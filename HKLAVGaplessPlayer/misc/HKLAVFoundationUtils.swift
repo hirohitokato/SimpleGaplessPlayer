@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-extension AVURLAsset: Printable, DebugPrintable {
+extension AVURLAsset: CustomDebugStringConvertible {
     public override var description: String {
         var str: String = ""
         str += "---------------------\n"
@@ -30,17 +30,17 @@ extension AVURLAsset: Printable, DebugPrintable {
         str += " preferredTransform    : \(preferredTransform.description)\n"
         str += " referenceRestrictions : \(referenceRestrictions.description)\n"
         str += "[Track Information] (\(tracks.count) tracks)\n"
-        for (i, track) in enumerate(tracks) {
+        for (i, track) in tracks.enumerate() {
             str += "\(track.description)\n"
         }
         str += " trackGroups:\(trackGroups)\n"
         str += "[Metadata]\n"
         str += " commonMetadata: \(commonMetadata.count)\n"
-        for (i, md) in enumerate(commonMetadata) {
+        for (i, md) in commonMetadata.enumerate() {
             str += "  | \(md.description),\n"
         }
         str += " metadata: \(metadata.count)\n"
-        for (i, md) in enumerate(metadata) {
+        for (i, md) in metadata.enumerate() {
             str += "  | \(md.description),\n"
         }
         str += " availableMetadataFormats : \(availableMetadataFormats)\n"
@@ -55,7 +55,7 @@ extension AVURLAsset: Printable, DebugPrintable {
     }
 }
 
-extension AVAssetReferenceRestrictions : Printable, DebugPrintable {
+extension AVAssetReferenceRestrictions : CustomDebugStringConvertible {
     public var description: String {
         switch self.rawValue {
         case 0:
@@ -79,7 +79,7 @@ extension AVAssetReferenceRestrictions : Printable, DebugPrintable {
     }
 }
 
-extension AVAssetTrack: Printable, DebugPrintable {
+extension AVAssetTrack: CustomDebugStringConvertible {
     public override var description: String {
         var str = ""
         str += " [track #\(trackID)]\n"
@@ -98,7 +98,7 @@ extension AVAssetTrack: Printable, DebugPrintable {
         str += "  | requiresFrameReordering: \(requiresFrameReordering)\n"
         str += "  | availableTrackAssociationTypes: \(availableTrackAssociationTypes)\n"
         str += "  | segments               : \(segments.count)\n"
-        for (i, segment) in enumerate(segments) {
+        for (i, segment) in segments.enumerate() {
             str += "  |  | \(segment.description)"
         }
         return str
@@ -122,7 +122,7 @@ extension AVAssetTrack: Printable, DebugPrintable {
     }
 }
 
-extension AVMetadataItem: Printable, DebugPrintable {
+extension AVMetadataItem: CustomDebugStringConvertible {
     public override var description: String {
         var str = "[\(key)"
         if self.dateValue != nil {
@@ -142,7 +142,7 @@ extension AVMetadataItem: Printable, DebugPrintable {
         if dataType != nil {
             str += "  | dataType    : \(dataType)\n"
         }
-        if (time.flags & .Valid).rawValue > 0 {
+        if (time.flags.intersect(.Valid)).rawValue > 0 {
             str += "  | time        : \(time.description)\n"
         }
         if self.dateValue != nil {
@@ -157,7 +157,7 @@ extension AVMetadataItem: Printable, DebugPrintable {
     }
 }
 
-extension AVAssetTrackSegment: Printable, DebugPrintable {
+extension AVAssetTrackSegment: CustomDebugStringConvertible {
     public override var description: String {
         return "{ empty:\(empty), timeMapping:\(timeMapping.description)}"
     }
