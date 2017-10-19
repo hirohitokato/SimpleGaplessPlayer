@@ -28,7 +28,7 @@ public extension CMTime /* : FloatingPointType */ {
     var isSignMinus: Bool {
         if self == kCMTimePositiveInfinity { return false }
         if self == kCMTimeNegativeInfinity { return false }
-        if (self.flags & .Valid).rawValue == 0 { return false }
+        if !self.flags.contains(.valid) { return false }
         return (self.value < 0)
     }
 
