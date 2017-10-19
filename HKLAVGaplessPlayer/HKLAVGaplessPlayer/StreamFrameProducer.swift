@@ -457,7 +457,7 @@ class StreamFrameProducer: NSObject {
         // 最大retry回数まで再作成を試みる
         var retry = 3
         var target = asset
-        do {
+        repeat {
             if let assetreader = AssetReaderFragment(asset:target,
                 rate:rate, startTime:startTime, endTime:endTime)
             {
