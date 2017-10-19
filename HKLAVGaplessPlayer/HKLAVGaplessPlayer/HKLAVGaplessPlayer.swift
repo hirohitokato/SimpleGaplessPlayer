@@ -24,10 +24,10 @@ public class HKLAVGaplessPlayer: NSObject {
     public weak var delegate: HKLAVGaplessPlayerDelegate! = nil
 
     public override convenience init() {
-        let queue = dispatch_queue_create("com.KatokichiSoft.HKLAVGaplessPlayer.producer", DISPATCH_QUEUE_SERIAL)
+        let queue = DispatchQueue(label: "com.KatokichiSoft.HKLAVGaplessPlayer.producer")
         self.init(decodeQueue:queue)
     }
-    public init(decodeQueue: dispatch_queue_t) {
+    public init(decodeQueue: DispatchQueue) {
         _producer = StreamFrameProducer(decodeQueue: decodeQueue)
 
         super.init()
@@ -36,8 +36,8 @@ public class HKLAVGaplessPlayer: NSObject {
         _displayLink = CADisplayLink(target: self, selector: "_displayLinkCallback:")
         _displayLink.frameInterval = 60 / playbackFrameRate
         _displayLink.paused = true
-        dispatch_async(dispatch_get_main_queue()) {
-            self._displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+        DispatchQueue.main.async {
+            self._displayLink.add(to: RunLoop.main, forMode: .defaultRunLoopMode)
         }
     }
 

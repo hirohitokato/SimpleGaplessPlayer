@@ -32,7 +32,7 @@ public enum PlaybackMode {
 */
 class StreamFrameProducer: NSObject {
 
-    init(decodeQueue: dispatch_queue_t) {
+    init(decodeQueue: DispatchQueue) {
         _decodeQueue = decodeQueue
         super.init()
     }
@@ -303,7 +303,7 @@ class StreamFrameProducer: NSObject {
 
     // MARK: Privates
 
-    private let _decodeQueue: dispatch_queue_t
+    private let _decodeQueue: DispatchQueue
     private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
@@ -658,7 +658,7 @@ private extension StreamFrameProducer {
 
 private extension StreamFrameProducer {
     func sync(handler: (StreamFrameProducer) -> Void) {
-        dispatch_sync(_decodeQueue) {
+        _decodeQueue.sync() {
 //            [unowned self] in
             handler(self)
         }
