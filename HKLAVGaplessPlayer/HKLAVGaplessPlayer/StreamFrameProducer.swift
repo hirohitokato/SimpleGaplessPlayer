@@ -103,7 +103,7 @@ class StreamFrameProducer: NSObject {
 
     :param: asset フレームの取り出し対象となるアセット
     */
-    func appendAsset(asset: AVAsset) {
+    func append(asset: AVAsset) {
         async { me in
             let holder = AssetHolder(asset) { duration in
                 me._amountDuration += duration
@@ -118,7 +118,7 @@ class StreamFrameProducer: NSObject {
 
     :param: asset 削除したいアセット
     */
-    func removeAsset(asset: AVAsset) {
+    func remove(asset: AVAsset) {
         sync { me in
 
             if let index = me._assets.index(where: { $0.asset == asset }) {

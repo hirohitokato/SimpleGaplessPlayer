@@ -34,7 +34,7 @@ class AssetHolder {
         // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
         //   時間を短くできることを狙っている）
         let keys = ["duration","tracks", "preferredTransform", "readable"]
-        asset.loadValuesAsynchronouslyForKeys(keys) {
+        asset.loadValuesAsynchronously(forKeys: keys) {
             self.duration = asset.duration
             completionHandler(self.duration)
         }
