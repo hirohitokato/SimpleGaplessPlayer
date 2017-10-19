@@ -44,7 +44,7 @@ public extension CMTime /* : FloatingPointType */ {
 func + (left: CMTime, right: CMTime) -> CMTime {
     return CMTimeAdd(left, right)
 }
-func += (inout left: CMTime, right: CMTime) -> CMTime {
+func += ( left: inout CMTime, right: CMTime) -> CMTime {
     left = left + right
     return left
 }
@@ -53,7 +53,7 @@ func += (inout left: CMTime, right: CMTime) -> CMTime {
 func - (minuend: CMTime, subtrahend: CMTime) -> CMTime {
     return CMTimeSubtract(minuend, subtrahend)
 }
-func -= (inout minuend: CMTime, subtrahend: CMTime) -> CMTime {
+func -= (minuend: inout CMTime, subtrahend: CMTime) -> CMTime {
     minuend = minuend - subtrahend
     return minuend
 }
@@ -77,15 +77,15 @@ func * (multiplier: Float64, time: CMTime) -> CMTime {
 func * (multiplier: Float, time: CMTime) -> CMTime {
     return time * multiplier
 }
-func *= (inout time: CMTime, multiplier: Int32) -> CMTime {
+func *= (time: inout CMTime, multiplier: Int32) -> CMTime {
     time = time * multiplier
     return time
 }
-func *= (inout time: CMTime, multiplier: Float64) -> CMTime {
+func *= (time: inout CMTime, multiplier: Float64) -> CMTime {
     time = time * multiplier
     return time
 }
-func *= (inout time: CMTime, multiplier: Float) -> CMTime {
+func *= (time: inout CMTime, multiplier: Float) -> CMTime {
     time = time * multiplier
     return time
 }
@@ -94,7 +94,7 @@ func *= (inout time: CMTime, multiplier: Float) -> CMTime {
 func / (time: CMTime, divisor: Int32) -> CMTime {
     return CMTimeMultiplyByRatio(time, 1, divisor)
 }
-func /= (inout time: CMTime, divisor: Int32) -> CMTime {
+func /= (time: inout CMTime, divisor: Int32) -> CMTime {
     time = time / divisor
     return time
 }
