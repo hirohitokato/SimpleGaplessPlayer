@@ -14,7 +14,7 @@ var playbackFrameRate: Int = 60
 
 /// 再生時のrate指定に使う特殊値。この値を指定した場合、アセットの
 /// 持つ1フレームをそのまま1フレームとして扱う
-public let HKLAVGaplessPlayerPlayRateAsIs: Float = FLT_MIN
+public let HKLAVGaplessPlayerPlayRateAsIs: Float =  .leastNormalMagnitude
 
 /**
 :class: HKLAVGaplessPlayer
@@ -24,20 +24,20 @@ public class HKLAVGaplessPlayer: NSObject {
     public weak var delegate: HKLAVGaplessPlayerDelegate! = nil
 
     public override convenience init() {
-        let queue = dispatch_queue_create("com.KatokichiSoft.HKLAVGaplessPlayer.producer", DISPATCH_QUEUE_SERIAL)
+        let queue = DispatchQueue(label: "com.KatokichiSoft.HKLAVGaplessPlayer.producer")
         self.init(decodeQueue:queue)
     }
-    public init(decodeQueue: dispatch_queue_t) {
+    public init(decodeQueue: DispatchQueue) {
         _producer = StreamFrameProducer(decodeQueue: decodeQueue)
 
         super.init()
 
         // DisplayLinkを作成
-        _displayLink = CADisplayLink(target: self, selector: "_displayLinkCallback:")
+        _displayLink = CADisplayLink(target: self, selector: #selector(_displayLinkCallback(displayLink:)))
         _displayLink.frameInterval = 60 / playbackFrameRate
-        _displayLink.paused = true
-        dispatch_async(dispatch_get_main_queue()) {
-            self._displayLink.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSDefaultRunLoopMode)
+        _displayLink.isPaused = true
+        DispatchQueue.main.async {
+            self._displayLink.add(to: RunLoop.main, forMode: .defaultRunLoopMode)
         }
     }
 
@@ -53,9 +53,9 @@ public class HKLAVGaplessPlayer: NSObject {
     :param: asset The asset to be appended.
     */
     public func appendAsset(asset: AVAsset) {
-        _producer.appendAsset(asset)
+        _producer.append(asset: asset)
         if _producer.playbackMode == .Streaming && !isPlaying && _producer.amountDuration > 2.0 {
-            play(1.0, position:1.0)
+            play(rate: 1.0, position:1.0)
         }
     }
 
@@ -68,7 +68,7 @@ public class HKLAVGaplessPlayer: NSObject {
     :returns: true if the asset is removed from the queue or false if it did not.
     */
     public func removeAsset(asset: AVAsset) {
-        return _producer.removeAsset(asset)
+        return _producer.remove(asset: asset)
     }
 
     /**
@@ -110,7 +110,7 @@ public class HKLAVGaplessPlayer: NSObject {
     :param: position The position where player starts playback. It is that in time window(0.0-1.0). Default value is nil(play from current position)
     */
     public func play(rate: Float, position:Float? = nil) {
-        _setRate(rate, position:position)
+        _set(rate: rate, position:position)
     }
 
     /**
@@ -119,14 +119,14 @@ public class HKLAVGaplessPlayer: NSObject {
     :discussion: （play(rate:,position:)がデフォルト値を持つため、publicにしてもObjective-Cではアクセスできない。そのため、コンビニエンスメソッドとしてplay()を用意した）
     */
     public func play() {
-        _setRate(1.0, position:nil)
+        _set(rate: 1.0, position:nil)
     }
 
     /**
     Pauses playback. This is the same as setting rate to 0.0.
     */
     public func pause() {
-        _setRate(0.0)
+        _set(rate: 0.0)
     }
 
     /**
@@ -139,7 +139,7 @@ public class HKLAVGaplessPlayer: NSObject {
     /**
     true if the player is in playing.
     */
-    public var isPlaying: Bool { return !_displayLink.paused }
+    public var isPlaying: Bool { return !_displayLink.isPaused }
 
     /** The automatic vs. nonautomatic repeat state of the player.
 
@@ -203,18 +203,16 @@ public class HKLAVGaplessPlayer: NSObject {
     :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
     :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
-    private func _setRate(rate:Float, position:Float? = nil) {
-        if rate < 0.0 {
+    private func _set(rate: Float, position: Float? = nil) {
+        guard rate >= 0.0 else {
             fatalError("Unable to set a negative value(\(rate)) to playback rate")
         }
-        if position != nil && (position < 0.0 || position > 1.0) {
-            fatalError("position(\(rate)) must be 0.0...1.0")
-        }
+        let pos = clip(position, lower: 0.0, upper: 1.0)
 
         if rate == 0 {
 
             // 一時停止
-            _displayLink.paused = true
+            _displayLink.isPaused = true
             _lastTimestamp = CACurrentMediaTime()
             _remainingPresentationTime = 0.0
             _previousTimestamp = 0.0
@@ -222,14 +220,14 @@ public class HKLAVGaplessPlayer: NSObject {
         } else {
 
             // 指定レートで再生開始
-            playbackFrameRate = delegate?.expectedPlaybackFramerate(self) ?? playbackFrameRate
+            playbackFrameRate = delegate?.expectedPlaybackFramerate(player: self) ?? playbackFrameRate
             _displayLink.frameInterval = 60 / playbackFrameRate
 
-            if _producer.startReading(rate: rate, atPosition: position) {
+            if _producer.startReading(rate: rate, atPosition: pos) {
                 _lastTimestamp = CACurrentMediaTime()
                 _remainingPresentationTime = 0.0
                 _previousTimestamp = 0.0
-                _displayLink.paused = false
+                _displayLink.isPaused = false
                 _playbackRate = CFTimeInterval(rate)
             }
         }
@@ -278,7 +276,7 @@ extension HKLAVGaplessPlayer {
 
                 // 表示処理はループの最後で1回だけ実行
                 if _remainingPresentationTime <= 0.0 {
-                    delegate?.player(self, didOutputSampleBuffer: sbuf)
+                    delegate?.player(player: self, didOutputSampleBuffer: sbuf)
                 }
             } else {
                 // サンプルバッファが得られなかった場合、今回の処理では何もしない
@@ -288,7 +286,7 @@ extension HKLAVGaplessPlayer {
         }
 
         if displayLink.timestamp - _lastTimestamp > 0.5 {
-            displayLink.paused = true
+            displayLink.isPaused = true
             NSLog("Paused display link in order to save energy.")
         }
     }

@@ -28,7 +28,7 @@ public extension CMTime /* : FloatingPointType */ {
     var isSignMinus: Bool {
         if self == kCMTimePositiveInfinity { return false }
         if self == kCMTimeNegativeInfinity { return false }
-        if (self.flags & .Valid).rawValue == 0 { return false }
+        if !self.flags.contains(.valid) { return false }
         return (self.value < 0)
     }
 
@@ -44,7 +44,7 @@ public extension CMTime /* : FloatingPointType */ {
 func + (left: CMTime, right: CMTime) -> CMTime {
     return CMTimeAdd(left, right)
 }
-func += (inout left: CMTime, right: CMTime) -> CMTime {
+@discardableResult func += ( left: inout CMTime, right: CMTime) -> CMTime {
     left = left + right
     return left
 }
@@ -53,7 +53,7 @@ func += (inout left: CMTime, right: CMTime) -> CMTime {
 func - (minuend: CMTime, subtrahend: CMTime) -> CMTime {
     return CMTimeSubtract(minuend, subtrahend)
 }
-func -= (inout minuend: CMTime, subtrahend: CMTime) -> CMTime {
+@discardableResult func -= (minuend: inout CMTime, subtrahend: CMTime) -> CMTime {
     minuend = minuend - subtrahend
     return minuend
 }
@@ -77,15 +77,15 @@ func * (multiplier: Float64, time: CMTime) -> CMTime {
 func * (multiplier: Float, time: CMTime) -> CMTime {
     return time * multiplier
 }
-func *= (inout time: CMTime, multiplier: Int32) -> CMTime {
+@discardableResult func *= (time: inout CMTime, multiplier: Int32) -> CMTime {
     time = time * multiplier
     return time
 }
-func *= (inout time: CMTime, multiplier: Float64) -> CMTime {
+@discardableResult func *= (time: inout CMTime, multiplier: Float64) -> CMTime {
     time = time * multiplier
     return time
 }
-func *= (inout time: CMTime, multiplier: Float) -> CMTime {
+@discardableResult func *= (time: inout CMTime, multiplier: Float) -> CMTime {
     time = time * multiplier
     return time
 }
@@ -94,33 +94,24 @@ func *= (inout time: CMTime, multiplier: Float) -> CMTime {
 func / (time: CMTime, divisor: Int32) -> CMTime {
     return CMTimeMultiplyByRatio(time, 1, divisor)
 }
-func /= (inout time: CMTime, divisor: Int32) -> CMTime {
+@discardableResult func /= (time: inout CMTime, divisor: Int32) -> CMTime {
     time = time / divisor
     return time
 }
 
-// MARK: - Comparable protocol
-extension CMTime: Comparable {
-}
-
-public func == (time1: CMTime, time2: CMTime) -> Bool {
-    return CMTimeCompare(time1, time2) == 0
-}
-public func < (time1: CMTime, time2: CMTime) -> Bool {
-    return CMTimeCompare(time1, time2) < 0
-}
-
 // MARK: - Convenience methods
 extension CMTime {
-    func isNearlyEqualTo(time: CMTime, _ tolerance: CMTime=CMTimeMake(1,600)) -> Bool {
+    func isNearlyEqualTo(_ time: CMTime, _ tolerance: CMTime=CMTimeMake(1,600)) -> Bool {
         let delta = CMTimeAbsoluteValue(self - time)
         return delta < tolerance
     }
     func isNearlyEqualTo(time: CMTime, _ tolerance: Float64=1.0/600) -> Bool {
-        return isNearlyEqualTo(time, CMTime(seconds:tolerance))
+        let t = Double(tolerance)
+        return isNearlyEqualTo(time, CMTime(seconds:t, preferredTimescale:600))
     }
     func isNearlyEqualTo(time: CMTime, _ tolerance: Float=1.0/600) -> Bool {
-        return isNearlyEqualTo(time, CMTime(seconds:tolerance))
+        let t = Double(tolerance)
+        return isNearlyEqualTo(time, CMTime(seconds:t, preferredTimescale:600))
     }
 }
 
@@ -209,16 +200,16 @@ public func >= (seconds: Float, time: CMTime) -> Bool {
 }
 
 // MARK: - Debugging
-extension CMTime: Printable,DebugPrintable {
+extension CMTime: CustomStringConvertible,CustomDebugStringConvertible {
     public var description: String {
         return "\(CMTimeGetSeconds(self))"
     }
     public var debugDescription: String {
-        return String(CMTimeCopyDescription(nil, self))
+        return String(describing: CMTimeCopyDescription(nil, self))
     }
 }
 
-extension CMTimeRange: Printable,DebugPrintable {
+extension CMTimeRange: CustomStringConvertible,CustomDebugStringConvertible {
     public var description: String {
         return "{\(self.start.value)/\(self.start.timescale),\(self.duration.value)/\(self.duration.timescale)}"
     }
@@ -227,7 +218,7 @@ extension CMTimeRange: Printable,DebugPrintable {
     }
 }
 
-extension CMTimeMapping: Printable, DebugPrintable {
+extension CMTimeMapping: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         return "{ source:\(source.description), target:\(target.description) }"
     }

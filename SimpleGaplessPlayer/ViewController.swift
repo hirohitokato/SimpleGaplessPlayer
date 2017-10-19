@@ -26,7 +26,7 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
     }
 
     private let _player = HKLAVGaplessPlayer()
-    private var _timer: NSTimer!
+    private var _timer: Timer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,15 +40,16 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
         // Dispose of any resources that can be recreated.
     }
 
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        _timer = NSTimer.scheduledTimerWithTimeInterval(
-            0.2, target: self, selector: "updateUI:",
-            userInfo: nil, repeats: true)
+        
+        _timer = Timer.scheduledTimer(timeInterval: 0.2,
+                                      target: self, selector: #selector(updateUI(timer:)),
+                                      userInfo: nil,
+                                      repeats: true)
     }
 
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         _timer.invalidate()
@@ -67,14 +68,14 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
     }
 
     @IBAction func sliderUpdated(sender: UISlider) {
-        _player.play(_player.rate, position: sender.value)
+        _player.play(rate: _player.rate, position: sender.value)
     }
 
     @IBAction func rateChanged(sender: UISlider) {
         rateLabel.text = "rate: \(sender.value)"
         // rate==0.0のときはAsIsモードで再生
         let newRate = sender.value>0.0 ? sender.value : HKLAVGaplessPlayerPlayRateAsIs
-        _player.play(newRate)
+        _player.play(rate: newRate)
     }
 
     @IBAction func modeChanged(sender: UISegmentedControl) {
@@ -84,11 +85,11 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
         case PlayerMode.Streaming.rawValue:
             _player.playbackMode = .Streaming
         default:
-            println("do nothing for mode:\(sender.selectedSegmentIndex)")
+            print("do nothing for mode:\(sender.selectedSegmentIndex)")
         }
     }
 
-    @objc func updateUI(timer: NSTimer) {
+    @objc func updateUI(timer: Timer) {
         rateLabel.text = "rate: \(_player.rate)"
         rateSlider.value = _player.rate
         msgLabel.text = "cpu: \(cpu_usage_in_percent())% pos:\(_player.position)"
@@ -100,52 +101,52 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
     */
     private func loadVideoAssets() {
 
-        let queue = dispatch_queue_create("buildingqueue", DISPATCH_QUEUE_SERIAL)
+        let queue = DispatchQueue(label: "buildingqueue")
 
         // 収集したアセットをいったん格納する（最終的にindex順でソートして格納）
         var avassets = [(Int, AVAsset)]()
 
         // 「ビデオ」のスマートアルバムから収集
-        let collections = PHAssetCollection.fetchAssetCollectionsWithType(.SmartAlbum, subtype:.SmartAlbumVideos, options: nil)
-        collections.enumerateObjectsUsingBlock {
+        let collections = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype:.smartAlbumVideos, options: nil)
+        collections.enumerateObjects {
             [unowned self]  collection, index, stop  in
-            let collection = collection as! PHAssetCollection
+            let collection = collection
 
             // 日付の古い順に取得
-            var options = PHFetchOptions()
+            let options = PHFetchOptions()
             options.sortDescriptors = [ NSSortDescriptor(key: "creationDate", ascending: true) ]
 
             var failed: Int = 0
 
-            let assets = PHAsset.fetchAssetsInAssetCollection(collection, options: options)
-            assets.enumerateObjectsUsingBlock {
+            let assets = PHAsset.fetchAssets(in: collection, options: options)
+            assets.enumerateObjects {
                 phAsset, index, stop in
-                let phAsset = phAsset as! PHAsset
+                let phAsset = phAsset
 
                 // オリジナルのアセットを取得するよう指定
                 let options = PHVideoRequestOptions()
-                options.version = .Original
+                options.version = .original
 
                 // この処理は非同期で行われるので注意
-                _ = PHImageManager.defaultManager().requestAVAssetForVideo(phAsset, options:options) {
+                _ = PHImageManager.default().requestAVAsset(forVideo: phAsset, options:options) {
                     avasset, audioMix, info in
 
                     // プレイヤーに日付順で追加できるよう試みる
                     if let avasset = avasset {
-                        dispatch_async(queue) { // シリアライズ(配列操作を排他)
+                        queue.async { // シリアライズ(配列操作を排他)
                             avassets.append((index,avasset))
                             if avassets.count + failed == assets.count {
-                                println("Finished gathering video assets. (\(failed) failed)")
+                                print("Finished gathering video assets. (\(failed) failed)")
                                 // プロデューサーにアセットを追加
-                                sort(&avassets) { $0.0 < $1.0 }
-                                for (_, a) in avassets {
-                                    self._player.appendAsset(a)
+                                let sorted = avassets.sorted { $0.0 < $1.0 }
+                                for (_, a) in sorted {
+                                    self._player.appendAsset(asset: a)
                                 }
                             }
                         }
                     } else {
-                        println("request asset failed:\(avasset)")
-                        dispatch_async(queue) { let dummy = ++failed }
+                        print("request asset failed:\(String(describing: avasset))")
+                        queue.async { failed += 1 }
                     }
                 }
             }
@@ -157,9 +158,9 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
         return 30
     }
 
-    func player(player: HKLAVGaplessPlayer, didOutputSampleBuffer sampleBuffer: CMSampleBufferRef) {
+    func player(player: HKLAVGaplessPlayer, didOutputSampleBuffer sampleBuffer: CMSampleBuffer) {
         if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-            playerView.displayPixelBuffer(pixelBuffer)
+            playerView.display(pixelBuffer)
         }
     }
 }

@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-extern float cpu_usage_in_percent();
+extern float cpu_usage_in_percent(void);
 extern vm_size_t memory_usage_in_bytes(void);
 
 #endif /* defined(__ProcessUtility__taskInfo__) */

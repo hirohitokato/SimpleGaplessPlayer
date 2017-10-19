@@ -32,7 +32,7 @@ public enum PlaybackMode {
 */
 class StreamFrameProducer: NSObject {
 
-    init(decodeQueue: dispatch_queue_t) {
+    init(decodeQueue: DispatchQueue) {
         _decodeQueue = decodeQueue
         super.init()
     }
@@ -94,7 +94,7 @@ class StreamFrameProducer: NSObject {
 
     func assets() -> [AVAsset] {
         var assets = [AVAsset]()
-        _assets.map { assets.append($0.asset) }
+        _assets.forEach { assets.append($0.asset) }
         return assets
     }
 
@@ -103,7 +103,7 @@ class StreamFrameProducer: NSObject {
 
     :param: asset フレームの取り出し対象となるアセット
     */
-    func appendAsset(asset: AVAsset) {
+    func append(asset: AVAsset) {
         async { me in
             let holder = AssetHolder(asset) { duration in
                 me._amountDuration += duration
@@ -118,18 +118,18 @@ class StreamFrameProducer: NSObject {
 
     :param: asset 削除したいアセット
     */
-    func removeAsset(asset: AVAsset) {
+    func remove(asset: AVAsset) {
         sync { me in
 
-            if let index = me._assets.indexOf({ $0.asset == asset }) {
+            if let index = me._assets.index(where: { $0.asset == asset }) {
 
                 me._amountDuration -= asset.duration
-                me._assets.removeAtIndex(index)
+                me._assets.remove(at: index)
 
                 // リーダーとしてスケジュール済みの場合、リーダーからも削除する
-                if let readerIndex = me._readers.indexOf({ $0.asset == asset }) {
+                if let readerIndex = me._readers.index(where: { $0.asset == asset }) {
 
-                    me._readers.removeAtIndex(readerIndex)
+                    me._readers.remove(at: readerIndex)
 
                     // 再生中のムービーを削除する場合、advanceToNextAsset()を呼ぶ
                     if readerIndex == 0 {
@@ -146,7 +146,7 @@ class StreamFrameProducer: NSObject {
     func removeAllAssets() {
         sync { me in
             me.cancelReading(async: false)
-            me._assets.removeAll(keepCapacity: false)
+            me._assets.removeAll(keepingCapacity: false)
             me._resetPosition()
             me._amountDuration = kCMTimeZero
         }
@@ -161,25 +161,25 @@ class StreamFrameProducer: NSObject {
             if !self._readers.isEmpty {
                 // autoRemoveOutdatedAssetsが有効ならばwindow外の古いアセットを削除
                 if self.autoRemoveOutdatedAssets {
-                    if let assetPos = self._getAssetPositionOf(0.0) {
+                    if let assetPos = self._getAssetPosition(of: 0.0) {
                         // 合計時間も減じておく
                         let duration = self._assets[0..<assetPos.index].reduce(kCMTimeZero) { $0 + $1.duration }
-                        self._assets.removeRange(0..<assetPos.index)
+                        self._assets.removeSubrange(0..<assetPos.index)
                         self._amountDuration -= duration
                     }
                 }
 
                 // 時間がリセットされる前に0.0位置の値を保持しておく(必要なときだけ)
                 let zeroPos = (self._readers[0].asset == self._assets.last?.asset && self.autoRepeat) ?
-                    self._getAssetPositionOf(0.0) : nil
+                    self._getAssetPosition(of: 0.0) : nil
 
                 // 現在再生中のリーダーを削除
-                let removed = self._readers.removeAtIndex(0)
+                let removed = self._readers.remove(at: 0)
                 self._currentPresentationTimestamp = kCMTimeZero
 
                 // アセットが残っているか、またはplaybackモードかつautorepeat==trueなら次を読み込む
                 if removed.asset != self._assets.last?.asset {
-                    if let removedIndex = self._assets.indexOf({ $0.asset == removed.asset }) {
+                    if let removedIndex = self._assets.index(where: { $0.asset == removed.asset }) {
                         self._prepareNextAssetReaders(initial: self._assets[removedIndex+1].asset)
                     }
                 } else if self.autoRepeat && self.playbackMode == .Playback {
@@ -209,8 +209,8 @@ class StreamFrameProducer: NSObject {
 
     :returns: リーダーから読み込まれたサンプルバッファ
     */
-    func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)! {
-        var result: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
+    func nextSampleBuffer() -> (sbuf:CMSampleBuffer, frameDuration:CMTime)! {
+        var result: (sbuf:CMSampleBuffer, frameDuration:CMTime)! = nil
         sync { me in
             if me._currentSampleBuffer != nil {
                 result = me._currentSampleBuffer
@@ -243,19 +243,19 @@ class StreamFrameProducer: NSObject {
             }
             var currentAsset: AVAsset? = nil
             if let pos = pos {
-                if let playerInfo = me._getAssetPositionOf(pos) {
+                if let playerInfo = me._getAssetPosition(of: pos) {
 
                     if me.autoRepeat &&
                         me._assets[playerInfo.index].asset == me._assets.last!.asset &&
-                        playerInfo.time.isNearlyEqualTo(me._assets.last!.duration, 0.1)
+                        playerInfo.time.isNearlyEqualTo(me._assets.last!.duration, CMTimeMake(1,10))
                     {
                         // 得られたアセット位置が全体の末尾かつautoRepeat=trueの場合、
                         // 窓時間の先頭に戻る
-                        let zero = me._getAssetPositionOf(0.0) ?? AssetPosition(0, kCMTimeZero)
+                        let zero = me._getAssetPosition(of: 0.0) ?? AssetPosition(0, kCMTimeZero)
 
                         currentAsset = me._assets[zero.index].asset
                         me._currentPresentationTimestamp = zero.time
-                        me._position = me._getPositionOf(0, time: kCMTimeZero)!
+                        me._position = me._getPosition(of: 0, time: kCMTimeZero)!
                     } else {
                         currentAsset = me._assets[playerInfo.index].asset
                         me._position = pos
@@ -288,7 +288,7 @@ class StreamFrameProducer: NSObject {
     */
     func cancelReading(async asyncFlag: Bool=true) {
         let operation = { [unowned self] ()->Void in
-            self._readers.removeAll(keepCapacity: false)
+            self._readers.removeAll(keepingCapacity: false)
         }
         if asyncFlag {
             async { me in operation() }
@@ -303,11 +303,11 @@ class StreamFrameProducer: NSObject {
 
     // MARK: Privates
 
-    private let _decodeQueue: dispatch_queue_t
+    private let _decodeQueue: DispatchQueue
     private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    private var _currentSampleBuffer: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
+    private var _currentSampleBuffer: (sbuf:CMSampleBuffer, frameDuration:CMTime)! = nil
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
 
@@ -334,7 +334,7 @@ class StreamFrameProducer: NSObject {
     サンプルバッファの生成
     */
     private func _prepareNextBuffer()
-        -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)?
+        -> (sbuf:CMSampleBuffer, frameDuration:CMTime)?
     {
         // サンプルバッファを生成する
         while let target = _readers.first {
@@ -352,31 +352,31 @@ class StreamFrameProducer: NSObject {
                     if _readers.first!.asset == _assets.last!.asset &&
                         _assets.last!.asset.duration == _getWindowEnd()?.time
                     {
-                        if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
+                        if let pos = _getPosition(of: _assets.index(where: {$0.asset == target.asset})!, time: pts) {
                             _position = pos
                         }
                     }
                 case .Playback:
-                    if let pos = _getPositionOf(_assets.indexOf({$0.asset == target.asset})!, time: pts) {
+                    if let pos = _getPosition(of: _assets.index(where: {$0.asset == target.asset})!, time: pts) {
                         _position = pos
                     }
                 }
                 if pts == kCMTimeZero {
                     var urls = ""
                     for reader in _readers {
-                        urls += "[\(reader.URL!.lastPathComponent!)]"
+                        urls += "[\(reader.URL!.lastPathComponent)]"
                     }
-                    NSLog("[\(target.URL!.lastPathComponent!)] start copying. ← \(urls)")
+                    NSLog("[\(target.URL!.lastPathComponent)] start copying. ← \(urls)")
                 }
                 return ( frameData.sampleBuffer, frameData.duration )
             } else {
-                if target.status == .Completed {
+                if target.status == .completed {
                     // 現在のリーダーからサンプルバッファをすべて読み終えた場合、次へ移動する
                     // TODO: 取得したサンプルバッファの位置が1.0を超えていた場合も移動する
                     advanceToNextAsset(shouldLock: false)
                 } else {
-                    NSLog("[\(target.URL!.lastPathComponent!)] Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
-                    _readers.removeAtIndex(0)
+                    NSLog("[\(target.URL!.lastPathComponent)] Invalid state[\(Int(target.status.rawValue))]. Something is wrong.")
+                    _readers.remove(at: 0)
                     _currentPresentationTimestamp = kCMTimeZero
                 }
             }
@@ -390,7 +390,7 @@ class StreamFrameProducer: NSObject {
         if (_readers.count >= maxNumOfReaders) { return }
 
         // アセットをどこから読み込むかを決定する
-        let startIndex = (initial == nil) ? 0 : _assets.indexOf({$0.asset == initial!}) ?? 0
+        let startIndex = (initial == nil) ? 0 : _assets.index(where: {$0.asset == initial!}) ?? 0
         // startTimeの設定は初回のみ有効
         var startTime = time
 
@@ -407,21 +407,21 @@ class StreamFrameProducer: NSObject {
                 startTime = kCMTimeZero
                 _readers.append(assetreader)
             } else {
-                _assets.removeAtIndex(startIndex)
+                _assets.remove(at: startIndex)
             }
         }
 
         // 読み込みしていないアセットがあれば読み込む(バックグラウンドで)
         async { me in
             var failedIndex: Int? = nil
-            outer: for (i, holder) in enumerate(me._assets[startIndex..<me._assets.count]) {
+            outer: for (i, holder) in me._assets[startIndex..<me._assets.count].enumerated() {
                 let asset = holder.asset
                 let actualIndex = i + startIndex
 
                 // 登録済みの最後のアセットを見つけて、それ以降のアセットを
                 // 追加対象として読み込む
                 if me._readers.last?.asset === asset && actualIndex+1 < me._assets.count {
-                    for (j, target) in enumerate(me._assets[actualIndex+1..<me._assets.count]) {
+                    for (j, target) in me._assets[actualIndex+1..<me._assets.count].enumerated() {
 
                         // 読み込み済みリーダーの数が上限になれば処理終了
                         if (me._readers.count >= me.maxNumOfReaders) {
@@ -443,13 +443,13 @@ class StreamFrameProducer: NSObject {
             }
             // 作成に失敗した場合はアセット群から取り除く（次に読み込んでも失敗しているため）
             if failedIndex != nil {
-                me._assets.removeAtIndex(failedIndex!)
+                me._assets.remove(at: failedIndex!)
             }
         }
     }
 
-    private func _createFragment(asset:AVAsset, rate:Float=1.0,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
+    private func _createFragment(_ asset:AVAsset, rate:Float=1.0,
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity)
         -> AssetReaderFragment?
     {
         // アセットを読むタイミングによっては、track情報が取得できないことがある。
@@ -457,7 +457,7 @@ class StreamFrameProducer: NSObject {
         // 最大retry回数まで再作成を試みる
         var retry = 3
         var target = asset
-        do {
+        repeat {
             if let assetreader = AssetReaderFragment(asset:target,
                 rate:rate, startTime:startTime, endTime:endTime)
             {
@@ -465,21 +465,22 @@ class StreamFrameProducer: NSObject {
             } else {
                 // URLから作成したアセットのみ、失敗したときに再作成を試みる
                 if let oldAsset = target as? AVURLAsset {
-                    let index = _assets.indexOf{ $0.asset == oldAsset }!
-                    _assets.removeAtIndex(index)
-                    let newAsset = AVAsset.assetWithURL(oldAsset.URL) as! AVAsset
+                    let index = _assets.index{ $0.asset == oldAsset }!
+                    _assets.remove(at: index)
+                    let newAsset = AVAsset(url: oldAsset.url)
                     let holder = AssetHolder(newAsset) { duration in
                         self._amountDuration += duration
                         return
                     }
-                    _assets.insert(holder, atIndex: index)
+                    _assets.insert(holder, at: index)
                     target = newAsset
                 } else {
                     // URL以外のアセット(コンポジションなど)は諦める
                     break
                 }
             }
-        } while --retry > 0
+            retry -= 1
+        } while retry > 0
         NSLog("Failed to create an asset reader fragment for \(asset)")
         return nil
     }
@@ -498,7 +499,7 @@ private extension StreamFrameProducer {
 
     :returns: 指定した再生位置に相当するアセット位置
     */
-    func _getAssetPositionOf(position: Float) -> AssetPosition? {
+    func _getAssetPosition(of position: Float) -> AssetPosition? {
         if _assets.isEmpty { return nil }
 
         // 1) 1.0のアセット位置を算出する
@@ -512,7 +513,7 @@ private extension StreamFrameProducer {
 
                 // 算出した値なので端数が出ないよう、なおかつアセット末尾近くも
                 // 余裕を持たせるよう、1/30秒で丸めて返す
-                let time = CMTimeConvertScale(result.time, 30, .RoundTowardZero)
+                let time = CMTimeConvertScale(result.time, 30, .roundTowardZero)
                 return AssetPosition(result.index, time)
             }
         }
@@ -527,7 +528,7 @@ private extension StreamFrameProducer {
 
     :returns: 再生位置(0.0-1.0)。値域外の場合はnilを返す
     */
-    func _getPositionOf(index:Int, time:CMTime) -> Float? {
+    func _getPosition(of index:Int, time:CMTime) -> Float? {
         let target = AssetPosition(index, time)
 
         /*
@@ -562,7 +563,7 @@ private extension StreamFrameProducer {
         switch playbackMode {
         case .Streaming:
             // 現在の再生場所を起点にしてposition=1.0地点を探索する
-            if let i_t1 = self._assets.indexOf({$0.asset == _readers.first!.asset}) {
+            if let i_t1 = self._assets.index(where: {$0.asset == _readers.first!.asset}) {
 
                 let t1 = AssetPosition(i_t1, _currentPresentationTimestamp)
                 let offset = window * (1.0 - position)
@@ -591,7 +592,7 @@ private extension StreamFrameProducer {
 
     :returns: アセット位置(インデックス, 時刻)
     */
-    func _findAsset(assets:[AssetHolder], from:AssetPosition, offset:CMTime)
+    func _findAsset(_ assets:[AssetHolder], from:AssetPosition, offset:CMTime)
         -> AssetPosition?
     {
         if from.index < 0 || from.index >= assets.count { return nil }
@@ -601,14 +602,14 @@ private extension StreamFrameProducer {
 
         // アセット列のうち、どの範囲を探すか
         let targets = isSignMinus ?
-            reverse(assets[0...from.index]) : Array(assets[from.index..<assets.count])
+            assets[0...from.index].reversed() : Array(assets[from.index..<assets.count])
 
         // 繰り返し処理を簡略化するためにゲタを履かせる
         var offset = isSignMinus ?
             (offset * -1.0 + assets[from.index].duration - from.time) :
             (offset + from.time)
 
-        for (i, holder) in enumerate(targets) {
+        for (i, holder) in targets.enumerated() {
 
             if offset <= holder.duration {
                 return isSignMinus ?
@@ -657,14 +658,14 @@ private extension StreamFrameProducer {
 
 private extension StreamFrameProducer {
     func sync(handler: (StreamFrameProducer) -> Void) {
-        dispatch_sync(_decodeQueue) {
+        _decodeQueue.sync() {
 //            [unowned self] in
             handler(self)
         }
     }
 
-    func async(handler: (StreamFrameProducer) -> Void) {
-        dispatch_async(_decodeQueue) {
+    func async(handler: @escaping (StreamFrameProducer) -> Void) {
+        _decodeQueue.async() {
 //            [unowned self] in
             handler(self)
         }

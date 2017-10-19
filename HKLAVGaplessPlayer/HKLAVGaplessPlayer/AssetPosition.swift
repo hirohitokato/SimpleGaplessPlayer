@@ -12,7 +12,7 @@ import AVFoundation
 /**
 *  アセット配列の中における位置（アセット位置）を表現するデータ構造
 */
-struct AssetPosition: Printable, DebugPrintable {
+struct AssetPosition: CustomStringConvertible, CustomDebugStringConvertible {
     var index: Int
     var time: CMTime
     init(_ index: Int, _ time: CMTime) {

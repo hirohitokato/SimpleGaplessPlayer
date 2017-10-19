@@ -7,7 +7,7 @@
 
 import QuartzCore
 
-extension CGAffineTransform: Printable {
+extension CGAffineTransform: CustomStringConvertible {
     public var description: String {
         return "[a:\(a),b:\(b),c:\(c),d:\(d),tx:\(tx),ty:\(ty)]"
     }

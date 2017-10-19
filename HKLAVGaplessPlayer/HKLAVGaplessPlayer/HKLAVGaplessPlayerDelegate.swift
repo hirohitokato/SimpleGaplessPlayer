@@ -34,5 +34,5 @@ HKLAVGaplessPlayerで逐次得られるフレームを受け取るための外�
     :param: sampleBuffer サンプルバッファ。映像のフレームデータを持つ
     */
     func player(player:HKLAVGaplessPlayer,
-        didOutputSampleBuffer sampleBuffer:CMSampleBufferRef)
+        didOutputSampleBuffer sampleBuffer:CMSampleBuffer)
 }

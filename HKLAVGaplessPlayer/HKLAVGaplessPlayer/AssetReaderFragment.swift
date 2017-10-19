@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-struct FrameData : Printable, DebugPrintable {
+struct FrameData : CustomStringConvertible, CustomDebugStringConvertible {
     let sampleBuffer: CMSampleBuffer
     let duration: CMTime
 
@@ -28,31 +28,31 @@ struct FrameData : Printable, DebugPrintable {
 */
 internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
-    let URL: NSURL!
+    let URL: URL!
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
     let preferredTransform: CGAffineTransform
 
-    init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
+    init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity) {
         self.asset = asset
         self.rate = rate
         self.startTime = startTime
         self.endTime = endTime
         self.preferredTransform = asset.preferredTransform
-        self.URL = (asset as? AVURLAsset)?.URL
+        self.URL = (asset as? AVURLAsset)?.url
 
         super.init()
 
         // リーダーとなるコンポジションを作成する
         if rate == HKLAVGaplessPlayerPlayRateAsIs {
-            if let result = _buildAsIsComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
+            if let result = _buildAsIsComposition(asset: asset, startTime:startTime, endTime:endTime, rate:rate) {
                 _reader = result.reader
                 _fragmentDuration = result.duration
                 _frameInterval = result.frameInterval
             }
         } else {
-            if let result = _buildComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
+            if let result = _buildComposition(asset: asset, startTime:startTime, endTime:endTime, rate:rate) {
                 _reader = result.reader
                 _fragmentDuration = result.duration
                 _frameInterval = result.frameInterval
@@ -63,11 +63,11 @@ internal class AssetReaderFragment: NSObject {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
-        _output = _reader.outputs.first as! AVAssetReaderOutput
+        _output = _reader.outputs.first
 
         // 読み込み開始
         if self._reader.startReading() == false {
-            NSLog("Failed to start a reader:\(self._reader)\n error:\(self._reader.error)")
+            NSLog("Failed to start a reader:\(self._reader)\n error:\(String(describing: self._reader.error))")
             return nil
         }
     }
@@ -126,21 +126,21 @@ internal class AssetReaderFragment: NSObject {
     :returns: アセットリーダー
     */
     private func _buildComposition(asset:AVAsset,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity,
         rate:Float=1.0)
         -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
-        var error: NSError? = nil
+        var endTime = endTime
 
         assert(rate>0.0, "Unable to set rate less than or equal to 0.0!!")
 
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
-        if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
-            NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
+        if asset.tracks(withMediaType: .video).count == 0 {
+            NSLog("Video track is empty. the asset:\(String(describing: (asset as? AVURLAsset)?.url.lastPathComponent)) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as! AVAssetTrack
+        let videoTrack = asset.tracks(withMediaType: .video)[0]
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
@@ -150,7 +150,7 @@ internal class AssetReaderFragment: NSObject {
         let timeRange = CMTimeRangeMake(startTime, duration)
 
         // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
-        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 1.0/60.0) {
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, CMTimeMake(1,60)) {
             NSLog("duration(\(duration)) is less than or equal to 0")
             return nil
         }
@@ -177,8 +177,10 @@ internal class AssetReaderFragment: NSObject {
         下記コード（AVMutableCompositionにアセットをそのまま入れる）を使用する。
         */
         let composition = AVMutableComposition()
-        if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
-            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(error)")
+        do {
+            try composition.insertTimeRange(timeRange, of: asset, at: kCMTimeZero)
+        } catch {
+            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(String(describing: error))")
             return nil
         }
 
@@ -192,7 +194,7 @@ internal class AssetReaderFragment: NSObject {
         var displayDuration: CMTime = kCMTimeInvalid
 
         // フレームレート指定のためにビデオコンポジションを作成
-        let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
+        let videoComposition = AVMutableVideoComposition(propertiesOf: asset)
         if rate == HKLAVGaplessPlayerPlayRateAsIs {
             // As Isで表示する場合、アセットのフレームをそのまま取り出せるよう
             // videoTrackのminFrameDurationをそのまま利用する
@@ -216,42 +218,43 @@ internal class AssetReaderFragment: NSObject {
         // 注意点：
         // - このビデオトラックにはコンポジション上のビデオトラックを指定すること
         // - IOSurfaceで作成しなくても再生できるが、念のため付けておく
-        let compoVideoTracks = composition.tracksWithMediaType(AVMediaTypeVideo)
-        var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
-            videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-                kCVPixelBufferIOSurfacePropertiesKey : [:]])
+        let compoVideoTracks = composition.tracks(withMediaType: .video)
+        let output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
+            videoSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+                            String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
         output.videoComposition = videoComposition
 
         // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
         output.alwaysCopiesSampleData = false
 
         // コンポジションからアセットリーダーを作成し、アウトプットを接続
-        if let reader = AVAssetReader(asset: composition, error: &error) {
-            if reader.canAddOutput(output) {
-                reader.addOutput(output)
+        do {
+            let reader = try AVAssetReader(asset: composition)
+            if reader.canAdd(output) {
+                reader.add(output)
             }
             return (reader, duration, displayDuration)
-        } else {
-            NSLog("Failed to instantiate a reader for a composition:\(error)")
+        } catch {
+            NSLog("Failed to instantiate a reader for a composition:\(String(describing: error))")
         }
         
         return nil
     }
 
     private func _buildAsIsComposition(asset:AVAsset,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity,
         rate:Float=HKLAVGaplessPlayerPlayRateAsIs)
         -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
-        var error: NSError? = nil
+        var endTime = endTime
 
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
-        if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
-            NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
+        if asset.tracks(withMediaType: .video).count == 0 {
+            NSLog("Video track is empty. the asset:\(String(describing: (asset as? AVURLAsset)?.url.lastPathComponent)) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as! AVAssetTrack
+        let videoTrack = asset.tracks(withMediaType: .video)[0]
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
@@ -261,7 +264,7 @@ internal class AssetReaderFragment: NSObject {
         let timeRange = CMTimeRangeMake(startTime, duration)
 
         // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
-        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 1.0/60.0) {
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, CMTimeMake(1,60)) {
             NSLog("duration(\(duration)) is less than or equal to 0")
             return nil
         }
@@ -274,32 +277,35 @@ internal class AssetReaderFragment: NSObject {
         *         └ [videoTrack in AVAsset] : ソースに使うビデオトラック
         */
         let composition = AVMutableComposition()
-        if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
-            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(error)")
+        do {
+            try composition.insertTimeRange(timeRange, of: asset, at: kCMTimeZero)
+        } catch {
+            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(String(describing: error))")
             return nil
         }
 
         // フレームの時間を1回/VSYNCにする
-        var displayDuration = FrameDurationIsAsIs
+        let displayDuration = FrameDurationIsAsIs
 
         // アセットリーダーに接続するアウトプット(出力口)として、
         // copyNextSampleBuffer()でハングする可能性の低いAVAssetReaderTrackOutputを使う
-        let compoVideoTrack = composition.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
-        var output = AVAssetReaderTrackOutput(track: compoVideoTrack,
-            outputSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-                kCVPixelBufferIOSurfacePropertiesKey : [:]])
+        let compoVideoTrack = composition.tracks(withMediaType: .video).first!
+        let output = AVAssetReaderTrackOutput(track: compoVideoTrack,
+                                              outputSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : String(describing: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+                                                               String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
 
         // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
         output.alwaysCopiesSampleData = false
 
         // コンポジションからアセットリーダーを作成し、アウトプットを接続
-        if let reader = AVAssetReader(asset: composition, error: &error) {
-            if reader.canAddOutput(output) {
-                reader.addOutput(output)
+        do {
+            let reader = try AVAssetReader(asset: composition)
+            if reader.canAdd(output) {
+                reader.add(output)
                 return (reader, duration, displayDuration)
             }
-        } else {
-            NSLog("Failed to instantiate a reader for a composition:\(error)")
+        } catch {
+            NSLog("Failed to instantiate a reader for a composition:\(String(describing: error))")
         }
         
         return nil

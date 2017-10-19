@@ -9,38 +9,38 @@
 import Foundation
 import AVFoundation
 
-extension AVURLAsset: Printable, DebugPrintable {
-    public override var description: String {
+extension AVURLAsset {
+    open override var description: String {
         var str: String = ""
         str += "---------------------\n"
-        str += "<file : \(URL.lastPathComponent!)>\n"
+        str += "<file : \(url.lastPathComponent)>\n"
         str += "[Availability]\n"
-        str += " playable              : \(playable)\n"
-        str += " exportable            : \(exportable)\n"
-        str += " readable              : \(readable)\n"
-        str += " composable            : \(composable)\n"
+        str += " isPlayable            : \(isPlayable)\n"
+        str += " isExportable          : \(isExportable)\n"
+        str += " isReadable            : \(isReadable)\n"
+        str += " isComposable          : \(isComposable)\n"
         str += " hasProtectedContent   : \(hasProtectedContent)\n"
-        str += " compatibleWithSavedPhotosAlbum: \(compatibleWithSavedPhotosAlbum)\n"
+        str += " isCompatibleWithSavedPhotosAlbum: \(isCompatibleWithSavedPhotosAlbum)\n"
         str += "[Asset Information]\n"
-        str += " creationDate          : \(creationDate)\n"
+        str += " creationDate          : \(String(describing: creationDate))\n"
         str += " duration              : \(duration.description)\n"
-        str += " lyrics                : \(lyrics)\n"
+        str += " lyrics                : \(String(describing: lyrics))\n"
         str += " preferredRate         : \(preferredRate)\n"
         str += " preferredVolume       : \(preferredVolume)\n"
         str += " preferredTransform    : \(preferredTransform.description)\n"
         str += " referenceRestrictions : \(referenceRestrictions.description)\n"
         str += "[Track Information] (\(tracks.count) tracks)\n"
-        for (i, track) in enumerate(tracks) {
+        for (_, track) in tracks.enumerated() {
             str += "\(track.description)\n"
         }
         str += " trackGroups:\(trackGroups)\n"
         str += "[Metadata]\n"
         str += " commonMetadata: \(commonMetadata.count)\n"
-        for (i, md) in enumerate(commonMetadata) {
+        for (_, md) in commonMetadata.enumerated() {
             str += "  | \(md.description),\n"
         }
         str += " metadata: \(metadata.count)\n"
-        for (i, md) in enumerate(metadata) {
+        for (_, md) in metadata.enumerated() {
             str += "  | \(md.description),\n"
         }
         str += " availableMetadataFormats : \(availableMetadataFormats)\n"
@@ -50,12 +50,12 @@ extension AVURLAsset: Printable, DebugPrintable {
         str += "---------------------"
         return str
     }
-    public override var debugDescription: String {
+    open override var debugDescription: String {
         return description
     }
 }
 
-extension AVAssetReferenceRestrictions : Printable, DebugPrintable {
+extension AVAssetReferenceRestrictions : CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         switch self.rawValue {
         case 0:
@@ -79,14 +79,14 @@ extension AVAssetReferenceRestrictions : Printable, DebugPrintable {
     }
 }
 
-extension AVAssetTrack: Printable, DebugPrintable {
-    public override var description: String {
+extension AVAssetTrack {
+    open override var description: String {
         var str = ""
         str += " [track #\(trackID)]\n"
-        str += "  | mediaType              : \(mediaTypeString(mediaType))\n"
-        str += "  | playable               : \(playable)\n"
-        str += "  | enabled                : \(enabled)\n"
-        str += "  | selfContained          : \(selfContained)\n"
+        str += "  | mediaType              : \(media(type: mediaType))\n"
+        str += "  | isPlayable             : \(isPlayable)\n"
+        str += "  | isEnabled              : \(isEnabled)\n"
+        str += "  | selfContained          : \(isSelfContained)\n"
         str += "  | totalSampleDataLength  : \(totalSampleDataLength)\n"
         str += "  | timeRange              : \(timeRange.description)\n"
         str += "  | naturalTimeScale       : \(naturalTimeScale)\n"
@@ -98,70 +98,70 @@ extension AVAssetTrack: Printable, DebugPrintable {
         str += "  | requiresFrameReordering: \(requiresFrameReordering)\n"
         str += "  | availableTrackAssociationTypes: \(availableTrackAssociationTypes)\n"
         str += "  | segments               : \(segments.count)\n"
-        for (i, segment) in enumerate(segments) {
+        for (_, segment) in segments.enumerated() {
             str += "  |  | \(segment.description)"
         }
         return str
     }
-    public override var debugDescription: String {
+    open override var debugDescription: String {
         return description
     }
-    func mediaTypeString(type:String)-> String {
+    func media(type: AVMediaType)-> String {
         switch type {
-        case AVMediaTypeVideo: return "video"
-        case AVMediaTypeAudio: return "audio"
-        case AVMediaTypeText: return "text"
-        case AVMediaTypeClosedCaption: return "closed caption"
-        case AVMediaTypeSubtitle: return "subtitle"
-        case AVMediaTypeTimecode: return "timecode"
-        case AVMediaTypeMetadata: return "metadata"
-        case AVMediaTypeMuxed: return "muxed"
+        case .video: return "video"
+        case .audio: return "audio"
+        case .text: return "text"
+        case .closedCaption: return "closed caption"
+        case .subtitle: return "subtitle"
+        case .timecode: return "timecode"
+        case .metadata: return "metadata"
+        case .muxed: return "muxed"
         default:
             return "Unknown"
         }
     }
 }
 
-extension AVMetadataItem: Printable, DebugPrintable {
-    public override var description: String {
-        var str = "[\(key)"
+extension AVMetadataItem {
+    open override var description: String {
+        var str = "[\(String(describing: key))"
         if self.dateValue != nil {
-            str += "(date) : \(self.dateValue)]"
+            str += "(date) : \(String(describing: self.dateValue))]"
         } else if self.stringValue != nil {
-            str += "(str) : \(self.stringValue)]"
+            str += "(str) : \(String(describing: self.stringValue))]"
         } else if self.numberValue != nil {
-            str += "(num) : \(self.numberValue)]"
+            str += "(num) : \(String(describing: self.numberValue))]"
         }
         return str
     }
-    public override var debugDescription: String {
+    open override var debugDescription: String {
         var str = ""
-        str += "  | key             : \(key)\n"
-        str += "  | keySpace        : \(keySpace)\n"
-        str += "  | identifier      : \(identifier)\n"
+        str += "  | key             : \(String(describing: key))\n"
+        str += "  | keySpace        : \(String(describing: keySpace))\n"
+        str += "  | identifier      : \(String(describing: identifier))\n"
         if dataType != nil {
-            str += "  | dataType    : \(dataType)\n"
+            str += "  | dataType    : \(String(describing: dataType))\n"
         }
-        if (time.flags & .Valid).rawValue > 0 {
+        if time.flags.contains(.valid) {
             str += "  | time        : \(time.description)\n"
         }
         if self.dateValue != nil {
-            str += "  | value(date) : \(self.dateValue)\n"
+            str += "  | value(date) : \(String(describing: self.dateValue))\n"
         } else if self.stringValue != nil {
-            str += "  | value(str)  : \(self.stringValue)\n"
+            str += "  | value(str)  : \(String(describing: self.stringValue))\n"
         } else if self.numberValue != nil {
-            str += "  | value(num)  : \(self.numberValue)\n"
+            str += "  | value(num)  : \(String(describing: self.numberValue))\n"
         }
-        str += "  | extraAttributes : \(extraAttributes)\n"
+        str += "  | extraAttributes : \(String(describing: extraAttributes))\n"
         return str
     }
 }
 
-extension AVAssetTrackSegment: Printable, DebugPrintable {
-    public override var description: String {
-        return "{ empty:\(empty), timeMapping:\(timeMapping.description)}"
+extension AVAssetTrackSegment {
+    open override var description: String {
+        return "{ empty:\(isEmpty), timeMapping:\(timeMapping.description)}"
     }
-    public override var debugDescription: String {
+    open override var debugDescription: String {
         return description
     }
 }
