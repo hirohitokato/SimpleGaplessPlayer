@@ -218,8 +218,8 @@ internal class AssetReaderFragment: NSObject {
         // - IOSurfaceで作成しなくても再生できるが、念のため付けておく
         let compoVideoTracks = composition.tracks(withMediaType: .video)
         var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
-            videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-                kCVPixelBufferIOSurfacePropertiesKey : [:]])
+            videoSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+                            String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
         output.videoComposition = videoComposition
 
         // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
@@ -286,8 +286,8 @@ internal class AssetReaderFragment: NSObject {
         // copyNextSampleBuffer()でハングする可能性の低いAVAssetReaderTrackOutputを使う
         let compoVideoTrack = composition.tracks(withMediaType: .video).first as! AVAssetTrack
         var output = AVAssetReaderTrackOutput(track: compoVideoTrack,
-            outputSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-                kCVPixelBufferIOSurfacePropertiesKey : [:]])
+                                              outputSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : String(describing: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+                                                               String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
 
         // サンプルバッファを取り出すときにデータをコピーしない（負荷軽減）
         output.alwaysCopiesSampleData = false

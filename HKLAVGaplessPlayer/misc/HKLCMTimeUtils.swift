@@ -205,7 +205,7 @@ extension CMTime: CustomStringConvertible,CustomDebugStringConvertible {
         return "\(CMTimeGetSeconds(self))"
     }
     public var debugDescription: String {
-        return String(CMTimeCopyDescription(nil, self))
+        return String(describing: CMTimeCopyDescription(nil, self))
     }
 }
 
