@@ -209,7 +209,7 @@ public func >= (seconds: Float, time: CMTime) -> Bool {
 }
 
 // MARK: - Debugging
-extension CMTime: Printable,DebugPrintable {
+extension CMTime: CustomStringConvertible,CustomDebugStringConvertible {
     public var description: String {
         return "\(CMTimeGetSeconds(self))"
     }
@@ -218,7 +218,7 @@ extension CMTime: Printable,DebugPrintable {
     }
 }
 
-extension CMTimeRange: Printable,DebugPrintable {
+extension CMTimeRange: CustomStringConvertible,CustomDebugStringConvertible {
     public var description: String {
         return "{\(self.start.value)/\(self.start.timescale),\(self.duration.value)/\(self.duration.timescale)}"
     }
@@ -227,7 +227,7 @@ extension CMTimeRange: Printable,DebugPrintable {
     }
 }
 
-extension CMTimeMapping: Printable, DebugPrintable {
+extension CMTimeMapping: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         return "{ source:\(source.description), target:\(target.description) }"
     }

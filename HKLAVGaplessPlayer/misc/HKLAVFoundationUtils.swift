@@ -55,7 +55,7 @@ extension AVURLAsset: Printable, DebugPrintable {
     }
 }
 
-extension AVAssetReferenceRestrictions : Printable, DebugPrintable {
+extension AVAssetReferenceRestrictions : CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         switch self.rawValue {
         case 0:
@@ -79,7 +79,7 @@ extension AVAssetReferenceRestrictions : Printable, DebugPrintable {
     }
 }
 
-extension AVAssetTrack: Printable, DebugPrintable {
+extension AVAssetTrack: CustomStringConvertible, CustomDebugStringConvertible {
     public override var description: String {
         var str = ""
         str += " [track #\(trackID)]\n"
