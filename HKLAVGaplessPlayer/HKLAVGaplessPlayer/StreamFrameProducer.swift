@@ -449,7 +449,7 @@ class StreamFrameProducer: NSObject {
     }
 
     private func _createFragment(asset:AVAsset, rate:Float=1.0,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity)
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity)
         -> AssetReaderFragment?
     {
         // アセットを読むタイミングによっては、track情報が取得できないことがある。

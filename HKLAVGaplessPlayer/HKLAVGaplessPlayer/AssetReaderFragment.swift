@@ -34,7 +34,7 @@ internal class AssetReaderFragment: NSObject {
     let endTime: CMTime
     let preferredTransform: CGAffineTransform
 
-    init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity) {
+    init!(asset:AVAsset, rate:Float=1.0, startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity) {
         self.asset = asset
         self.rate = rate
         self.startTime = startTime
@@ -126,11 +126,12 @@ internal class AssetReaderFragment: NSObject {
     :returns: アセットリーダー
     */
     private func _buildComposition(asset:AVAsset,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity,
         rate:Float=1.0)
         -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
         var error: NSError? = nil
+        var endTime = endTime
 
         assert(rate>0.0, "Unable to set rate less than or equal to 0.0!!")
 
@@ -239,11 +240,12 @@ internal class AssetReaderFragment: NSObject {
     }
 
     private func _buildAsIsComposition(asset:AVAsset,
-        startTime:CMTime=kCMTimeZero, var endTime:CMTime=kCMTimePositiveInfinity,
+        startTime:CMTime=kCMTimeZero, endTime:CMTime=kCMTimePositiveInfinity,
         rate:Float=HKLAVGaplessPlayerPlayRateAsIs)
         -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
         var error: NSError? = nil
+        var endTime = endTime
 
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
