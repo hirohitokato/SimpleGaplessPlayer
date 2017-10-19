@@ -67,7 +67,7 @@ internal class AssetReaderFragment: NSObject {
 
         // 読み込み開始
         if self._reader.startReading() == false {
-            NSLog("Failed to start a reader:\(self._reader)\n error:\(self._reader.error)")
+            NSLog("Failed to start a reader:\(self._reader)\n error:\(String(describing: self._reader.error))")
             return nil
         }
     }
@@ -138,7 +138,7 @@ internal class AssetReaderFragment: NSObject {
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
         if asset.tracks(withMediaType: .video).count == 0 {
-            NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
+            NSLog("Video track is empty. the asset:\(String(describing: (asset as? AVURLAsset)?.url.lastPathComponent)) contains \(asset.tracks)")
             return nil
         }
         let videoTrack = asset.tracks(withMediaType: .video)[0] as! AVAssetTrack
@@ -179,7 +179,7 @@ internal class AssetReaderFragment: NSObject {
         */
         let composition = AVMutableComposition()
         if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
-            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(error)")
+            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(String(describing: error))")
             return nil
         }
 
@@ -233,7 +233,7 @@ internal class AssetReaderFragment: NSObject {
             }
             return (reader, duration, displayDuration)
         } else {
-            NSLog("Failed to instantiate a reader for a composition:\(error)")
+            NSLog("Failed to instantiate a reader for a composition:\(String(describing: error))")
         }
         
         return nil
@@ -250,7 +250,7 @@ internal class AssetReaderFragment: NSObject {
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
         if asset.tracks(withMediaType: .video).count == 0 {
-            NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
+            NSLog("Video track is empty. the asset:\(String(describing: (asset as? AVURLAsset)?.url.lastPathComponent)) contains \(asset.tracks)")
             return nil
         }
         let videoTrack = asset.tracks(withMediaType: .video)[0] as! AVAssetTrack
@@ -277,7 +277,7 @@ internal class AssetReaderFragment: NSObject {
         */
         let composition = AVMutableComposition()
         if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
-            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(error)")
+            NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(String(describing: error))")
             return nil
         }
 
@@ -301,7 +301,7 @@ internal class AssetReaderFragment: NSObject {
                 return (reader, duration, displayDuration)
             }
         } else {
-            NSLog("Failed to instantiate a reader for a composition:\(error)")
+            NSLog("Failed to instantiate a reader for a composition:\(String(describing: error))")
         }
         
         return nil
