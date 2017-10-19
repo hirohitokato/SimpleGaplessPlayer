@@ -32,6 +32,7 @@
 		1AA61A7A1A41044B00F2B2F6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A781A41044B00F2B2F6 /* Main.storyboard */; };
 		1AA61A7C1A41044B00F2B2F6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */; };
 		1AA61A7F1A41044B00F2B2F6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1AA61A7D1A41044B00F2B2F6 /* LaunchScreen.xib */; };
+		1AC023A41F98BFA80072F4AE /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 1AC023A21F98BFA30072F4AE /* LICENSE */; };
 		1AEABB0C1A47C40400EF97E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0A1A47C40400EF97E2 /* AppDelegate.swift */; };
 		1AEABB0D1A47C40400EF97E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AEABB0B1A47C40400EF97E2 /* ViewController.swift */; };
 		1AEC97791A52F84100ACE922 /* taskInfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC97771A52F84100ACE922 /* taskInfo.c */; };
@@ -89,6 +90,8 @@
 		1AA61A7B1A41044B00F2B2F6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		1AA61A7E1A41044B00F2B2F6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		1AA61ADD1A41CCCB00F2B2F6 /* SimpleGaplessPlayer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimpleGaplessPlayer-Bridging-Header.h"; sourceTree = "<group>"; };
+		1AC023A21F98BFA30072F4AE /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		1AC023A31F98BFA30072F4AE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1AEABB0A1A47C40400EF97E2 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1AEABB0B1A47C40400EF97E2 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		1AEC97771A52F84100ACE922 /* taskInfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = taskInfo.c; sourceTree = "<group>"; };
@@ -186,6 +189,8 @@
 		1AA61A661A41044B00F2B2F6 = {
 			isa = PBXGroup;
 			children = (
+				1AC023A21F98BFA30072F4AE /* LICENSE */,
+				1AC023A31F98BFA30072F4AE /* README.md */,
 				1AA61A711A41044B00F2B2F6 /* SimpleGaplessPlayer */,
 				1A25A0A61A5BE41800106B11 /* HKLAVGaplessPlayer */,
 				1A25A0C71A5BE4D500106B11 /* Frameworks */,
@@ -328,6 +333,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AC023A41F98BFA80072F4AE /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -420,7 +426,7 @@
 				);
 				INFOPLIST_FILE = HKLAVGaplessPlayer/Info.plist;
 				INSTALL_PATH = "@rpath";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -445,7 +451,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = HKLAVGaplessPlayer/Info.plist;
 				INSTALL_PATH = "@rpath";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -562,7 +568,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SimpleGaplessPlayer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = SimpleGaplessPlayer;
@@ -582,7 +588,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = SimpleGaplessPlayer/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yourcompany.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = SimpleGaplessPlayer;
