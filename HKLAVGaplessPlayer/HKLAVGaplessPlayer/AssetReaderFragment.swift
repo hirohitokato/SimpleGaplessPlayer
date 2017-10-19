@@ -136,11 +136,11 @@ internal class AssetReaderFragment: NSObject {
 
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
-        if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
+        if asset.tracks(withMediaType: .video).count == 0 {
             NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as! AVAssetTrack
+        let videoTrack = asset.tracks(withMediaType: .video)[0] as! AVAssetTrack
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
@@ -216,7 +216,7 @@ internal class AssetReaderFragment: NSObject {
         // 注意点：
         // - このビデオトラックにはコンポジション上のビデオトラックを指定すること
         // - IOSurfaceで作成しなくても再生できるが、念のため付けておく
-        let compoVideoTracks = composition.tracksWithMediaType(AVMediaTypeVideo)
+        let compoVideoTracks = composition.tracks(withMediaType: .video)
         var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
             videoSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
                 kCVPixelBufferIOSurfacePropertiesKey : [:]])
@@ -247,11 +247,11 @@ internal class AssetReaderFragment: NSObject {
 
         // ビデオトラックを抽出
         /* durationを調べるためだけに使う */
-        if asset.tracksWithMediaType(AVMediaTypeVideo).count == 0 {
+        if asset.tracks(withMediaType: .video).count == 0 {
             NSLog("Video track is empty. the asset:\((asset as? AVURLAsset)?.URL.lastPathComponent!) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracksWithMediaType(AVMediaTypeVideo)[0] as! AVAssetTrack
+        let videoTrack = asset.tracks(withMediaType: .video)[0] as! AVAssetTrack
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
@@ -284,7 +284,7 @@ internal class AssetReaderFragment: NSObject {
 
         // アセットリーダーに接続するアウトプット(出力口)として、
         // copyNextSampleBuffer()でハングする可能性の低いAVAssetReaderTrackOutputを使う
-        let compoVideoTrack = composition.tracksWithMediaType(AVMediaTypeVideo).first as! AVAssetTrack
+        let compoVideoTrack = composition.tracks(withMediaType: .video).first as! AVAssetTrack
         var output = AVAssetReaderTrackOutput(track: compoVideoTrack,
             outputSettings: [kCVPixelBufferPixelFormatTypeKey : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
                 kCVPixelBufferIOSurfacePropertiesKey : [:]])
