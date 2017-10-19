@@ -42,7 +42,7 @@ Returns the first index where condition matches in domain or nil if it does not 
 :author: norio_nomura
 */
 func index_of<C : Collection>
-    (domain: C, condition: C.Generator.Element -> Bool) -> C.Index? where C.Iterator.Element : Equatable
+    (domain: C, condition: (C.Iterator.Element) -> Bool) -> C.Index? where C.Iterator.Element : Equatable
 {
     // faster than  find(lazy(domain).map(condition), true)
     for idx in domain.indices() {
