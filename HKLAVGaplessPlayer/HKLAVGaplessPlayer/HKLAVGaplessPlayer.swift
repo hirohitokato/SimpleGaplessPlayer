@@ -203,14 +203,11 @@ public class HKLAVGaplessPlayer: NSObject {
     :param: rate     再生レート。デフォルト:1.0(等倍速再生)。0.0は停止
     :param: position 再生位置(0.0-1.0) デフォルト:nil(現在位置から再生)
     */
-    private func _set(rate:Float, position:Float? = nil) {
+    private func _set(rate: Float, position: Float? = nil) {
         guard rate >= 0.0 else {
             fatalError("Unable to set a negative value(\(rate)) to playback rate")
         }
-        guard let position = position,
-         (position >= 0.0 && position <= 1.0) else {
-            fatalError("position(\(rate)) must be 0.0...1.0")
-        }
+        let pos = clip(position, lower: 0.0, upper: 1.0)
 
         if rate == 0 {
 
@@ -226,7 +223,7 @@ public class HKLAVGaplessPlayer: NSObject {
             playbackFrameRate = delegate?.expectedPlaybackFramerate(player: self) ?? playbackFrameRate
             _displayLink.frameInterval = 60 / playbackFrameRate
 
-            if _producer.startReading(rate: rate, atPosition: position) {
+            if _producer.startReading(rate: rate, atPosition: pos) {
                 _lastTimestamp = CACurrentMediaTime()
                 _remainingPresentationTime = 0.0
                 _previousTimestamp = 0.0

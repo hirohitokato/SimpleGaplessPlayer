@@ -30,3 +30,25 @@ func index_of<C : Collection>
     }
     return nil
 }
+
+/**
+ Returns a clipped value between lower & upper bounds.
+
+ :param: value to be clipped.
+ :param: lower bounds
+ :param: upper bounds
+
+ :returns: value clipped between lower<= value <= upper.
+ */
+func clip<T: Comparable>(_ value: T?, lower: T, upper: T) -> T? {
+    guard let value = value else {
+        return nil
+    }
+    if value < lower {
+        return lower
+    } else if value > upper {
+        return upper
+    } else {
+        return value
+    }
+}
