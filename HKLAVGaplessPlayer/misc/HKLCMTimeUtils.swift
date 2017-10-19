@@ -99,28 +99,19 @@ func /= (time: inout CMTime, divisor: Int32) -> CMTime {
     return time
 }
 
-// MARK: - Comparable protocol
-extension CMTime: Comparable {
-}
-
-public func == (time1: CMTime, time2: CMTime) -> Bool {
-    return CMTimeCompare(time1, time2) == 0
-}
-public func < (time1: CMTime, time2: CMTime) -> Bool {
-    return CMTimeCompare(time1, time2) < 0
-}
-
 // MARK: - Convenience methods
 extension CMTime {
-    func isNearlyEqualTo(time: CMTime, _ tolerance: CMTime=CMTimeMake(1,600)) -> Bool {
+    func isNearlyEqualTo(_ time: CMTime, _ tolerance: CMTime=CMTimeMake(1,600)) -> Bool {
         let delta = CMTimeAbsoluteValue(self - time)
         return delta < tolerance
     }
     func isNearlyEqualTo(time: CMTime, _ tolerance: Float64=1.0/600) -> Bool {
-        return isNearlyEqualTo(time, CMTime(seconds:tolerance))
+        let t = Double(tolerance)
+        return isNearlyEqualTo(time, CMTime(seconds:t, preferredTimescale:600))
     }
     func isNearlyEqualTo(time: CMTime, _ tolerance: Float=1.0/600) -> Bool {
-        return isNearlyEqualTo(time, CMTime(seconds:tolerance))
+        let t = Double(tolerance)
+        return isNearlyEqualTo(time, CMTime(seconds:t, preferredTimescale:600))
     }
 }
 
