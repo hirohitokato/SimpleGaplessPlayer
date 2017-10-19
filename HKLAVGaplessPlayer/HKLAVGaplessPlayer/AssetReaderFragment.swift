@@ -63,7 +63,7 @@ internal class AssetReaderFragment: NSObject {
             NSLog("Failed to build a composition for asset.")
             return nil
         }
-        _output = _reader.outputs.first as! AVAssetReaderOutput
+        _output = _reader.outputs.first
 
         // 読み込み開始
         if self._reader.startReading() == false {
@@ -141,7 +141,7 @@ internal class AssetReaderFragment: NSObject {
             NSLog("Video track is empty. the asset:\(String(describing: (asset as? AVURLAsset)?.url.lastPathComponent)) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracks(withMediaType: .video)[0] as! AVAssetTrack
+        let videoTrack = asset.tracks(withMediaType: .video)[0]
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
@@ -253,7 +253,7 @@ internal class AssetReaderFragment: NSObject {
             NSLog("Video track is empty. the asset:\(String(describing: (asset as? AVURLAsset)?.url.lastPathComponent)) contains \(asset.tracks)")
             return nil
         }
-        let videoTrack = asset.tracks(withMediaType: .video)[0] as! AVAssetTrack
+        let videoTrack = asset.tracks(withMediaType: .video)[0]
 
         // 引数で指定した再生範囲を「いつから何秒間」の形式に変換
         if endTime > videoTrack.timeRange.duration {
@@ -286,7 +286,7 @@ internal class AssetReaderFragment: NSObject {
 
         // アセットリーダーに接続するアウトプット(出力口)として、
         // copyNextSampleBuffer()でハングする可能性の低いAVAssetReaderTrackOutputを使う
-        let compoVideoTrack = composition.tracks(withMediaType: .video).first as! AVAssetTrack
+        let compoVideoTrack = composition.tracks(withMediaType: .video).first!
         var output = AVAssetReaderTrackOutput(track: compoVideoTrack,
                                               outputSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : String(describing: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
                                                                String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
