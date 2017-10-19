@@ -1,8 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="qFG-nD-IPX">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="qFG-nD-IPX">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -14,12 +19,12 @@
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aDi-tX-l2h" customClass="HKLGLPixelBufferView">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="Nm1-O4-2zc" appends="YES" id="DYe-z0-KPc"/>
@@ -27,31 +32,31 @@
                                 </connections>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pFe-ID-r99">
-                                <rect key="frame" x="16" y="523" width="568" height="18"/>
+                                <rect key="frame" x="16" y="590" width="343" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cRN-jc-sLx">
-                                <rect key="frame" x="14" y="550" width="572" height="31"/>
+                                <rect key="frame" x="14" y="617" width="347" height="31"/>
                                 <connections>
-                                    <action selector="sliderUpdated:" destination="vXZ-lx-hvc" eventType="valueChanged" id="J2N-Jb-mbo"/>
+                                    <action selector="sliderUpdatedWithSender:" destination="vXZ-lx-hvc" eventType="valueChanged" id="O4E-3F-Gob"/>
                                 </connections>
                             </slider>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="0.0" maxValue="4" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="66z-3M-JKt">
-                                <rect key="frame" x="14" y="485" width="572" height="31"/>
+                                <rect key="frame" x="14" y="552" width="347" height="31"/>
                                 <connections>
-                                    <action selector="rateChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="fjL-Ze-PQs"/>
+                                    <action selector="rateChangedWithSender:" destination="vXZ-lx-hvc" eventType="valueChanged" id="aFq-bP-Zwa"/>
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="rate: 1.0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m0K-h5-DhY">
-                                <rect key="frame" x="16" y="459" width="568" height="18"/>
+                                <rect key="frame" x="16" y="526" width="343" height="18"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="66z-3M-JKt" firstAttribute="top" secondItem="m0K-h5-DhY" secondAttribute="bottom" constant="8" id="0Rc-Dd-B97"/>
                             <constraint firstItem="m0K-h5-DhY" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="1Gf-X4-hkl"/>
@@ -74,14 +79,14 @@
                     <navigationItem key="navigationItem" id="fTt-ok-2SL">
                         <nil key="title"/>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Iu9-Ai-Hlh">
-                            <rect key="frame" x="180" y="7" width="240" height="30"/>
+                            <rect key="frame" x="67.5" y="7" width="240" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="Playback"/>
                                 <segment title="Streaming"/>
                             </segments>
                             <connections>
-                                <action selector="modeChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="Eyq-ni-JWQ"/>
+                                <action selector="modeChangedWithSender:" destination="vXZ-lx-hvc" eventType="valueChanged" id="eeQ-ha-foE"/>
                             </connections>
                         </segmentedControl>
                     </navigationItem>
@@ -97,12 +102,12 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer numberOfTapsRequired="2" id="Nm1-O4-2zc">
                     <connections>
-                        <action selector="tapped:" destination="vXZ-lx-hvc" id="XuF-Fk-SUi"/>
+                        <action selector="tappedWithSender:" destination="vXZ-lx-hvc" id="hEG-TK-xhe"/>
                     </connections>
                 </tapGestureRecognizer>
                 <swipeGestureRecognizer direction="left" id="l6b-8H-mBk">
                     <connections>
-                        <action selector="swipedToLeft:" destination="vXZ-lx-hvc" id="GkA-qB-u2G"/>
+                        <action selector="swipedToLeftWithSender:" destination="vXZ-lx-hvc" id="ent-L8-dsp"/>
                     </connections>
                 </swipeGestureRecognizer>
             </objects>
@@ -112,7 +117,7 @@
             <objects>
                 <navigationController id="qFG-nD-IPX" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="CQe-lJ-Gzz">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
