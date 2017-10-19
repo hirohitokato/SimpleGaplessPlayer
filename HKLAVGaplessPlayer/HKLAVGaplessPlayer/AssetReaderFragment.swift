@@ -46,13 +46,13 @@ internal class AssetReaderFragment: NSObject {
 
         // リーダーとなるコンポジションを作成する
         if rate == HKLAVGaplessPlayerPlayRateAsIs {
-            if let result = _buildAsIsComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
+            if let result = _buildAsIsComposition(asset: asset, startTime:startTime, endTime:endTime, rate:rate) {
                 _reader = result.reader
                 _fragmentDuration = result.duration
                 _frameInterval = result.frameInterval
             }
         } else {
-            if let result = _buildComposition(asset, startTime:startTime, endTime:endTime, rate:rate) {
+            if let result = _buildComposition(asset: asset, startTime:startTime, endTime:endTime, rate:rate) {
                 _reader = result.reader
                 _fragmentDuration = result.duration
                 _frameInterval = result.frameInterval
@@ -151,7 +151,7 @@ internal class AssetReaderFragment: NSObject {
         let timeRange = CMTimeRangeMake(startTime, duration)
 
         // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
-        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 1.0/60.0) {
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, CMTimeMake(1,60)) {
             NSLog("duration(\(duration)) is less than or equal to 0")
             return nil
         }
@@ -193,7 +193,7 @@ internal class AssetReaderFragment: NSObject {
         var displayDuration: CMTime = kCMTimeInvalid
 
         // フレームレート指定のためにビデオコンポジションを作成
-        let videoComposition = AVMutableVideoComposition(propertiesOfAsset: asset)
+        let videoComposition = AVMutableVideoComposition(propertiesOf: asset)
         if rate == HKLAVGaplessPlayerPlayRateAsIs {
             // As Isで表示する場合、アセットのフレームをそのまま取り出せるよう
             // videoTrackのminFrameDurationをそのまま利用する
@@ -263,7 +263,7 @@ internal class AssetReaderFragment: NSObject {
         let timeRange = CMTimeRangeMake(startTime, duration)
 
         // durationがほぼゼロの場合はコンポジションを作成できないのでnilを返す
-        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, 1.0/60.0) {
+        if duration < kCMTimeZero || duration.isNearlyEqualTo(kCMTimeZero, CMTimeMake(1,60)) {
             NSLog("duration(\(duration)) is less than or equal to 0")
             return nil
         }
