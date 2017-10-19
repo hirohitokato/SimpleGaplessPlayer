@@ -28,7 +28,7 @@ struct FrameData : CustomStringConvertible, CustomDebugStringConvertible {
 */
 internal class AssetReaderFragment: NSObject {
     let asset: AVAsset
-    let URL: NSURL!
+    let URL: URL!
     let rate: Float
     let startTime: CMTime
     let endTime: CMTime
@@ -40,7 +40,7 @@ internal class AssetReaderFragment: NSObject {
         self.startTime = startTime
         self.endTime = endTime
         self.preferredTransform = asset.preferredTransform
-        self.URL = (asset as? AVURLAsset)?.URL
+        self.URL = (asset as? AVURLAsset)?.url
 
         super.init()
 
