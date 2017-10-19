@@ -130,7 +130,6 @@ internal class AssetReaderFragment: NSObject {
         rate:Float=1.0)
         -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
-        var error: NSError? = nil
         var endTime = endTime
 
         assert(rate>0.0, "Unable to set rate less than or equal to 0.0!!")
@@ -178,7 +177,9 @@ internal class AssetReaderFragment: NSObject {
         下記コード（AVMutableCompositionにアセットをそのまま入れる）を使用する。
         */
         let composition = AVMutableComposition()
-        if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
+        do {
+            try composition.insertTimeRange(timeRange, of: asset, at: kCMTimeZero)
+        } catch {
             NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(String(describing: error))")
             return nil
         }
@@ -218,7 +219,7 @@ internal class AssetReaderFragment: NSObject {
         // - このビデオトラックにはコンポジション上のビデオトラックを指定すること
         // - IOSurfaceで作成しなくても再生できるが、念のため付けておく
         let compoVideoTracks = composition.tracks(withMediaType: .video)
-        var output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
+        let output = AVAssetReaderVideoCompositionOutput(videoTracks: compoVideoTracks,
             videoSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
                             String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
         output.videoComposition = videoComposition
@@ -227,12 +228,13 @@ internal class AssetReaderFragment: NSObject {
         output.alwaysCopiesSampleData = false
 
         // コンポジションからアセットリーダーを作成し、アウトプットを接続
-        if let reader = AVAssetReader(asset: composition, error: &error) {
-            if reader.canAddOutput(output) {
-                reader.addOutput(output)
+        do {
+            let reader = try AVAssetReader(asset: composition)
+            if reader.canAdd(output) {
+                reader.add(output)
             }
             return (reader, duration, displayDuration)
-        } else {
+        } catch {
             NSLog("Failed to instantiate a reader for a composition:\(String(describing: error))")
         }
         
@@ -244,7 +246,6 @@ internal class AssetReaderFragment: NSObject {
         rate:Float=HKLAVGaplessPlayerPlayRateAsIs)
         -> (reader:AVAssetReader, duration:CMTime, frameInterval:CMTime)!
     {
-        var error: NSError? = nil
         var endTime = endTime
 
         // ビデオトラックを抽出
@@ -276,18 +277,20 @@ internal class AssetReaderFragment: NSObject {
         *         └ [videoTrack in AVAsset] : ソースに使うビデオトラック
         */
         let composition = AVMutableComposition()
-        if !composition.insertTimeRange(timeRange, ofAsset: asset, atTime: kCMTimeZero, error: &error) {
+        do {
+            try composition.insertTimeRange(timeRange, of: asset, at: kCMTimeZero)
+        } catch {
             NSLog("Failed to insert a video track(from:\(startTime) to:\(endTime)) to composition:\(String(describing: error))")
             return nil
         }
 
         // フレームの時間を1回/VSYNCにする
-        var displayDuration = FrameDurationIsAsIs
+        let displayDuration = FrameDurationIsAsIs
 
         // アセットリーダーに接続するアウトプット(出力口)として、
         // copyNextSampleBuffer()でハングする可能性の低いAVAssetReaderTrackOutputを使う
         let compoVideoTrack = composition.tracks(withMediaType: .video).first!
-        var output = AVAssetReaderTrackOutput(track: compoVideoTrack,
+        let output = AVAssetReaderTrackOutput(track: compoVideoTrack,
                                               outputSettings: [String(describing: kCVPixelBufferPixelFormatTypeKey) : String(describing: kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
                                                                String(describing: kCVPixelBufferIOSurfacePropertiesKey) : [:]])
 
@@ -295,12 +298,13 @@ internal class AssetReaderFragment: NSObject {
         output.alwaysCopiesSampleData = false
 
         // コンポジションからアセットリーダーを作成し、アウトプットを接続
-        if let reader = AVAssetReader(asset: composition, error: &error) {
-            if reader.canAddOutput(output) {
-                reader.addOutput(output)
+        do {
+            let reader = try AVAssetReader(asset: composition)
+            if reader.canAdd(output) {
+                reader.add(output)
                 return (reader, duration, displayDuration)
             }
-        } else {
+        } catch {
             NSLog("Failed to instantiate a reader for a composition:\(String(describing: error))")
         }
         
