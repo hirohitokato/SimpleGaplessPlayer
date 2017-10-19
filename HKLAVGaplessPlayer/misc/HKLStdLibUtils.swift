@@ -41,11 +41,11 @@ Returns the first index where condition matches in domain or nil if it does not 
 :refer: https://github.com/norio-nomura/SwiftBenchmark-indexOf
 :author: norio_nomura
 */
-func index_of<C : CollectionType where C.Generator.Element : Equatable>
-    (domain: C, condition: C.Generator.Element -> Bool) -> C.Index?
+func index_of<C : Collection>
+    (domain: C, condition: C.Generator.Element -> Bool) -> C.Index? where C.Iterator.Element : Equatable
 {
     // faster than  find(lazy(domain).map(condition), true)
-    for idx in indices(domain) {
+    for idx in domain.indices() {
         if condition(domain[idx]) {
             return idx
         }
