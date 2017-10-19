@@ -664,8 +664,8 @@ private extension StreamFrameProducer {
         }
     }
 
-    func async(handler: (StreamFrameProducer) -> Void) {
-        dispatch_async(_decodeQueue) {
+    func async(handler: @escaping (StreamFrameProducer) -> Void) {
+        _decodeQueue.async() {
 //            [unowned self] in
             handler(self)
         }

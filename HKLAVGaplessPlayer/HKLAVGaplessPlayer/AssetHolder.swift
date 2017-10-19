@@ -28,7 +28,7 @@ class AssetHolder {
         }
         set { _duration = newValue }
     }
-    init(_ asset: AVAsset, completionHandler: (CMTime) -> Void) {
+    init(_ asset: AVAsset, completionHandler: @escaping (CMTime) -> Void) {
         self.asset = asset
         // AssetReaderFragmentのビルドに必要な情報を非同期に読み込み始めておく
         // （もしビルドまでに間に合わなかった場合でも、処理がブロックされる
