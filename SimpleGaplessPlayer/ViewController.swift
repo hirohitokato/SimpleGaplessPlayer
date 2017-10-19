@@ -157,7 +157,7 @@ class ViewController: UIViewController, HKLAVGaplessPlayerDelegate {
         return 30
     }
 
-    func player(player: HKLAVGaplessPlayer, didOutputSampleBuffer sampleBuffer: CMSampleBufferRef) {
+    func player(player: HKLAVGaplessPlayer, didOutputSampleBuffer sampleBuffer: CMSampleBuffer) {
         if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
             playerView.displayPixelBuffer(pixelBuffer)
         }

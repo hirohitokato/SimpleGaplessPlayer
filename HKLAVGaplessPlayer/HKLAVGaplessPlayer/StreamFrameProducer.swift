@@ -209,8 +209,8 @@ class StreamFrameProducer: NSObject {
 
     :returns: リーダーから読み込まれたサンプルバッファ
     */
-    func nextSampleBuffer() -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)! {
-        var result: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
+    func nextSampleBuffer() -> (sbuf:CMSampleBuffer, frameDuration:CMTime)! {
+        var result: (sbuf:CMSampleBuffer, frameDuration:CMTime)! = nil
         sync { me in
             if me._currentSampleBuffer != nil {
                 result = me._currentSampleBuffer
@@ -307,7 +307,7 @@ class StreamFrameProducer: NSObject {
     private var _assets = [AssetHolder]() // アセット
     private var _readers = [AssetReaderFragment]() // リーダー
 
-    private var _currentSampleBuffer: (sbuf:CMSampleBufferRef, frameDuration:CMTime)! = nil
+    private var _currentSampleBuffer: (sbuf:CMSampleBuffer, frameDuration:CMTime)! = nil
     private var _currentPresentationTimestamp: CMTime = kCMTimeZero
 
 
@@ -334,7 +334,7 @@ class StreamFrameProducer: NSObject {
     サンプルバッファの生成
     */
     private func _prepareNextBuffer()
-        -> (sbuf:CMSampleBufferRef, frameDuration:CMTime)?
+        -> (sbuf:CMSampleBuffer, frameDuration:CMTime)?
     {
         // サンプルバッファを生成する
         while let target = _readers.first {
