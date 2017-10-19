@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-struct FrameData : Printable, DebugPrintable {
+struct FrameData : CustomStringConvertible, CustomDebugStringConvertible {
     let sampleBuffer: CMSampleBuffer
     let duration: CMTime
 

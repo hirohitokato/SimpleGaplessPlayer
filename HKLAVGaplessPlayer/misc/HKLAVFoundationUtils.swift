@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-extension AVURLAsset: Printable, DebugPrintable {
+extension AVURLAsset: CustomStringConvertible, CustomDebugStringConvertible {
     public override var description: String {
         var str: String = ""
         str += "---------------------\n"
@@ -122,7 +122,7 @@ extension AVAssetTrack: CustomStringConvertible, CustomDebugStringConvertible {
     }
 }
 
-extension AVMetadataItem: Printable, DebugPrintable {
+extension AVMetadataItem: CustomStringConvertible, CustomDebugStringConvertible {
     public override var description: String {
         var str = "[\(key)"
         if self.dateValue != nil {
