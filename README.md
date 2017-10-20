@@ -18,7 +18,7 @@ HKLAVGaplessPlayer is available through [Carthage](https://github.com/Carthage/C
 it, simply add the following line to your Cartfile:
 
 ```
-github "katokichisoft/SimpleGaplessPlayer"
+github "hirohitokato/SimpleGaplessPlayer"
 ```
 
 ## What is this?
@@ -37,7 +37,7 @@ This project includes HKLGLPixelBufferView class. It is a subclass of UIView so 
 let player = HKLAVGaplessPlayer()
 // append assets.
 for asset in assets {
-  player.appendAsset(asset)
+  player.appendAsset(asset: asset)
 }
 
 // connect playerView(=HKLGLPixelBufferView) to player.
