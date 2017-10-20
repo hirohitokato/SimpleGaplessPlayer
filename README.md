@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/badge/license-NewBSD-green.svg?style=flat)](http://choosealicense.com/licenses/bsd-3-clause/)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/katokichisoft/SimpleGaplessPlayer?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](https://swift.org/)
 
 HKLAVGaplessPlayer is similar Movie player class to AVQueuePlayer. But it can play multiple assets without gap.
 
